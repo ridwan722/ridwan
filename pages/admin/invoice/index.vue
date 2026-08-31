@@ -494,7 +494,6 @@ import moment from "moment";
 import type { ConfirmationDialog } from "#components";
 import type { customerM } from "~/types/customerModel";
 import type { invoiceM } from "~/types/invoice";
-import { usecustomerStore } from "~/stores/customerStore";
 import { useinvoiceStore } from "~/stores/invoiceStore";
 import Index from "../index.vue";
 

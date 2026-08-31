@@ -14,6 +14,25 @@ export default defineNuxtConfig({
 
   ssr: false,
 
+  // Prevents stale build asset caching issues on deploy
+  experimental: {
+    payloadExtraction: false,
+  },
+
+  // Forces fresh headers for HTML & JS chunks in client-only SPA
+  routeRules: {
+    "/**": {
+      headers: {
+        "cache-control": "no-cache, no-store, must-revalidate",
+      },
+    },
+    "/_nuxt/**": {
+      headers: {
+        "cache-control": "public, max-age=31536000, immutable",
+      },
+    },
+  },
+
   vuetify: {
     vuetifyOptions: {
       theme: {
