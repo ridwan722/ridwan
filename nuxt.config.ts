@@ -1,17 +1,19 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
-  devtools: { enabled: true },
-  modules: ["vuetify-nuxt-module", "@pinia/nuxt", "nuxt-vuefire"],
-  ssr: false,
-  nitro: {
-    preset: "cloudflare-pages",
 
-    cloudflare: {
-      deployConfig: true,
-      nodeCompat: true,
-    },
+  devtools: {
+    enabled: true,
   },
+
+  modules: [
+    "vuetify-nuxt-module",
+    "@pinia/nuxt",
+    "nuxt-vuefire",
+  ],
+
+  ssr: false,
+
   vuetify: {
     vuetifyOptions: {
       theme: {
@@ -57,8 +59,9 @@ export default defineNuxtConfig({
       storageBucket: process.env.storageBucket,
       messagingSenderId: process.env.messagingSenderId,
       appId: process.env.appId,
+
       databaseURL:
-      "https://aresadigital-default-rtdb.asia-southeast1.firebasedatabase.app",
+        "https://aresadigital-default-rtdb.asia-southeast1.firebasedatabase.app",
     },
   },
 });
