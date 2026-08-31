@@ -52,7 +52,7 @@ const update = async () => {
               color="primary"
               class="text-capitalize mt-10"
               rounded="lg"
-              to="/login"
+              to="/admin/"
             >
               Login
             </v-btn>

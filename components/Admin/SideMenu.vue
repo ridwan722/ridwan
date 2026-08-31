@@ -28,7 +28,7 @@
 
       <div class="nav-submenu">
         <v-list-item to="/admin/master/users" title="User Management" />
-        <v-list-item to="/admin/master/perusahaan" title="Perusahaan" />
+        <!-- <v-list-item to="/admin/master/perusahaan" title="Perusahaan" /> -->
       </div>
     </v-list-group>
 

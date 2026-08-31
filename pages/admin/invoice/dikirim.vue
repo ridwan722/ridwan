@@ -155,7 +155,7 @@ function statusColor(status: string) {
 async function refreshData() {
   useloadingStore().setLoading(true);
   try {
-    sessionStorage.removeItem("invoice_aresa_digital");
+    sessionStorage.removeItem("invoice");
     await invoiceStore.tarikDataInvoiceAct();
     notificationStore.showSuccess("Data berhasil diperbarui");
   } finally {

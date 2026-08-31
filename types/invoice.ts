@@ -1,9 +1,9 @@
-export interface invoiceItemAresaDigitalM {
+export interface invoiceItemM {
   description_pekerjaan: string;
   amount: number;
 }
 
-export interface invoiceAresaDigitalM {
+export interface invoiceM {
   id?: string;
   id_invoice_aresa?: string;
   no_inv_aresa: string;
@@ -11,7 +11,7 @@ export interface invoiceAresaDigitalM {
   nama_customer: string;
   alamat_customer: string;
   tanggal: string;
-  item_pekerjaan: invoiceItemAresaDigitalM[];
+  item_pekerjaan: invoiceItemM[];
   pakai_ppn: boolean;
   subtotal: number;
   ppn: number;

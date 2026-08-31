@@ -1,12 +1,12 @@
 import { useFirestore } from "vuefire";
 import { doc, runTransaction } from "firebase/firestore";
-import type { invoiceAresaDigitalM } from "~/types/invoiceAresaDigitalModel";
+import type { invoiceM } from "~/types/invoice";
 import moment from "moment";
 import { getAuth } from "firebase/auth";
 import _ from "lodash";
 
 
-export const createInvoiceAresaDigital = async (data: invoiceAresaDigitalM) => {
+export const createInvoiceAresaDigital = async (data: invoiceM) => {
   const db = useFirestore();
   const auth = getAuth();
   const now = moment().unix();
@@ -25,7 +25,7 @@ export const createInvoiceAresaDigital = async (data: invoiceAresaDigitalM) => {
     const stringnewnumber = _.toString(newnumber).padStart(5, "0");
     const no_inv_aresa = `${stringnewnumber}`;
     const id_invoice_aresa = `${stringnewnumber}`;
-    const setdata: invoiceAresaDigitalM = {
+    const setdata: invoiceM = {
       ...data,
       no_inv_aresa,
       id_invoice_aresa,
@@ -34,7 +34,7 @@ export const createInvoiceAresaDigital = async (data: invoiceAresaDigitalM) => {
     };
 
     //Ref dokumen utama laporan
-    const laporanRef = doc(db, "invoice_aresa_digital", id_invoice_aresa);
+    const laporanRef = doc(db, "invoice", id_invoice_aresa);
     // Simpan dokumen utama laporan
     transaction.set(laporanRef, setdata, { merge: true });
     transaction.update(nomorInvRef, { no_inv: newnumber });

@@ -331,7 +331,7 @@
 <script setup lang="ts">
 import moment from "moment";
 import type { ConfirmationDialog } from "#components";
-import type { invoiceAresaDigitalM } from "~/types/invoiceAresaDigitalModel";
+import type { invoiceM } from "~/types/invoiceModel";
 import { uploadStore } from "~/stores/uploadStore";
 
 definePageMeta({
@@ -387,7 +387,7 @@ async function ubahStatusDikirim() {
   const id = route.params.id as string;
   const invoice = JSON.parse(
     JSON.stringify(invoiceDetail.value),
-  ) as invoiceAresaDigitalM;
+  ) as invoiceM;
   invoice.status = "Dikirim";
   invoice.dokumen_dikirim = uploadStoreInstance.getUrlRef;
   invoice.updatedAt = moment().unix();
@@ -413,7 +413,7 @@ async function ubahStatusSelesai() {
   const id = route.params.id as string;
   const invoice = JSON.parse(
     JSON.stringify(invoiceDetail.value),
-  ) as invoiceAresaDigitalM;
+  ) as invoiceM;
   invoice.status = "Selesai";
   invoice.updatedAt = moment().unix();
   invoice.updatedBy = userStore.getEmail;

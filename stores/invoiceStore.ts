@@ -1,12 +1,12 @@
 import { defineStore } from "pinia";
-import type { invoiceAresaDigitalM } from "~/types/invoiceAresaDigitalModel";
+import type { invoiceM } from "~/types/invoice";
 
-const COLLECTION = "invoice_aresa_digital";
+const COLLECTION = "invoice";
 
 export const useinvoiceStore = defineStore("invoiceStore", {
   state: () => ({
-    dataInvoice: [] as invoiceAresaDigitalM[],
-    detailInvoice: {} as invoiceAresaDigitalM,
+    dataInvoice: [] as invoiceM[],
+    detailInvoice: {} as invoiceM,
   }),
 
   getters: {
@@ -21,7 +21,7 @@ export const useinvoiceStore = defineStore("invoiceStore", {
   actions: {
     async tarikDataInvoiceAct() {
       const datatarik = await queryambilid(COLLECTION);
-      this.dataInvoice = datatarik as unknown as invoiceAresaDigitalM[];
+      this.dataInvoice = datatarik as unknown as invoiceM[];
     },
 
     async tarikDetailInvoiceAct(id: string) {
@@ -30,13 +30,13 @@ export const useinvoiceStore = defineStore("invoiceStore", {
         throw new Error("Invoice tidak ditemukan");
       }
       this.detailInvoice = {
-        ...(datatarik as invoiceAresaDigitalM),
+        ...(datatarik as invoiceM),
         id,
       };
       return this.detailInvoice;
     },
 
-    async createInvoiceAct(data: invoiceAresaDigitalM) {
+    async createInvoiceAct(data: invoiceM) {
       const notificationStore = useNotificationStore();
       try {
         useloadingStore().setLoading(true);
@@ -52,11 +52,11 @@ export const useinvoiceStore = defineStore("invoiceStore", {
       }
     },
 
-    async updateInvoiceAct(id: string, data: invoiceAresaDigitalM) {
+    async updateInvoiceAct(id: string, data: invoiceM) {
       const notificationStore = useNotificationStore();
       try {
         useloadingStore().setLoading(true);
-        const plainData = JSON.parse(JSON.stringify(data)) as invoiceAresaDigitalM;
+        const plainData = JSON.parse(JSON.stringify(data)) as invoiceM;
         const { id: _documentId, ...updateData } = plainData;
 
         await updatedatabase(COLLECTION, id, updateData);

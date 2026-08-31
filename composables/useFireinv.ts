@@ -14,7 +14,7 @@ import {
 import _, { update } from "lodash";
 import moment from "moment";
 import { getAuth } from "firebase/auth";
-import type { invoiceM } from "~/types/InvoiceModel";
+import type { invoiceM } from "~/types/invoice";
 import type { penawaranM, revisipenawaranM } from "~/types/penawaranModel";
 import { arrayUnion } from "firebase/firestore";
 import type { laporanCacheM } from "~/types/akutansi";

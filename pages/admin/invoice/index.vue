@@ -474,7 +474,7 @@ import { useRouter } from "vue-router";
 import moment from "moment";
 import type { ConfirmationDialog } from "#components";
 import type { customerM } from "~/types/customerModel";
-import type { invoiceAresaDigitalM } from "~/types/invoiceAresaDigitalModel";
+import type { invoiceM } from "~/types/invoice";
 import { usecustomerStore } from "~/stores/customerStore";
 import { useinvoiceStore } from "~/stores/invoiceStore";
 import Index from "../index.vue";
@@ -537,7 +537,7 @@ function emptyCustomer(): customerM {
 
 const newCustomer = ref<customerM>(emptyCustomer());
 
-function emptyInvoice(): invoiceAresaDigitalM {
+function emptyInvoice(): invoiceM {
   return {
     no_inv_aresa: "",
     id_customer: "",
@@ -555,7 +555,7 @@ function emptyInvoice(): invoiceAresaDigitalM {
   };
 }
 
-const newInvoice = ref<invoiceAresaDigitalM>(emptyInvoice());
+const newInvoice = ref<invoiceM>(emptyInvoice());
 
 const subtotalInvoice = computed(() =>
   newInvoice.value.item_pekerjaan.reduce(
@@ -610,7 +610,7 @@ async function getallinvoice() {
   useloadingStore().setLoading(true);
   try {
     data.filterStatus = "";
-    sessionStorage.removeItem("invoice_aresa_digital");
+    sessionStorage.removeItem("invoice");
     await invoiceStore.tarikDataInvoiceAct();
     data.showAllInvoice = true;
     notificationStore.showSuccess("Semua invoice berhasil dimuat");
@@ -635,7 +635,7 @@ function openDialogTambahInvoice() {
   data.dialogTambahInvoice = true;
 }
 
-function openDialogEditInvoice(item: invoiceAresaDigitalM) {
+function openDialogEditInvoice(item: invoiceM) {
   const customer = customerStore.getDataCustomer.find(
     (dataCustomer) =>
       dataCustomer.id === item.id_customer ||
@@ -643,7 +643,7 @@ function openDialogEditInvoice(item: invoiceAresaDigitalM) {
       dataCustomer.nama === item.nama_customer,
   );
 
-  const invoice = JSON.parse(JSON.stringify(item)) as invoiceAresaDigitalM;
+  const invoice = JSON.parse(JSON.stringify(item)) as invoiceM;
   if (customer?.id) {
     invoice.id_customer = customer.id;
     invoice.nama_customer = customer.nama;
@@ -770,7 +770,7 @@ async function hapusCustomer(id: string) {
 
 async function refreshData() {
   useloadingStore().setLoading(true);
-  sessionStorage.removeItem("invoice_aresa_digital");
+  sessionStorage.removeItem("invoice");
   await invoiceStore.tarikDataInvoiceAct();
   useloadingStore().setLoading(false);
   notificationStore.showSuccess("Data berhasil diperbarui");
