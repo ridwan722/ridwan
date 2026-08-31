@@ -6,7 +6,7 @@ import { getAuth } from "firebase/auth";
 import _ from "lodash";
 
 
-export const createInvoiceAresaDigital = async (data: invoiceM) => {
+export const createInvoice = async (data: invoiceM) => {
   const db = useFirestore();
   const auth = getAuth();
   const now = moment().unix();
@@ -23,22 +23,22 @@ export const createInvoiceAresaDigital = async (data: invoiceM) => {
     const datanomor = getnomor.data();
     const newnumber = datanomor!.no_inv + 1;
     const stringnewnumber = _.toString(newnumber).padStart(5, "0");
-    const no_inv_aresa = `${stringnewnumber}`;
-    const id_invoice_aresa = `${stringnewnumber}`;
+    const no_inv = `${stringnewnumber}`;
+    const id_invoice = `${stringnewnumber}`;
     const setdata: invoiceM = {
       ...data,
-      no_inv_aresa,
-      id_invoice_aresa,
+      no_inv,
+      id_invoice,
       createdAt: now,
       createdBy: email,
     };
 
     //Ref dokumen utama laporan
-    const laporanRef = doc(db, "invoice", id_invoice_aresa);
+    const laporanRef = doc(db, "invoice", id_invoice);
     // Simpan dokumen utama laporan
     transaction.set(laporanRef, setdata, { merge: true });
     transaction.update(nomorInvRef, { no_inv: newnumber });
 
-    return { ...setdata, id: id_invoice_aresa };
+    return { ...setdata, id: id_invoice };
   });
 };

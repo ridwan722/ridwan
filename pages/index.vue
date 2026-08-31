@@ -19,150 +19,255 @@ const update = async () => {
 
 <template>
   <div class="welcome-page">
-    <div class="header-wrapper">
-      <div class="header-triangle border-layer"></div>
+    <div class="bg-glow glow-top"></div>
+    <div class="bg-glow glow-bottom"></div>
+    <div class="grid-pattern"></div>
 
-      <div class="header-triangle main-layer">
-        <!-- <img
-          src="https://imagedelivery.net/_tN3dTar-XzU6X9_PBgTbA/1043a53d-dea0-4de7-86a2-7dfcb529f000/heromobile"
-          alt="Aresa Logo"
-          :width="$vuetify.display.smAndDown ? 150 : 180"
-          class="logo"
-        /> -->
-      </div>
-    </div>
-
-    <div class="content-area">
-      <p class="font-weight-medium welcome-text">Selamat Datang</p>
-
-      <p class="main-title">
-        Di Sistem Kendali Pusat <br />
-        <span class="text-primary">SNS ADMIN</span>
-      </p>
-
-      <v-row justify="center" class="description-row">
-        <v-col cols="12" sm="8" md="6">
-          <p class="text-grey-darken-1 text-center description-text">
-            Kelola seluruh operasional dan data bisnis Anda dengan efisien dalam
-            satu platform. Solusi administrasi modern untuk manajemen yang lebih
-            terorganisir dan produktif.
-          </p>
-          <div class="text-center">
-            <v-btn
-              color="primary"
-              class="text-capitalize mt-10"
-              rounded="lg"
-              to="/admin/"
-            >
-              Login
-            </v-btn>
+    <main class="main-container">
+      <div class="glass-card">
+        <div class="logo-wrapper">
+          <div class="logo-badge">
+            <img
+              src="/Logo-SNS.png"
+              alt="SNS Logo"
+              class="logo-img"
+            />
           </div>
-        </v-col>
-      </v-row>
-    </div>
+        </div>
 
-    <footer class="footer-bar">SNS © 2026 V 1</footer>
+        <div class="text-group">
+          <h1 class="hero-title">
+            Selamat Datang di <br />
+            <span class="brand-gradient">SNS ADMIN</span>
+          </h1>
+          <p class="hero-subtitle">
+            Platform administrasi terpadu untuk mengelola operasional, performa, dan data bisnis Anda secara presisi.
+          </p>
+        </div>
+
+        <div class="action-wrapper">
+          <v-btn
+            color="primary"
+            class="btn-login"
+            rounded="xl"
+            size="x-large"
+            block
+            elevation="0"
+            to="/admin/menu"
+          >
+            Masuk ke Dashboard
+            <v-icon end icon="mdi-arrow-right" class="btn-icon" />
+          </v-btn>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer-bar">
+      <span>SNS &copy; 2026 Enterprise System</span>
+      <span class="version-tag">v1.0.0</span>
+    </footer>
   </div>
 </template>
 
 <style scoped>
-/* Style tetap sama seperti sebelumnya agar desain tidak berubah */
+/* Reset & Canvas Base */
 .welcome-page {
   position: relative;
   min-height: 100vh;
-  background-color: #f1f3f7;
+  min-height: 100dvh;
+  background-color: #0b0f19; /* Dark Luxury Navy Base */
+  color: #f8fafc;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  text-align: center;
-  overflow-x: hidden;
+  overflow: hidden;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-.header-wrapper {
-  position: relative;
-  width: 100%;
-  height: 220px;
-}
-
-.header-triangle {
+/* Background Ambient Glows & Grid */
+.bg-glow {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  clip-path: polygon(0 0, 100% 0, 100% 78%, 50% 95%, 0 78%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
+  border-radius: 50%;
+  filter: blur(90px);
+  pointer-events: none;
+  z-index: 0;
 }
 
-.border-layer {
-  background: #2196f3;
-  transform: translateY(10px);
+.glow-top {
+  width: 280px;
+  height: 280px;
+  background: rgba(37, 99, 235, 0.35); /* Royal Blue Glow */
+  top: -60px;
+  right: -40px;
+}
+
+.glow-bottom {
+  width: 300px;
+  height: 300px;
+  background: rgba(14, 165, 233, 0.2); /* Cyan Glow */
+  bottom: 40px;
+  left: -80px;
+}
+
+.grid-pattern {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
   z-index: 1;
 }
 
-.main-layer {
-  background: linear-gradient(180deg, #285e98 0%, #092345 100%);
+/* Main Layout Setup */
+.main-container {
+  position: relative;
   z-index: 2;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 440px;
+  padding: 24px 16px;
+  margin: auto 0;
+  display: flex;
+  justify-content: center;
 }
 
-@media (min-width: 600px) {
-  .header-wrapper {
-    height: 280px;
-  }
-  .border-layer {
-    transform: translateY(14px);
-  }
-}
-
-.content-area {
-  padding-left: 20px;
-  padding-right: 20px;
-  padding-top: clamp(20px, 6vh, 40px);
-  padding-bottom: clamp(30px, 5vh, 60px);
-  z-index: 3;
-  flex-grow: 1;
+/* Glassmorphism Card */
+.glass-card {
+  width: 100%;
+  background: rgba(18, 24, 38, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 28px;
+  padding: 36px 24px 32px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  text-align: center;
   display: flex;
   flex-direction: column;
+  align-items: center;
+}
+
+/* Logo Design */
+.logo-wrapper {
+  margin-bottom: 24px;
+}
+
+.logo-badge {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 14px 24px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
-  max-width: 95%;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
 }
 
-.welcome-text {
-  font-size: clamp(16px, 3.5vw, 20px);
-  margin-bottom: clamp(5px, 0.6vh, 10px);
+.logo-img {
+  height: 38px;
+  width: auto;
+  object-fit: contain;
 }
 
-.main-title {
-  font-size: clamp(28px, 7vw, 45px);
-  font-weight: 900;
-  line-height: 1.1;
-  margin-bottom: clamp(5px, 1vh, 20px);
-}
-
-.description-row {
-  margin-top: clamp(10px, 2vh, 20px) !important;
-  margin-bottom: clamp(15px, 3vh, 35px) !important;
-}
-
-.description-text {
-  font-size: clamp(12px, 2.5vw, 16px);
-  line-height: 1.4;
-}
-
-.footer-bar {
-  position: sticky;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: #007bff;
-  color: #fff;
-  text-align: center;
+/* Badge Tag */
+.badge-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  border-radius: 99px;
+  background: rgba(37, 99, 235, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: #60a5fa;
   font-size: 11px;
-  padding: 6px 0;
-  z-index: 10;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  background-color: #3b82f6;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #3b82f6;
+}
+
+/* Text Formatting */
+.hero-title {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+}
+
+.brand-gradient {
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+.hero-subtitle {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: #94a3b8;
+  margin-bottom: 32px;
+  font-weight: 400;
+  padding: 0 4px;
+}
+
+/* Action Area & Buttons */
+.action-wrapper {
+  width: 100%;
+}
+
+.btn-login {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 15px !important;
+  letter-spacing: 0.2px;
+  height: 52px !important;
+  text-transform: none !important;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35) !important;
+  transition: all 0.3s ease !important;
+}
+
+.btn-login:active {
+  transform: scale(0.98);
+}
+
+.btn-icon {
+  transition: transform 0.2s ease;
+}
+
+.btn-login:hover .btn-icon {
+  transform: translateX(4px);
+}
+
+/* Footer Styling */
+.footer-bar {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: #64748b;
+}
+
+.version-tag {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #475569;
 }
 </style>

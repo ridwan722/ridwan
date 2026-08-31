@@ -52,7 +52,7 @@
     >
     <template v-slot:item.no="{ index }"> {{ index + 1 }}</template>
       <template v-slot:item.no_inv="{ item }"
-        >#{{ item.no_inv_aresa }}</template
+        >#{{ item.no_inv }}</template
       >
 
       <template v-slot:item.tanggal="{ item }">{{

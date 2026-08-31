@@ -1,12 +1,14 @@
 export interface invoiceItemM {
-  description_pekerjaan: string;
+  deskripsi_pekerjaan: string;
+  qty: number;
+  uom: string;
   amount: number;
 }
 
 export interface invoiceM {
   id?: string;
-  id_invoice_aresa?: string;
-  no_inv_aresa: string;
+  id_invoice?: string;
+  no_inv: string;
   id_customer: string;
   nama_customer: string;
   alamat_customer: string;

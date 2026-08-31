@@ -1,3 +1,135 @@
+<script setup lang="ts">
+import moment from "moment";
+import type { ConfirmationDialog } from "#components";
+import type { invoiceM } from "~/types/invoice";
+import { uploadStore } from "~/stores/uploadStore";
+
+definePageMeta({
+  layout: "admin",
+});
+
+const invoiceStore = useinvoiceStore();
+const uploadStoreInstance = uploadStore();
+const notificationStore = useNotificationStore();
+const userStore = useUserStore();
+const route = useRoute();
+const confirmationDialog = ref<InstanceType<typeof ConfirmationDialog> | null>(
+  null,
+);
+const dialogDikirim = ref(false);
+
+onMounted(async () => {
+  await invoiceStore.tarikDetailInvoiceAct(route.params.id as string);
+});
+
+const formatTanggal = (tanggal: string) => {
+  if (!tanggal) return "-";
+
+  const date = new Date(tanggal);
+
+  return new Intl.DateTimeFormat("id-ID", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  })
+    .format(date)
+    .replace(/\//g, "-");
+};
+const invoiceDetail = computed(() => invoiceStore.getDetailInvoice);
+
+const printArea = ref<HTMLElement | null>(null);
+
+function bukaDialogDikirim() {
+  uploadStoreInstance.setReset();
+  dialogDikirim.value = true;
+}
+
+function tutupDialogDikirim() {
+  uploadStoreInstance.setReset();
+  dialogDikirim.value = false;
+}
+
+async function ubahStatusDikirim() {
+  if (!uploadStoreInstance.getUrlRef) {
+    return notificationStore.showError("Dokumen Tidak Boleh Kosong");
+  }
+
+  const id = route.params.id as string;
+  const invoice = JSON.parse(JSON.stringify(invoiceDetail.value)) as invoiceM;
+  invoice.status = "Dikirim";
+  invoice.dokumen_dikirim = uploadStoreInstance.getUrlRef;
+  invoice.updatedAt = moment().unix();
+  invoice.updatedBy = userStore.getEmail;
+  invoice.dikirimAt = moment().unix();
+  invoice.dikirimBy = userStore.getEmail;
+
+  const updated = await invoiceStore.updateInvoiceAct(id, invoice);
+  if (!updated) return;
+
+  await invoiceStore.tarikDetailInvoiceAct(id);
+  tutupDialogDikirim();
+  navigateTo("/admin/invoice/dikirim");
+}
+
+async function ubahStatusSelesai() {
+  const confirmed = await confirmationDialog.value?.show(
+    "Konfirmasi Selesai",
+    "Anda yakin ingin mengubah status invoice menjadi Selesai?",
+  );
+  if (!confirmed) return;
+
+  const id = route.params.id as string;
+  const invoice = JSON.parse(JSON.stringify(invoiceDetail.value)) as invoiceM;
+  invoice.status = "Selesai";
+  invoice.updatedAt = moment().unix();
+  invoice.updatedBy = userStore.getEmail;
+  invoice.selesaiAt = moment().unix();
+  invoice.selesaiBy = userStore.getEmail;
+
+  const updated = await invoiceStore.updateInvoiceAct(id, invoice);
+  if (!updated) return;
+  await invoiceStore.tarikDetailInvoiceAct(id);
+}
+
+function printInvoice() {
+  const content = printArea.value;
+  if (!content) return;
+
+  const printWindow = window.open("", "_blank");
+  if (!printWindow) return;
+
+  const styles = Array.from(
+    document.querySelectorAll('style, link[rel="stylesheet"]'),
+  )
+    .map((style) => style.outerHTML)
+    .join("");
+
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>INV - </title>
+        ${styles}
+        <style>
+          body { background: white !important; margin: 0; padding: 0; }
+          .invoice-paper { border: none !important; box-shadow: none !important; width: 100% !important; max-width: 100% !important; }
+          @page { margin: 0.5cm; }
+        </style>
+      </head>
+      <body>
+        ${content.innerHTML}
+        <script>
+          window.onload = () => {
+            window.print();
+            window.close();
+          };
+        <\/script>
+      </body>
+    </html>
+  `);
+  printWindow.document.close();
+}
+</script>
+
 <template>
   <div>
     <ConfirmationDialog ref="confirmationDialog" />
@@ -9,7 +141,7 @@
         </v-card-title>
         <v-card-text class="pa-5">
           <upload-image
-            typefolder="invoice_aresa_digital/file_dikirim"
+            typefolder="invoice/file_dikirim"
             label="Upload Dokumen"
           />
           <v-img
@@ -98,22 +230,22 @@
 
         <div v-if="invoiceDetail.status != 'Draft'">
           <v-divider class="my-2" />
-        <v-row>
-          <v-col>
-            <v-btn
-              size="small"
-              color="primary"
-              class="font-weight-bold text-uppercase"
-              label
-              append-icon="mdi-open-in-new"
-              :href="invoiceDetail.dokumen_dikirim"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              INVOICE
-            </v-btn>
-          </v-col>
-        </v-row>
+          <v-row>
+            <v-col>
+              <v-btn
+                size="small"
+                color="primary"
+                class="font-weight-bold text-uppercase"
+                label
+                append-icon="mdi-open-in-new"
+                :href="invoiceDetail.dokumen_dikirim"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                INVOICE
+              </v-btn>
+            </v-col>
+          </v-row>
         </div>
       </v-card>
     </div>
@@ -126,10 +258,10 @@
             <div>
               <img src="/public/Logo-SNS.png" height="130" />
               <div class="company-address">
-                <strong>PT. KARYA ARESA MANDIRI</strong><br />
-                Jl. Kebagusan Raya, Mawar No. 54, Pasar Minggu<br />
-                Jakarta Selatan 12520 Indonesia<br />
-                Phone : +6221 2179 8064
+                <strong>CV. SOLUSI NUSA SEGARA</strong><br />
+                Ruko Dream Land Blok A No.05, Dreamland Square, Marina City,
+                <br />
+                Tanjung Riau, Kec. Sekupang, Kota Batam 29425.
               </div>
             </div>
             <div class="invoice-title">INVOICE</div>
@@ -150,7 +282,16 @@
                     </td>
                   </tr>
                   <tr>
-                    <td style="vertical-align: top">Alamat</td>
+                    <td width="80">Attn</td>
+                    <td width="10">:</td>
+                    <td>
+                      <span>
+                        {{ invoiceDetail.pic }}
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="vertical-align: top">Location</td>
                     <td style="vertical-align: top">:</td>
                     <td style="vertical-align: top">
                       {{ invoiceDetail.alamat_customer }}
@@ -163,9 +304,9 @@
               <table class="w-100">
                 <tbody>
                   <tr>
-                    <td width="100">Number</td>
+                    <td width="130">Quotation Ref No</td>
                     <td width="10">:</td>
-                    <td>#{{ invoiceDetail.id }}</td>
+                    <td>QT/ICI/2026/SNS/{{ invoiceDetail.id }}</td>
                   </tr>
                   <tr>
                     <td>Inv Date</td>
@@ -186,8 +327,9 @@
           <table class="main-table">
             <thead>
               <tr>
-                <th width="65%">DESCRIPTION</th>
-                <th colspan="2" width="35%">AMOUNT</th>
+                <th width="50%">DESCRIPTION</th>
+                <th  width="5%">QTY</th>
+                <th  width="35%">AMOUNT</th>
               </tr>
             </thead>
             <tbody>
@@ -195,11 +337,16 @@
                 <td class="desc-cell">
                   <div class="text-center font-weight-bold">
                     <span style="white-space: pre-line">
-                      {{ item.description_pekerjaan }}
+                      {{ item.deskripsi_pekerjaan }}
                     </span>
                   </div>
                 </td>
-                <td colspan="2" class="amount-cell v-align-middle">
+                <td  class="qty-cell v-align-middle">
+                  <div class="align-center text-center">
+                    <span>{{ item.qty }}</span>
+                  </div>
+                </td>
+                <td  class="amount-cell v-align-middle">
                   <div class="d-flex justify-space-between align-center">
                     <span>Rp</span>
                     <span>{{ rupiah(item.amount) }}</span>
@@ -209,25 +356,29 @@
 
               <!-- Total & Tax Calculation -->
               <tr>
-                <td rowspan="4" class="remark-cell">
+                <td rowspan="5" class="remark-cell">
                   <div class="remark-border-box">
-                    <strong>REMARK :</strong>
+                    <strong>TERMS & CONDITIONS :</strong>
                     <ul class="remark-list-style">
                       <li>
                         <strong
-                          >Pembayaran dapat di Transfer melalui Bank
-                          BCA.</strong
+                          >Lead time 10-15 Days</strong
                         >
                       </li>
                       <li>
                         <strong>
-                          Harap konfirmasi kembali apabila sudah melakukan
-                          pembayaran.
+                          Payment Terms Down Payment (DP) 50%, Balance Prior Delivery
+                        </strong>
+                      </li>
+                       <li>
+                        <strong>
+                          Validation of this Quotation – 7 Days from Quotation Date
                         </strong>
                       </li>
                     </ul>
                   </div>
                 </td>
+                
                 <td class="footer-label">
                   <strong>SUB TOTAL</strong>
                 </td>
@@ -288,7 +439,7 @@
                       <tr>
                         <td>AN</td>
                         <td>:</td>
-                        <td>PT. KARYA ARESA MANDIRI</td>
+                        <td>CV. SOLUSI NUSA SEGARA</td>
                       </tr>
                     </tbody>
                   </table>
@@ -296,8 +447,8 @@
               </div>
             </div>
             <div class="text-center signature-area">
-              Hormat Kami,<br /><br /><br /><br /><br /><br />
-              <strong>( Alip Usman )</strong>
+              <span class="font-italic">Your sincerely,</span><br /><strong>CV. SOLUSI NUSA SEGARA</strong><br /><br /><br /><br /><br />
+              <strong>( Muhammad Ridwan )</strong>
             </div>
           </div>
         </v-card>
@@ -316,7 +467,7 @@
         Ubah Status Selesai
       </v-btn>
       <v-btn
-       v-if="invoiceDetail.status != 'Selesai'"
+        v-if="invoiceDetail.status != 'Selesai'"
         prepend-icon="mdi-printer"
         color="indigo"
         variant="elevated"
@@ -327,142 +478,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import moment from "moment";
-import type { ConfirmationDialog } from "#components";
-import type { invoiceM } from "~/types/invoiceModel";
-import { uploadStore } from "~/stores/uploadStore";
-
-definePageMeta({
-  layout: "admin",
-});
-
-const invoiceStore = useinvoiceStore();
-const uploadStoreInstance = uploadStore();
-const notificationStore = useNotificationStore();
-const userStore = useUserStore();
-const route = useRoute();
-const confirmationDialog = ref<InstanceType<typeof ConfirmationDialog> | null>(
-  null,
-);
-const dialogDikirim = ref(false);
-
-onMounted(async () => {
-  await invoiceStore.tarikDetailInvoiceAct(route.params.id as string);
-});
-
-const formatTanggal = (tanggal: string) => {
-  if (!tanggal) return "-";
-
-  const date = new Date(tanggal);
-
-  return new Intl.DateTimeFormat("id-ID", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  })
-    .format(date)
-    .replace(/\//g, "-");
-};
-const invoiceDetail = computed(() => invoiceStore.getDetailInvoice);
-
-const printArea = ref<HTMLElement | null>(null);
-
-function bukaDialogDikirim() {
-  uploadStoreInstance.setReset();
-  dialogDikirim.value = true;
-}
-
-function tutupDialogDikirim() {
-  uploadStoreInstance.setReset();
-  dialogDikirim.value = false;
-}
-
-async function ubahStatusDikirim() {
-  if (!uploadStoreInstance.getUrlRef) {
-    return notificationStore.showError("Dokumen Tidak Boleh Kosong");
-  }
-
-  const id = route.params.id as string;
-  const invoice = JSON.parse(
-    JSON.stringify(invoiceDetail.value),
-  ) as invoiceM;
-  invoice.status = "Dikirim";
-  invoice.dokumen_dikirim = uploadStoreInstance.getUrlRef;
-  invoice.updatedAt = moment().unix();
-  invoice.updatedBy = userStore.getEmail;
-  invoice.dikirimAt = moment().unix();
-  invoice.dikirimBy = userStore.getEmail;
-
-  const updated = await invoiceStore.updateInvoiceAct(id, invoice);
-  if (!updated) return;
-
-  await invoiceStore.tarikDetailInvoiceAct(id);
-  tutupDialogDikirim();
-  navigateTo("/admin/invoice/dikirim");
-}
-
-async function ubahStatusSelesai() {
-  const confirmed = await confirmationDialog.value?.show(
-    "Konfirmasi Selesai",
-    "Anda yakin ingin mengubah status invoice menjadi Selesai?",
-  );
-  if (!confirmed) return;
-
-  const id = route.params.id as string;
-  const invoice = JSON.parse(
-    JSON.stringify(invoiceDetail.value),
-  ) as invoiceM;
-  invoice.status = "Selesai";
-  invoice.updatedAt = moment().unix();
-  invoice.updatedBy = userStore.getEmail;
-  invoice.selesaiAt = moment().unix();
-  invoice.selesaiBy = userStore.getEmail;
-
-  const updated = await invoiceStore.updateInvoiceAct(id, invoice);
-  if (!updated) return;
-  await invoiceStore.tarikDetailInvoiceAct(id);
-}
-
-function printInvoice() {
-  const content = printArea.value;
-  if (!content) return;
-
-  const printWindow = window.open("", "_blank");
-  if (!printWindow) return;
-
-  const styles = Array.from(
-    document.querySelectorAll('style, link[rel="stylesheet"]'),
-  )
-    .map((style) => style.outerHTML)
-    .join("");
-
-  printWindow.document.write(`
-    <html>
-      <head>
-        <title>INV - </title>
-        ${styles}
-        <style>
-          body { background: white !important; margin: 0; padding: 0; }
-          .invoice-paper { border: none !important; box-shadow: none !important; width: 100% !important; max-width: 100% !important; }
-          @page { margin: 0.5cm; }
-        </style>
-      </head>
-      <body>
-        ${content.innerHTML}
-        <script>
-          window.onload = () => {
-            window.print();
-            window.close();
-          };
-        <\/script>
-      </body>
-    </html>
-  `);
-  printWindow.document.close();
-}
-</script>
 
 <style scoped>
 .invoice-paper {
@@ -483,7 +498,7 @@ function printInvoice() {
 
 .info-grid {
   display: flex;
-  border: 2px solid #000;
+  border: 1px solid #000;
 }
 .info-box-left,
 .info-box-right {
@@ -492,7 +507,7 @@ function printInvoice() {
   width: 50%;
 }
 .info-box-right {
-  border-left: 2px solid #000;
+  border-left: 1px solid #000;
 }
 
 .main-table {
@@ -587,8 +602,9 @@ function printInvoice() {
 }
 
 .main-table th {
-  background-color: #b8cce4 !important;
+  background-color: #fa0000 !important;
   font-weight: bold;
+  color: white;
   border: 2px solid #000;
 }
 
@@ -596,13 +612,18 @@ function printInvoice() {
   padding: 15px !important;
 }
 
+.qty-cell {
+  vertical-align: top;
+  width: 15%;
+}
+
 .amount-cell {
   vertical-align: top;
-  width: 35%;
+  width: 125%;
 }
 
 .remark-cell {
-  width: 65%;
+  width: 60%;
   vertical-align: middle;
   padding: 8px !important;
 }
@@ -628,7 +649,7 @@ function printInvoice() {
 
 .footer-label {
   width: 15%;
-  text-align: right;
+
   padding-right: 10px !important;
   white-space: nowrap;
 }
@@ -637,9 +658,6 @@ function printInvoice() {
   width: 20%;
 }
 
-.bg-blue-total {
-  background-color: #b8cce4 !important;
-}
 
 .d-flex {
   display: flex;

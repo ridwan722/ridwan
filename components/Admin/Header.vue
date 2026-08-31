@@ -48,7 +48,7 @@ const logout = async () => {
     <template v-slot:prepend>
       <div class="logo-container d-flex align-center justify-center">
         <img
-          src="https://imagedelivery.net/_tN3dTar-XzU6X9_PBgTbA/1043a53d-dea0-4de7-86a2-7dfcb529f000/heromobile"
+          src="/public/Logo-SNS.png"
           alt="Logo"
           class="logo-img"
           :class="{ 'logo-rail': !drawer && width > 500 }"

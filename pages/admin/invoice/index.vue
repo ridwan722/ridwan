@@ -66,14 +66,28 @@
           class="bg-grey-lighten-5 rounded-lg pa-4 mb-4 border border-dashed"
         >
           <v-row align="center" density="compact" class="mb-2">
-            <v-col cols="12" sm="7">
+            <v-col cols="12" sm="5">
               <a-textarea
-                v-model="item.description_pekerjaan"
-                label="Pekerjaan"
-                placeholder="Deskripsi pekerjaan"
+                v-model="item.deskripsi_pekerjaan"
+                label="Deskripsi"
+                placeholder="Deskripsi"
               />
             </v-col>
-            <v-col cols="10" sm="4">
+             <v-col cols="10" sm="2">
+              <a-field-number
+                v-model="item.qty"
+                label="Qty"
+                placeholder="0"
+              />
+            </v-col>
+             <v-col cols="10" sm="2">
+              <a-text-field
+                v-model="item.uom"
+                label="Satuan"
+                placeholder="Pcs"
+              />
+            </v-col>
+             <v-col cols="10" sm="2">
               <a-field-number
                 v-model="item.amount"
                 label="Jumlah (Amount)"
@@ -195,13 +209,18 @@
       <v-card-text>
         <a-text-field
           v-model="newCustomer.nama"
-          label="Nama Customer"
+          label="Nama Perusahaan"
           placeholder="Nama Customer"
         />
         <a-textarea
           v-model="newCustomer.alamat"
           label="Alamat"
           placeholder="Alamat Customer"
+        />
+         <a-text-field
+          v-model="newCustomer.pic"
+          label="PIC"
+          placeholder="Nama Customer"
         />
       </v-card-text>
 
@@ -316,7 +335,7 @@
           <template v-slot:item.no="{ index }"> {{ index + 1 }}</template>
 
           <template v-slot:item.no_inv="{ item }"
-            >#{{ item.no_inv_aresa }}</template
+            >#{{ item.no_inv }}</template
           >
 
           <template v-slot:item.tanggal="{ item }">{{
@@ -509,6 +528,7 @@ const data = reactive({
   customerAddEdit: "add" as "add" | "edit",
   headCustomer: [
     { title: "Nama Customer", value: "nama", sortable: true },
+    { title: "PIC", value: "pic", sortable: true },
     { title: "Alamat", value: "alamat", sortable: true },
     { title: "Aksi", align: "center" as const, value: "aksi", width: "100px" },
   ],
@@ -529,6 +549,7 @@ const data = reactive({
 function emptyCustomer(): customerM {
   return {
     nama: "",
+    pic: "",
     alamat: "",
     createdAt: 0,
     createdBy: "",
@@ -539,12 +560,12 @@ const newCustomer = ref<customerM>(emptyCustomer());
 
 function emptyInvoice(): invoiceM {
   return {
-    no_inv_aresa: "",
+    no_inv: "",
     id_customer: "",
     nama_customer: "",
     alamat_customer: "",
     tanggal: moment().format("YYYY-MM-DD"),
-    item_pekerjaan: [{ description_pekerjaan: "", amount: 0 }],
+    item_pekerjaan: [{ deskripsi_pekerjaan: "", qty: 0, uom: "", amount: 0 }],
     pakai_ppn: true,
     subtotal: 0,
     ppn: 0,
@@ -657,8 +678,10 @@ function openDialogEditInvoice(item: invoiceM) {
 
 function tambahBarisInvoice() {
   newInvoice.value.item_pekerjaan.push({
-    description_pekerjaan: "",
+    deskripsi_pekerjaan: "",
     amount: 0,
+    uom: "",
+    qty: 0
   });
 }
 
@@ -675,7 +698,7 @@ async function simpanInvoiceDialog() {
   }
   if (
     newInvoice.value.item_pekerjaan.some(
-      (item) => !item.description_pekerjaan || !item.amount,
+      (item) => !item.deskripsi_pekerjaan || !item.amount,
     )
   ) {
     return notificationStore.showError(

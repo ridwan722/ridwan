@@ -40,7 +40,7 @@ export const useinvoiceStore = defineStore("invoiceStore", {
       const notificationStore = useNotificationStore();
       try {
         useloadingStore().setLoading(true);
-        const result = await createInvoiceAresaDigital(data);
+        const result = await createInvoice(data);
         // sessionStorage.removeItem(COLLECTION);
         notificationStore.showSuccess("Invoice berhasil dibuat");
         return result;
