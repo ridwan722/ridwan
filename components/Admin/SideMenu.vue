@@ -135,13 +135,11 @@
 import { computed, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useMasterPerusahaanStore } from "~/stores/master/perusahaanStore";
-import { usePenawaranStore } from "~/stores/penawaranStore";
 
 const router = useRouter();
 
 const openedGroups = ref(["penawaran", "invoice"]);
 
-const penawaranStore = usePenawaranStore();
 const perusahaanStore = useMasterPerusahaanStore();
 
 // STATE VALIDASI PIN
@@ -176,35 +174,6 @@ const verifyPin = () => {
   }
 };
 
-/**
- * FETCH DATA SIDEBAR
- */
-const fetchData = async () => {
-  await Promise.all([
-    penawaranStore.tarikdatapenawaranbystatusDraft("Draft"),
-    penawaranStore.tarikPenawaranProses(),
-    penawaranStore.tarikPenawaranPemberkasan(),
-    perusahaanStore.tarikDataCabangAct(),
-    perusahaanStore.tarikDataPerusahaanAct(),
-  ]);
-};
-
-onMounted(fetchData);
-
-/**
- * COUNTER SIDEBAR
- */
-const countAll = computed(() => {
-  return penawaranStore.dataPenawaranDraft?.length || 0;
-});
-
-const countProses = computed(() => {
-  return penawaranStore.dataPenawaranProses?.length || 0;
-});
-
-const countPemberkasan = computed(() => {
-  return penawaranStore.dataPenawaranPemberkasan?.length || 0;
-});
 </script>
 
 <style scoped>

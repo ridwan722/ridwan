@@ -1,11 +1,11 @@
 import { defineStore } from "pinia";
-import type { customerAresaDigitalM } from "~/types/customerAresaDigitalModel";
+import type { customerM } from "~/types/customerModel";
 
-const COLLECTION = "customer_aresa_digital";
+const COLLECTION = "customer";
 
-export const useCustomerAresaDigitalStore = defineStore("customerAresaDigitalStore", {
+export const usecustomerStore = defineStore("customerStore", {
   state: () => ({
-    dataCustomer: [] as customerAresaDigitalM[],
+    dataCustomer: [] as customerM[],
   }),
 
   getters: {
@@ -17,10 +17,10 @@ export const useCustomerAresaDigitalStore = defineStore("customerAresaDigitalSto
   actions: {
     async tarikDataCustomerAct() {
       const datatarik = await queryambilid(COLLECTION);
-      this.dataCustomer = datatarik as unknown as customerAresaDigitalM[];
+      this.dataCustomer = datatarik as unknown as customerM[];
     },
 
-    async addCustomerAct(data: customerAresaDigitalM) {
+    async addCustomerAct(data: customerM) {
       const notificationStore = useNotificationStore();
       try {
         useloadingStore().setLoading(true);
@@ -35,7 +35,7 @@ export const useCustomerAresaDigitalStore = defineStore("customerAresaDigitalSto
       }
     },
 
-    async updateCustomerAct(data: customerAresaDigitalM) {
+    async updateCustomerAct(data: customerM) {
       const notificationStore = useNotificationStore();
       try {
         useloadingStore().setLoading(true);

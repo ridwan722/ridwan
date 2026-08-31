@@ -104,14 +104,14 @@
 <script setup lang="ts">
 import { reactive, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { useInvoiceAresaDigitalStore } from "~/stores/invoiceAresaDigitalStore";
+import { useinvoiceStore } from "~/stores/invoiceStore";
 
 definePageMeta({
   layout: "admin",
 });
 
 const router = useRouter();
-const invoiceStore = useInvoiceAresaDigitalStore();
+const invoiceStore = useinvoiceStore();
 const notificationStore = useNotificationStore();
 
 const data = reactive({

@@ -3,7 +3,7 @@ import type { invoiceAresaDigitalM } from "~/types/invoiceAresaDigitalModel";
 
 const COLLECTION = "invoice_aresa_digital";
 
-export const useInvoiceAresaDigitalStore = defineStore("invoiceAresaDigitalStore", {
+export const useinvoiceStore = defineStore("invoiceStore", {
   state: () => ({
     dataInvoice: [] as invoiceAresaDigitalM[],
     detailInvoice: {} as invoiceAresaDigitalM,

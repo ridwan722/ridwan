@@ -338,7 +338,7 @@ definePageMeta({
   layout: "admin",
 });
 
-const invoiceStore = useInvoiceAresaDigitalStore();
+const invoiceStore = useinvoiceStore();
 const uploadStoreInstance = uploadStore();
 const notificationStore = useNotificationStore();
 const userStore = useUserStore();

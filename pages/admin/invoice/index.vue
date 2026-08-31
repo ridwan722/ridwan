@@ -473,10 +473,10 @@ import { reactive, ref, computed, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import moment from "moment";
 import type { ConfirmationDialog } from "#components";
-import type { customerAresaDigitalM } from "~/types/customerAresaDigitalModel";
+import type { customerM } from "~/types/customerModel";
 import type { invoiceAresaDigitalM } from "~/types/invoiceAresaDigitalModel";
-import { useCustomerAresaDigitalStore } from "~/stores/customerAresaDigitalStore";
-import { useInvoiceAresaDigitalStore } from "~/stores/invoiceAresaDigitalStore";
+import { usecustomerStore } from "~/stores/customerStore";
+import { useinvoiceStore } from "~/stores/invoiceStore";
 import Index from "../index.vue";
 
 definePageMeta({
@@ -484,8 +484,8 @@ definePageMeta({
 });
 
 const router = useRouter();
-const customerStore = useCustomerAresaDigitalStore();
-const invoiceStore = useInvoiceAresaDigitalStore();
+const customerStore = usecustomerStore();
+const invoiceStore = useinvoiceStore();
 const userStore = useUserStore();
 const notificationStore = useNotificationStore();
 const confirmationDialog = ref<InstanceType<typeof ConfirmationDialog> | null>(
@@ -526,7 +526,7 @@ const data = reactive({
   ],
 });
 
-function emptyCustomer(): customerAresaDigitalM {
+function emptyCustomer(): customerM {
   return {
     nama: "",
     alamat: "",
@@ -535,7 +535,7 @@ function emptyCustomer(): customerAresaDigitalM {
   };
 }
 
-const newCustomer = ref<customerAresaDigitalM>(emptyCustomer());
+const newCustomer = ref<customerM>(emptyCustomer());
 
 function emptyInvoice(): invoiceAresaDigitalM {
   return {
@@ -732,7 +732,7 @@ function openDialogAddCustomer() {
   data.dialogCustomer = true;
 }
 
-function openDialogEditCustomer(item: customerAresaDigitalM) {
+function openDialogEditCustomer(item: customerM) {
   data.customerAddEdit = "edit";
   newCustomer.value = { ...item };
   data.dialogCustomer = true;

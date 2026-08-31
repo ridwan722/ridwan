@@ -1,4 +1,4 @@
-export interface customerAresaDigitalM {
+export interface customerM {
   id?: string;
   nama: string;
   alamat: string;
