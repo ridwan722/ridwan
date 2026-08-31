@@ -117,7 +117,7 @@
             </div>
 
             <div class="logo-container">
-              <img src="/aresa_typo.png" alt="Logo Aresa" class="header-logo" />
+              <img src="/Logo-SNS.png" alt="Logo Aresa" class="header-logo" />
             </div>
           </div>
         </div>

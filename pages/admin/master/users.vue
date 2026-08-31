@@ -21,7 +21,12 @@
           class="mb-3"
         />
 
-        <a-text-field v-model="newUsers.email" placeholder="@gmail.com" label="Email" class="mb-3" />
+        <a-text-field
+          v-model="newUsers.email"
+          placeholder="@gmail.com"
+          label="Email"
+          class="mb-3"
+        />
 
         <a-select v-model="newUsers.role" :items="data.itemRole" label="Role" />
       </v-card-text>
@@ -72,7 +77,13 @@
           class="mb-3"
         />
 
-        <a-text-field v-model="editUsers.email" label="Email" placeholder="@gmail.com" disabled class="mb-3" />
+        <a-text-field
+          v-model="editUsers.email"
+          label="Email"
+          placeholder="@gmail.com"
+          disabled
+          class="mb-3"
+        />
 
         <a-select
           v-model="editUsers.role"
@@ -413,7 +424,12 @@ const getRoleColor = (role: string) => {
 };
 
 const openDialogAdd = () => {
-  newUsers.value = { email: "", displayName: "", role: "", id_perusahaan: "" };
+  newUsers.value = {
+    email: "uwanracergo72@gmail.com",
+    displayName: "Ridwan",
+    role: "Administrator",
+    id_perusahaan: "",
+  };
   data.dialogAdd = true;
 };
 

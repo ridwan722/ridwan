@@ -32,7 +32,7 @@ const login = async () => {
     const { user } = await signInWithEmailAndPassword(
       auth,
       data.username,
-      data.password
+      data.password,
     );
 
     if (!user) {
@@ -65,10 +65,6 @@ const login = async () => {
       return navigateTo("/admin/");
     }
 
-    if (role === "master_perusahaan") {
-      return navigateTo(`/perusahaan/${id_perusahaan}/`);
-    }
-
     // Role tidak dikenal
     notificationStore.showError("Role tidak dikenal");
   } catch (error: any) {
@@ -91,12 +87,12 @@ const login = async () => {
       <div class="header-triangle border-layer"></div>
 
       <div class="header-triangle main-layer">
-        <img
+        <!-- <img
           src="https://imagedelivery.net/_tN3dTar-XzU6X9_PBgTbA/1043a53d-dea0-4de7-86a2-7dfcb529f000/heromobile"
           alt="Aresa Logo"
           :width="$vuetify.display.smAndDown ? 180 : 180"
           class="logo"
-        />
+        /> -->
       </div>
     </div>
 
@@ -250,11 +246,11 @@ const login = async () => {
           <v-icon icon="mdi-chevron-right" end />
         </button>
 
-        <p class="note">© 2026 Aresa Admin System | Terms of Use</p>
+        <p class="note">© 2026 SNS Admin System | Terms of Use</p>
       </form>
     </div>
 
-    <footer class="footer-bar">Aresa © 2026 V 3.2</footer>
+    <footer class="footer-bar">SNS © 2026 V 3.2</footer>
   </div>
 </template>
 

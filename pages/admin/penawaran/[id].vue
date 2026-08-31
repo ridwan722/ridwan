@@ -4,7 +4,7 @@ import moment from "moment";
 import { useRoute } from "vue-router";
 import { useMasterPerusahaanStore } from "~/stores/master/perusahaanStore";
 import { usePenawaranStore } from "~/stores/penawaranStore";
-import { useInvoiceStore } from "~/stores/invoiceStore";
+import { uselnvoiceStore } from "~/stores/invoiceStore";
 import { useUserStore } from "~/stores/userStore";
 import type { invoiceM } from "~/types/InvoiceModel";
 import type { ConfirmationDialog } from "#components";
@@ -87,7 +87,7 @@ const masterobjectstore = useMasterKategoriStore();
 const penawaranstore = usePenawaranStore();
 const perusahaanStore = useMasterPerusahaanStore();
 const masterCabangStore = useMasterPerusahaanStore();
-const invoicestore = useInvoiceStore();
+const invoicestore = uselnvoiceStore();
 const userStore = useUserStore();
 const notificationStore = useNotificationStore();
 const confirmationDialog = ref<InstanceType<typeof ConfirmationDialog> | null>(
@@ -4843,7 +4843,7 @@ const cancelEdit = (item) => {
         <div class="d-flex align-start mb-3">
           <img
             v-if="detailpenawaran.handle_by_aresa == 'KAM'"
-            src="/public/aresa_typo.png"
+            src="/public/Logo-SNS.png"
             alt="Aresa Logo"
             style="height: 45px; margin-right: 12px"
           />

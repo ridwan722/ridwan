@@ -6,22 +6,21 @@
   </v-row>
 
   <v-row class="ga-3 flex-nowrap overflow-x-auto dashboard-row" no-gutters>
-    <v-col v-for="item in cards" :key="item.label" style="width: 100%">
+    <v-col  style="width: 100%">
       <v-card class="dashboard-card" elevation="0">
-        <div class="card-glow" :class="item.color" />
 
         <v-card-text class="pa-3">
           <div class="d-flex justify-space-between align-center">
             <div>
-              <p class="card-label">{{ item.label }}</p>
+              <p class="card-label">ddd</p>
 
               <h2 class="card-value">
-                {{ item.value }}
+d
               </h2>
             </div>
 
-            <div class="card-icon" :class="item.color">
-              <v-icon size="18">{{ item.icon }}</v-icon>
+            <div class="card-icon" >
+              <v-icon size="18">dd</v-icon>
             </div>
           </div>
         </v-card-text>
@@ -79,59 +78,12 @@
 </template>
 
 <script setup>
-import { useMasterKategoriStore } from "~/stores/master/kategoriStore";
-import { useMasterPerusahaanStore } from "~/stores/master/perusahaanStore";
 
-// Import stores
-const perusahaanStore = useMasterPerusahaanStore();
-const kategoriStore = useMasterKategoriStore();
-const penawaranStore = usePenawaranStore();
-const invoiceStore = useInvoiceStore();
-
-onMounted(async () => {
-  (await perusahaanStore.tarikDataPerusahaanAct(),
-    await perusahaanStore.tarikDataCabangAct(),
-    await kategoriStore.tarikDataItemKategoriAct(),
-    await penawaranStore.tarikDataPenawaranAct(),
-    await invoiceStore.tarikDataInvoiceAct());
-});
 
 definePageMeta({
   layout: "admin",
 });
 
-const cards = computed(() => [
-  {
-    label: "Pekerjaan",
-    value: kategoriStore.dataItemKategori?.length || 0,
-    icon: "mdi-tag-multiple-outline",
-    color: "purple",
-  },
-  {
-    label: "Penawaran",
-    value: penawaranStore.dataPenawaran?.length || 0,
-    icon: "mdi-file-document-outline",
-    color: "orange",
-  },
-  {
-    label: "Invoice",
-    value: invoiceStore.dataInvoice?.length || 0,
-    icon: "mdi-receipt-text-outline",
-    color: "red",
-  },
-  {
-    label: "Perusahaan",
-    value: perusahaanStore.dataPerusahaan?.length || 0,
-    icon: "mdi-office-building-outline",
-    color: "blue",
-  },
-  {
-    label: "Cabang",
-    value: perusahaanStore.dataCabang?.length || 0,
-    icon: "mdi-store-outline",
-    color: "green",
-  },
-]);
 </script>
 
 <style scoped>

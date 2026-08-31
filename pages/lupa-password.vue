@@ -125,11 +125,11 @@ const handleResetPassword = async () => {
           </NuxtLink>
         </div>
 
-        <p class="note">© 2026 Aresa Admin System</p>
+        <p class="note">© 2026 SNS Admin System</p>
       </form>
     </div>
 
-    <footer class="footer-bar">Aresa © 2026</footer>
+    <footer class="footer-bar">SNS © 2026</footer>
   </div>
 </template>
 

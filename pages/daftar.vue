@@ -147,11 +147,11 @@ await sendEmailVerification(user, {
           <v-icon icon="mdi-chevron-right" end />
         </button>
 
-        <p class="note">© 2026 Aresa Accounting System | Terms of Use</p>
+        <p class="note">© 2026 SNS Accounting System | Terms of Use</p>
       </form>
     </div>
 
-    <footer class="footer-bar">Aresa © 2026</footer>
+    <footer class="footer-bar">SNS © 2026</footer>
   </div>
 </template>
 

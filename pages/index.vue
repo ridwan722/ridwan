@@ -23,12 +23,12 @@ const update = async () => {
       <div class="header-triangle border-layer"></div>
 
       <div class="header-triangle main-layer">
-        <img
+        <!-- <img
           src="https://imagedelivery.net/_tN3dTar-XzU6X9_PBgTbA/1043a53d-dea0-4de7-86a2-7dfcb529f000/heromobile"
           alt="Aresa Logo"
           :width="$vuetify.display.smAndDown ? 150 : 180"
           class="logo"
-        />
+        /> -->
       </div>
     </div>
 

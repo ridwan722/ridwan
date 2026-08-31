@@ -65,7 +65,7 @@ export const useInvoiceAresaDigitalStore = defineStore("invoiceAresaDigitalStore
         notificationStore.showSuccess("Perubahan berhasil disimpan");
         return true;
       } catch (error) {
-        console.error("Gagal memperbarui invoice Aresa Digital:", error);
+        console.error("Gagal memperbarui invoice Solusi Nusa Segara:", error);
         notificationStore.showError("Gagal memperbarui invoice");
         return false;
       } finally {

@@ -61,7 +61,7 @@ export default defineNuxtConfig({
       appId: process.env.appId,
 
       databaseURL:
-        "https://aresadigital-default-rtdb.asia-southeast1.firebasedatabase.app",
+        "https://sns-project-315db-default-rtdb.asia-southeast1.firebasedatabase.app",
     },
   },
 });

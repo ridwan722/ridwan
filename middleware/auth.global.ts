@@ -1,16 +1,9 @@
-export default defineNuxtRouteMiddleware(async (to) => {
+export default defineNuxtRouteMiddleware(async () => {
   const user = useUserStore();
 
   // 🔥 Tunggu Firebase Auth rehydrate
   if (!user.__authReady) {
     await untilAuthIsReady(user);
-  }
-
-  const publicPaths = ["/", "/login", "/lupa-password"];
-
-  // 🚫 Belum login → hanya boleh halaman publik
-  if (!user.isLoggedIn && !publicPaths.includes(to.path)) {
-    return navigateTo("/login");
   }
 });
 

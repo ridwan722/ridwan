@@ -14,7 +14,7 @@
       density="comfortable"
     />
 
-    <div class="nav-section-label">Master Records</div>
+    <div class="nav-section-label">Master</div>
 
     <v-list-group value="master" class="nav-group mb-1">
       <template #activator="{ props }">
@@ -29,16 +29,6 @@
       <div class="nav-submenu">
         <v-list-item to="/admin/master/users" title="User Management" />
         <v-list-item to="/admin/master/perusahaan" title="Perusahaan" />
-        <v-list-item
-          to="/admin/master/perusahaan/cabang"
-          title="Cabang Perusahaan"
-        />
-        <v-list-item to="/admin/master/dokumen" title="Arsip Dokumen" />
-        <v-list-item to="/admin/master/kategori/objek" title="Kategori Objek" />
-        <v-list-item
-          to="/admin/master/kategori/unmanage"
-          title="Unmanaged (Kategori Item)"
-        />
       </div>
     </v-list-group>
 
@@ -52,28 +42,12 @@
       class="nav-item mb-1"
       title="Petty Cash"
       prepend-icon="mdi-cash-multiple"
-    to="/admin/petty-cash"
-    />
-
-    <div class="nav-section-label">ARESA PERIZINAN</div>
-
-    <v-list-item
-      to="/admin/master/kategori/item"
-      title="Daftar Pekerjaan"
-      prepend-icon="mdi-tag-multiple-outline"
-      class="nav-item mb-1"
-    />
-
-    <v-list-item
-      to="/admin/reminder_pekerjaan"
-      title="Reminder Pekerjaan"
-      prepend-icon="mdi-database-clock-outline"
-      class="nav-item mb-1"
+      to="/admin/petty-cash"
     />
 
     <v-list-item
       class="nav-item mb-1"
-      title="Lapora Inspeksi"
+      title="Laporan Inspeksi"
       prepend-icon="mdi-chart-box-outline"
       to="/admin/laporan"
     />
@@ -83,109 +57,17 @@
         <v-list-item
           v-bind="props"
           class="nav-item"
-          prepend-icon="mdi-file-edit-outline"
-          title="Penawaran"
-        />
-      </template>
-
-      <div class="nav-submenu">
-        <v-list-item to="/admin/penawaran/" title="Penawaran">
-          <template #append>
-            <span class="status-badge gray">{{ countAll }}</span>
-          </template>
-        </v-list-item>
-        <v-list-item to="/admin/penawaran/sent" title="Terkirim" />
-        <v-list-item to="/admin/penawaran/spk" title="SPK" />
-        <v-list-item to="/admin/penawaran/rejected" title="Dibatalkan" />
-      </div>
-    </v-list-group>
-
-    <v-list-item
-      to="/admin/penawaran/proses"
-      class="nav-item mb-1"
-      title="Dalam Proses"
-      prepend-icon="mdi-sync"
-    >
-      <template #append>
-        <span class="status-badge gray">{{ countProses }}</span>
-      </template>
-    </v-list-item>
-
-    <v-list-item
-      to="/admin/penawaran/pemberkasan"
-      class="nav-item mb-1"
-      title="Pemberkasan"
-      prepend-icon="mdi-folder-sync-outline"
-    >
-      <template #append>
-        <span class="status-badge gray">{{ countPemberkasan }}</span>
-      </template>
-    </v-list-item>
-
-    <v-list-group value="invoice" class="nav-group mb-1">
-      <template #activator="{ props }">
-        <v-list-item
-          v-bind="props"
-          class="nav-item"
           prepend-icon="mdi-receipt-text-outline"
-          title="Invoice"
+          title="INV Solusi Nusa Segara"
         />
       </template>
 
       <div class="nav-submenu">
-        <v-list-item to="/admin/invoice/" title="Invoice" />
-        <v-list-item to="/admin/invoice/disetujui" title="Disetujui" />
+        <v-list-item to="/admin/invoice" title="Invoice" />
         <v-list-item to="/admin/invoice/dikirim" title="Dikirim" />
-        <v-list-item to="/admin/invoice/diterima" title="Diterima" />
         <v-list-item to="/admin/invoice/selesai" title="Selesai" />
       </div>
     </v-list-group>
-
-    <v-divider color="white" opacity="100" />
-
-    <div class="nav-section-label">ARESA DIGITAL</div>
-    <v-list-item
-      to="/admin/customer/leads"
-      title="Leads Aresa Digital"
-      prepend-icon="mdi-newspaper-variant-outline"
-      class="nav-item mb-1"
-    />
-    <!-- <v-list-item
-      to="/admin/invoice-aresa-digital/"
-      title="Invoice Aresa Digital"
-      prepend-icon="mdi-receipt-text-outline"
-      class="nav-item mb-1"
-    /> -->
-
-    <v-list-group value="penawaran" class="nav-group mb-1">
-      <template #activator="{ props }">
-        <v-list-item
-          v-bind="props"
-          class="nav-item"
-          prepend-icon="mdi-receipt-text-outline"
-          title="INV Aresa Digital"
-        />
-      </template>
-
-      <div class="nav-submenu">
-        <v-list-item to="/admin/invoice-aresa-digital" title="Invoice" />
-        <v-list-item to="/admin/invoice-aresa-digital/dikirim" title="Dikirim" />
-        <v-list-item to="/admin/invoice-aresa-digital/selesai" title="Selesai" />
-      </div>
-    </v-list-group>
-
-    <v-list-item
-      to="/admin/blog"
-      title="Berita & Blog"
-      prepend-icon="mdi-newspaper-variant-outline"
-      class="nav-item mb-1"
-    />
-    <v-list-item
-      to="/admin/projects"
-      title="Portfolio Project"
-      prepend-icon="mdi-briefcase-variant-outline"
-      class="nav-item mb-1"
-    />
   </v-list>
 
   <div v-if="pinDialog" class="pin-overlay">

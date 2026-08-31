@@ -95,7 +95,7 @@ const logout = async () => {
           </div>
         </v-btn>
         <img
-          src="/public/aresa_typo.png"
+          src="/public/Logo-SNS.png"
           alt="Logo"
           width="40"
           v-if="!drawer"
@@ -103,7 +103,7 @@ const logout = async () => {
         />
 
         <div class="ml-4">
-          <v-chip class="text-primary"><strong>V 3.2</strong></v-chip>
+          <v-chip class="text-primary"><strong>V 1</strong></v-chip>
         </div>
       </div>
     </template>
