@@ -14,6 +14,9 @@ export const usePenawaranStore = defineStore("PenawaranStore", {
       // KHUSUS COUNTER SIDEBAR
       dataPenawaranDraft: [] as penawaranM[],
 
+      // Revisi disimpan sebagai subkoleksi dari dokumen penawaran.
+      dataRevisiPenawaran: [] as Record<string, any>[],
+
     };
   },
 
@@ -22,7 +25,9 @@ export const usePenawaranStore = defineStore("PenawaranStore", {
       return state.dataPenawaran;
     },
 
-
+    getDataRevisiPenawaran(state) {
+      return state.dataRevisiPenawaran;
+    },
 
     getDetailPenawaran(state) {
       return state.detailPenawaran;
@@ -77,9 +82,11 @@ export const usePenawaranStore = defineStore("PenawaranStore", {
         await this.tarikDataPenawaranAct();
 
         notificationStore.showSuccess("Penawaran berhasil diperbarui");
-        useloadingStore().setLoading(false);
+        return true;
       } catch (error) {
         notificationStore.showError("Gagal memperbarui penawaran");
+        return false;
+      } finally {
         useloadingStore().setLoading(false);
       }
     },
@@ -151,7 +158,12 @@ export const usePenawaranStore = defineStore("PenawaranStore", {
       this.detailPenawaran = datatarik as unknown as penawaranM;
     },
 
-
+    async tarikDataPenawaranrevisAct(idPenawaran: string) {
+      const datatarik = await queryambilid(
+        `penawaran/${idPenawaran}/revisi_penawaran`,
+      );
+      this.dataRevisiPenawaran = datatarik as Record<string, any>[];
+    },
 
     // async tarikdatapenawaranbystatus(status: string) {
     //   const datatarik = await queryPenawaranBystatus(status);

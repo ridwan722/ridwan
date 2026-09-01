@@ -532,7 +532,7 @@ export const updatepenawaran = async (data: penawaranM) => {
     const email = auth.currentUser?.email;
 
     return await runTransaction(db, async (transaction) => {
-        for (const element of data.items) {
+        for (const element of data.penawaran_item) {
             const itempenawaranRef = doc(
                 db,
                 "m_item_kategori",

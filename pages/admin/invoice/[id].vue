@@ -50,16 +50,11 @@ function tutupDialogDikirim() {
 }
 
 async function ubahStatusDikirim() {
-  if (!uploadStoreInstance.getUrlRef) {
-    return notificationStore.showError("Dokumen Tidak Boleh Kosong");
-  }
-
   const id = route.params.id as string;
   const invoice = JSON.parse(JSON.stringify(invoiceDetail.value)) as invoiceM;
   invoice.status = "Dikirim";
   invoice.dokumen_dikirim = uploadStoreInstance.getUrlRef;
-  invoice.updatedAt = moment().unix();
-  invoice.updatedBy = userStore.getEmail;
+
   invoice.dikirimAt = moment().unix();
   invoice.dikirimBy = userStore.getEmail;
 
@@ -81,8 +76,6 @@ async function ubahStatusSelesai() {
   const id = route.params.id as string;
   const invoice = JSON.parse(JSON.stringify(invoiceDetail.value)) as invoiceM;
   invoice.status = "Selesai";
-  invoice.updatedAt = moment().unix();
-  invoice.updatedBy = userStore.getEmail;
   invoice.selesaiAt = moment().unix();
   invoice.selesaiBy = userStore.getEmail;
 
@@ -139,7 +132,7 @@ function printInvoice() {
         <v-card-title class="bg-primary text-white pa-4">
           Kirim Invoice
         </v-card-title>
-        <v-card-text class="pa-5">
+        <!-- <v-card-text class="pa-5">
           <upload-image
             typefolder="invoice/file_dikirim"
             label="Upload Dokumen"
@@ -151,7 +144,7 @@ function printInvoice() {
             class="mt-3 rounded-lg border"
             contain
           />
-        </v-card-text>
+        </v-card-text> -->
         <v-card-actions class="pa-4 bg-grey-lighten-4">
           <v-spacer />
           <v-btn
@@ -285,9 +278,7 @@ function printInvoice() {
                     <td width="80">Attn</td>
                     <td width="10">:</td>
                     <td>
-                      <span>
-                        Bpk. {{ invoiceDetail.pic }}
-                      </span>
+                      <span> Bpk. {{ invoiceDetail.pic }} </span>
                     </td>
                   </tr>
                   <tr>

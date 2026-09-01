@@ -1,8 +1,9 @@
 export interface invoiceItemM {
-  deskripsi_pekerjaan: string;
+  nama: string;
   qty: number;
   uom: string;
   amount: number;
+  subtotal_item: number;
 }
 
 export interface invoiceM {
@@ -23,8 +24,6 @@ export interface invoiceM {
   dokumen_dikirim?: string;
   createdAt: number;
   createdBy: string;
-  updatedAt?: number;
-  updatedBy?: string;
   dikirimAt?: number;
   dikirimBy?: string;
   selesaiAt?: number;
