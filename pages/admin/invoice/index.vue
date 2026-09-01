@@ -7,7 +7,7 @@
       <v-card-item class="bg-grey-lighten-4 pa-3 text-center">
         <h4 class="font-weight-bold text-grey-darken-3">
           {{ data.invoiceAddEdit === "add" ? "Buat" : "Edit" }} Invoice
-          <span class="text-primary">Solusi Nusa Segara</span>
+          <!-- <span class="text-primary">Solusi Nusa Segara</span> -->
         </h4>
         <p class="text-caption text-grey-darken-1 m-0">
           Lengkapi rincian tagihan dan item pekerjaan di bawah ini.
@@ -40,7 +40,16 @@
           v-model="newInvoice.alamat_customer"
           class="mt-2"
           label="Alamat Customer"
+          disabled
           placeholder="Alamat customer terisi otomatis, bisa diedit"
+        />
+
+        <a-text-field
+          v-model="newInvoice.pic"
+          class="mt-2"
+          label="PIC"
+          disabled
+          placeholder="PIC"
         />
         <v-divider class="my-6 border-opacity-50" />
 
@@ -73,21 +82,17 @@
                 placeholder="Deskripsi"
               />
             </v-col>
-             <v-col cols="10" sm="2">
-              <a-field-number
-                v-model="item.qty"
-                label="Qty"
-                placeholder="0"
-              />
+            <v-col cols="10" sm="2">
+              <a-field-number v-model="item.qty" label="Qty" placeholder="0" />
             </v-col>
-             <v-col cols="10" sm="2">
+            <v-col cols="10" sm="2">
               <a-text-field
                 v-model="item.uom"
                 label="Satuan"
                 placeholder="Pcs"
               />
             </v-col>
-             <v-col cols="10" sm="2">
+            <v-col cols="10" sm="2">
               <a-field-number
                 v-model="item.amount"
                 label="Jumlah (Amount)"
@@ -139,7 +144,7 @@
               >
                 <span>Subtotal</span>
                 <span class="font-weight-medium text-grey-darken-3"
-                  >Rp {{ rupiah(subtotalInvoice) }}</span
+                  >Rp {{ rupiah(subtotal_invoice) }}</span
                 >
               </div>
               <div
@@ -157,7 +162,7 @@
                   >Grand Total</span
                 >
                 <span class="text-h6 font-weight-black text-primary"
-                  >Rp {{ rupiah(grandtotalInvoice) }}</span
+                  >Rp {{ rupiah(grandtotal_invoice) }}</span
                 >
               </div>
             </v-col>
@@ -217,7 +222,7 @@
           label="Alamat"
           placeholder="Alamat Customer"
         />
-         <a-text-field
+        <a-text-field
           v-model="newCustomer.pic"
           label="PIC"
           placeholder="Nama Customer"
@@ -251,7 +256,7 @@
     <v-col cols="12">
       <v-breadcrumbs>
         <v-breadcrumbs-item>
-          <span class="font-weight-medium text-h5">Invoice Solusi Nusa Segara</span>
+          <span class="font-weight-medium text-h5">Invoice</span>
         </v-breadcrumbs-item>
       </v-breadcrumbs>
     </v-col>
@@ -334,9 +339,7 @@
         >
           <template v-slot:item.no="{ index }"> {{ index + 1 }}</template>
 
-          <template v-slot:item.no_inv="{ item }"
-            >#{{ item.no_inv }}</template
-          >
+          <template v-slot:item.no_inv="{ item }">#{{ item.no_inv }}</template>
 
           <template v-slot:item.tanggal="{ item }">{{
             rubahtanggallengkap(item.tanggal)
@@ -468,7 +471,7 @@
                 <v-tooltip activator="parent" location="top">Hapus</v-tooltip>
               </v-btn>
             </div>
-          </template>
+          </template> 
 
           <template v-slot:no-data>
             <div class="py-8 text-center text-grey-darken-1">
@@ -539,7 +542,7 @@ const data = reactive({
     { title: "Tanggal", value: "tanggal", sortable: true },
     { title: "No. Invoice", value: "no_inv", sortable: true },
     { title: "Customer", value: "nama_customer", sortable: true },
-    { title: "Total", value: "grandtotal", sortable: true },
+    { title: "Total", value: "grandtotal_invoice", sortable: true },
     { title: "Status", value: "status", sortable: true },
     { title: "Aksi", align: "center" as const, value: "aksi", width: "100px" },
   ],
@@ -562,13 +565,14 @@ function emptyInvoice(): invoiceM {
     no_inv: "",
     id_customer: "",
     nama_customer: "",
+    pic: "",
     alamat_customer: "",
     tanggal: moment().format("YYYY-MM-DD"),
     item_pekerjaan: [{ deskripsi_pekerjaan: "", qty: 0, uom: "", amount: 0 }],
     pakai_ppn: true,
-    subtotal: 0,
+    subtotal_invoice: 0,
     ppn: 0,
-    grandtotal: 0,
+    grandtotal_invoice: 0,
     status: "Draft",
     createdAt: 0,
     createdBy: "",
@@ -577,17 +581,17 @@ function emptyInvoice(): invoiceM {
 
 const newInvoice = ref<invoiceM>(emptyInvoice());
 
-const subtotalInvoice = computed(() =>
+const subtotal_invoice = computed(() =>
   newInvoice.value.item_pekerjaan.reduce(
     (total, item) => total + (Number(item.amount) || 0),
     0,
   ),
 );
 const ppnInvoice = computed(() =>
-  newInvoice.value.pakai_ppn ? Math.round(subtotalInvoice.value * 0.11) : 0,
+  newInvoice.value.pakai_ppn ? Math.round(subtotal_invoice.value * 0.11) : 0,
 );
-const grandtotalInvoice = computed(
-  () => subtotalInvoice.value + ppnInvoice.value,
+const grandtotal_invoice = computed(
+  () => subtotal_invoice.value + ppnInvoice.value,
 );
 
 watch(
@@ -606,6 +610,7 @@ watch(
     newInvoice.value.id_customer = customer.id ?? "";
     newInvoice.value.nama_customer = customer.nama;
     newInvoice.value.alamat_customer = customer.alamat;
+    newInvoice.value.pic = customer.pic;
   },
 );
 
@@ -660,7 +665,8 @@ function openDialogEditInvoice(item: invoiceM) {
     (dataCustomer) =>
       dataCustomer.id === item.id_customer ||
       dataCustomer.nama === item.id_customer ||
-      dataCustomer.nama === item.nama_customer,
+      dataCustomer.nama === item.nama_customer ||
+      dataCustomer.pic === item.pic,
   );
 
   const invoice = JSON.parse(JSON.stringify(item)) as invoiceM;
@@ -680,7 +686,7 @@ function tambahBarisInvoice() {
     deskripsi_pekerjaan: "",
     amount: 0,
     uom: "",
-    qty: 0
+    qty: 0,
   });
 }
 
@@ -705,9 +711,9 @@ async function simpanInvoiceDialog() {
     );
   }
 
-  newInvoice.value.subtotal = subtotalInvoice.value;
+  newInvoice.value.subtotal_invoice = subtotal_invoice.value;
   newInvoice.value.ppn = ppnInvoice.value;
-  newInvoice.value.grandtotal = grandtotalInvoice.value;
+  newInvoice.value.grandtotal_invoice = grandtotal_invoice.value;
   if (data.invoiceAddEdit === "add") {
     newInvoice.value.createdAt = moment().unix();
     newInvoice.value.createdBy = userStore.getEmail;

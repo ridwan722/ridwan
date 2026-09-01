@@ -12,12 +12,13 @@ export interface invoiceM {
   id_customer: string;
   nama_customer: string;
   alamat_customer: string;
+  pic: string,
   tanggal: string;
   item_pekerjaan: invoiceItemM[];
   pakai_ppn: boolean;
-  subtotal: number;
+  subtotal_invoice: number;
   ppn: number;
-  grandtotal: number;
+  grandtotal_invoice: number;
   status: string;
   dokumen_dikirim?: string;
   createdAt: number;

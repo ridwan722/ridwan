@@ -53,7 +53,7 @@ const update = async () => {
             size="x-large"
             block
             elevation="0"
-            to="/admin/menu"
+            to="/admin"
           >
             Masuk ke Dashboard
             <v-icon end icon="mdi-arrow-right" class="btn-icon" />
@@ -227,14 +227,14 @@ const update = async () => {
 }
 
 .btn-login {
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+  background: linear-gradient(135deg, #eb2525 0%, #d81d1d 100%) !important;
   color: #ffffff !important;
   font-weight: 600 !important;
   font-size: 15px !important;
   letter-spacing: 0.2px;
   height: 52px !important;
   text-transform: none !important;
-  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35) !important;
+  box-shadow: 0 8px 20px rgba(235, 37, 37, 0.35) !important;
   transition: all 0.3s ease !important;
 }
 

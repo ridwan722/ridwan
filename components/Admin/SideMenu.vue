@@ -224,7 +224,7 @@ const verifyPin = () => {
   top: 8px;
   bottom: 8px;
   width: 3px;
-  background-color: #195de6;
+  background-color: #e61919;
   border-radius: 0 4px 4px 0;
 }
 .v-list-item--active.nav-item :deep(.v-list-item__prepend .v-icon) {

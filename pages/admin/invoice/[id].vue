@@ -185,7 +185,7 @@ function printInvoice() {
                 INVOICE
               </div>
               <div class="text-h6 font-weight-bold primary--text">
-                #{{ invoiceDetail.id }}
+                #QT/ICI/2026/SNS/{{ invoiceDetail.id }}
               </div>
             </div>
           </v-col>
@@ -213,7 +213,7 @@ function printInvoice() {
 
             <!-- Creator & Timestamp -->
             <div
-              class="text-caption text-grey-darken-1 d-flex align-center justify-sm-end"
+              class="text-caption text-grey-darken-1 d-flex align-center justify-sm-end mt-2"
             >
               <v-icon size="small" class="mr-1"
                 >mdi-account-circle-outline</v-icon
@@ -222,8 +222,8 @@ function printInvoice() {
                 invoiceDetail.createdBy
               }}</span>
               <span>•</span>
-              <v-icon size="small" class="ml-2 mr-1">mdi-clock-outline</v-icon>
-              <span>{{ invoiceDetail.createdAt }}</span>
+              <v-icon size="small" class="ml-2 mr-1">mdi-pencil-outline</v-icon>
+              <span>{{ rubahtanggalunix(invoiceDetail.createdAt) }}</span>
             </div>
           </v-col>
         </v-row>
@@ -286,7 +286,7 @@ function printInvoice() {
                     <td width="10">:</td>
                     <td>
                       <span>
-                        {{ invoiceDetail.pic }}
+                        Bpk. {{ invoiceDetail.pic }}
                       </span>
                     </td>
                   </tr>
@@ -327,26 +327,45 @@ function printInvoice() {
           <table class="main-table">
             <thead>
               <tr>
-                <th width="50%">DESCRIPTION</th>
-                <th  width="5%">QTY</th>
-                <th  width="35%">AMOUNT</th>
+                <th width="3%">NO.</th>
+                <th width="47%">DESCRIPTION</th>
+                <th width="5%">QTY</th>
+                <th width="5%">UOM</th>
+                <th width="35%">AMOUNT</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in invoiceDetail.item_pekerjaan">
-                <td class="desc-cell">
+              <tr
+                v-for="(item, index) in invoiceDetail.item_pekerjaan"
+                :key="index"
+              >
+                <td class="no-cell v-align-middle">
                   <div class="text-center font-weight-bold">
+                    <span> {{ index + 1 }}. </span>
+                  </div>
+                </td>
+
+                <td class="desc-cell">
+                  <div class="font-weight-bold">
                     <span style="white-space: pre-line">
                       {{ item.deskripsi_pekerjaan }}
                     </span>
                   </div>
                 </td>
-                <td  class="qty-cell v-align-middle">
+
+                <td class="qty-cell v-align-middle">
                   <div class="align-center text-center">
                     <span>{{ item.qty }}</span>
                   </div>
                 </td>
-                <td  class="amount-cell v-align-middle">
+
+                <td class="qty-cell v-align-middle">
+                  <div class="align-center text-center">
+                    <span>{{ item.uom }}</span>
+                  </div>
+                </td>
+
+                <td class="amount-cell v-align-middle">
                   <div class="d-flex justify-space-between align-center">
                     <span>Rp</span>
                     <span>{{ rupiah(item.amount) }}</span>
@@ -356,40 +375,23 @@ function printInvoice() {
 
               <!-- Total & Tax Calculation -->
               <tr>
-                <td rowspan="5" class="remark-cell">
-                  <div class="remark-border-box">
-                    <strong>TERMS & CONDITIONS :</strong>
-                    <ul class="remark-list-style">
-                      <li>
-                        <strong
-                          >Lead time 10-15 Days</strong
-                        >
-                      </li>
-                      <li>
-                        <strong>
-                          Payment Terms Down Payment (DP) 50%, Balance Prior Delivery
-                        </strong>
-                      </li>
-                       <li>
-                        <strong>
-                          Validation of this Quotation – 7 Days from Quotation Date
-                        </strong>
-                      </li>
-                    </ul>
-                  </div>
-                </td>
-                
+                <td></td>
+                <td></td>
+                <td></td>
                 <td class="footer-label">
                   <strong>SUB TOTAL</strong>
                 </td>
                 <td class="footer-value">
                   <div class="d-flex justify-space-between">
                     <span>Rp</span
-                    ><span>{{ rupiah(invoiceDetail.subtotal) }}</span>
+                    ><span>{{ rupiah(invoiceDetail.subtotal_invoice) }}</span>
                   </div>
                 </td>
               </tr>
-              <tr>
+              <tr v-if="invoiceDetail.pakai_ppn == true">
+                <td></td>
+                <td></td>
+                <td></td>
                 <td class="footer-label"><strong>PPn 11%</strong></td>
                 <td class="footer-value">
                   <div class="d-flex justify-space-between">
@@ -397,14 +399,17 @@ function printInvoice() {
                   </div>
                 </td>
               </tr>
-              <tr class="bg-blue-total">
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
                 <td class="footer-label">
                   <strong>TOTAL</strong>
                 </td>
                 <td class="footer-value">
                   <div class="d-flex justify-space-between font-weight-bold">
                     <span>Rp</span
-                    ><span>{{ rupiah(invoiceDetail.grandtotal) }}</span>
+                    ><span>{{ rupiah(invoiceDetail.grandtotal_invoice) }}</span>
                   </div>
                 </td>
               </tr>
@@ -414,9 +419,41 @@ function printInvoice() {
           <!-- Terbilang -->
           <div class="terbilang-strip">
             <strong
-              >Terbilang : #{{ jadirupiah(invoiceDetail.grandtotal) }}#</strong
+              >Terbilang :
+              {{ jadirupiah(invoiceDetail.grandtotal_invoice) }}Rupiah</strong
             >
           </div>
+
+          <table>
+            <tbody>
+              <tr>
+                <td class="remark-cell">
+                  <div class="remark-border-box">
+                    <strong class="text-body-2 font-weight-bold"
+                      >TERMS & CONDITIONS :</strong
+                    >
+                    <ul class="remark-list-style">
+                      <li>
+                        <strong>Lead time 10-15 Days</strong>
+                      </li>
+                      <li>
+                        <strong>
+                          Payment Terms Down Payment (DP) 50%, Balance Prior
+                          Delivery
+                        </strong>
+                      </li>
+                      <li>
+                        <strong>
+                          Validation of this Quotation – 7 Days from Quotation
+                          Date
+                        </strong>
+                      </li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
 
           <!-- Bank & Signature -->
           <div class="d-flex justify-space-between mt-6">
@@ -447,7 +484,9 @@ function printInvoice() {
               </div>
             </div>
             <div class="text-center signature-area">
-              <span class="font-italic">Your sincerely,</span><br /><strong>CV. SOLUSI NUSA SEGARA</strong><br /><br /><br /><br /><br />
+              <span class="font-italic">Your sincerely,</span><br /><strong
+                >CV. SOLUSI NUSA SEGARA</strong
+              ><br /><br /><br /><br /><br />
               <strong>( Muhammad Ridwan )</strong>
             </div>
           </div>
@@ -472,6 +511,7 @@ function printInvoice() {
         color="indigo"
         variant="elevated"
         @click="printInvoice"
+        width="45%"
       >
         Print Invoice
       </v-btn>
@@ -535,8 +575,8 @@ function printInvoice() {
   font-size: 12px;
 }
 .amount-cell {
-  padding-left: 10px !important;
-  padding-right: 10px !important;
+  padding-left: 5px !important;
+  padding-right: 5px !important;
 }
 
 @media print {
@@ -609,12 +649,16 @@ function printInvoice() {
 }
 
 .desc-cell {
-  padding: 15px !important;
+  padding: 8px !important;
 }
 
 .qty-cell {
   vertical-align: top;
   width: 15%;
+}
+
+.no-cell {
+  width: 5%;
 }
 
 .amount-cell {
@@ -623,9 +667,7 @@ function printInvoice() {
 }
 
 .remark-cell {
-  width: 60%;
   vertical-align: middle;
-  padding: 8px !important;
 }
 
 .remark-border-box {
@@ -658,7 +700,6 @@ function printInvoice() {
   width: 20%;
 }
 
-
 .d-flex {
   display: flex;
 }
@@ -681,9 +722,10 @@ function printInvoice() {
 @media print {
   .bg-blue-total,
   .main-table th {
-    background-color: #b8cce4 !important;
+    background-color: #fa0000 !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
+    border: 1px solid black;
   }
 }
 
