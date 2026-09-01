@@ -9,7 +9,7 @@ export interface penawaranM {
   pic: string;
   nama_perusahaan: string;
   alamat_perusahaan?: string;
-  telp_perusahaan: string;
+  no_telp: string;
 
   tanggal_penawaran: string;
 

@@ -1,66 +1,21 @@
 <script setup lang="ts">
 import _ from "lodash";
-import moment from "moment";
 import { useRoute } from "vue-router";
-import { useMasterPerusahaanStore } from "~/stores/master/perusahaanStore";
 import { usePenawaranStore } from "~/stores/penawaranStore";
 import type { ConfirmationDialog } from "#components";
-import { ref } from "vue";
-import { useMasterKategoriStore } from "~/stores/master/kategoriStore";
-import type { penawaranM } from "~/types/penawaranModel";
-import { useMasterDokumenStore } from "~/stores/master/dokumenStore";
-import { QuillEditor } from "@vueup/vue-quill";
+
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
 import CreateInvoiceDialog from "~/components/Admin/Penawaran/CreateInvoiceDialog.vue";
 
-const generatePdfFromCanvas = async () => {
-  if (process.server) return;
 
-  const html2canvas = (await import("html2canvas")).default;
-  const { jsPDF } = await import("jspdf");
 
-  const element = document.getElementById("offer-to-print");
-  if (!element) return;
-
-  // ✅ AKTIFKAN MODE PDF
-  document.body.classList.add("export-pdf");
-
-  const canvas = await html2canvas(element, {
-    scale: 3,
-    useCORS: true,
-  });
-
-  // ❗ WAJIB: BALIKIN KE NORMAL
-  document.body.classList.remove("export-pdf");
-
-  const imgData = canvas.toDataURL("image/png");
-
-  const namaFile = detailpenawaran.value.perihal;
-
-  const pdf = new jsPDF("p", "mm", "a4");
-  pdf.addImage(imgData, "PNG", 0, 0, 210, 297);
-
-  const blob = pdf.output("blob");
-
-  return new File([blob], `${namaFile}.pdf`, {
-    type: "application/pdf",
-  });
-};
-
-const body = ref("");
-const masterdokumenstore = useMasterDokumenStore();
 
 definePageMeta({ layout: "admin" });
 
 const route = useRoute();
-const masterobjectstore = useMasterKategoriStore();
+
 const penawaranstore = usePenawaranStore();
-const perusahaanStore = useMasterPerusahaanStore();
-const masterCabangStore = useMasterPerusahaanStore();
-const notificationStore = useNotificationStore();
-const confirmationDialog = ref<InstanceType<typeof ConfirmationDialog> | null>(
-  null,
-);
+
 
 onMounted(async () => {
   useloadingStore().setLoading(true); // Aktifkan loading
@@ -74,10 +29,6 @@ onMounted(async () => {
 
 const detailpenawaran = computed(() => penawaranstore.getDetailPenawaran);
 
-const totalUnit = computed(() => {
-  return _.sumBy(masterCabangStore.getDataItemKategori, "jumlahUnit");
-});
-
 const data = reactive({
   dialogAdd: false,
   dialogRevisi: false,
@@ -85,23 +36,7 @@ const data = reactive({
   page: 1,
   itemsPerPage: 10,
   pageKategori: 1,
-  dialogkirimpenawaran: false,
-  dialogspk: false,
-  dialogpemberkasan: false,
-  dialogaddberkas: false,
   dialogPenawaran: false,
-  dokumen_pemberkasan: [],
-  item_kode_bayar: [],
-  attachments: [] as string[],
-  tambahupdateberkas: "",
-
-  new_kirim_penawaran: {
-    email: [],
-    email_cc: [],
-    email_bcc: [],
-    body_email: "",
-    tanggal_kirim_penawaran: "",
-  },
 
   new_pemberkasan: {
     id_dokumen: "",
@@ -115,37 +50,6 @@ const data = reactive({
     status_dokumen: "Asli",
   },
 
-  new_spk: {
-    document_spk: [] as string[],
-    tanggal_spk: "",
-  },
-
-  new_kodebayar: {
-    kode_bayar: "",
-    file_kode_bayar: "",
-  },
-
-  headerberkas: [
-    { title: "No", value: "no" },
-    { title: "Nama Kategori Item", value: "nama_kategori_item" },
-    { title: "Jenis Dokumen", value: "nama_dokumen" },
-    { title: "No Dokumen", value: "no_dokumen" },
-    { title: "File Dokumen", value: "file_dokumen" },
-    { title: "Aksi", value: "aksi" },
-  ],
-
-  headerkodebayar: [
-    { title: "No.", value: "no" },
-    { title: "Kode Bayar", value: "kode_bayar" },
-    { title: "Dok Kode Bayar", value: "file_kode_bayar" },
-    { title: "Aksi", value: "aksi" },
-  ],
-
-  header: [
-    { title: "No", value: "no" },
-    { title: "Item", value: "new_item" },
-  ],
-
   headers_items: [
     { title: "Nama", key: "nama_kategori_item" },
     { title: "Jumlah", key: "jumlahUnit" },
@@ -154,395 +58,11 @@ const data = reactive({
     { title: "Subtotal", key: "subtotal" },
     { title: "Aksi", key: "actions", sortable: false },
   ],
-
-  headKategoriItem: [
-    {
-      title: "No",
-      value: "no",
-      align: "center" as const,
-      width: "50px",
-    },
-    { title: "Nama", value: "nama_kategori_item", sortable: true },
-    { title: "Jumlah", value: "jumlah_unit", sortable: true, width: "50px" },
-    { title: "Periode Terakhir", value: "periode", sortable: true },
-    { title: "Periode Penawaran", value: "periode_penawaran", sortable: true },
-    { title: "Nominal", value: "nominal", sortable: true },
-    { title: "Status", value: "status", sortable: true },
-    {
-      title: "Pilih",
-      value: "select",
-      align: "center" as const,
-      width: "50px",
-    },
-  ],
-  headItemTambahan: [
-    {
-      title: "No",
-      value: "no",
-      align: "center" as const,
-      width: "50px",
-    },
-    { title: "Keterangan", value: "keterangan_penawaran", sortable: true },
-    { title: "Nominal", value: "nominal_tambahan", sortable: true },
-    { title: "Aksi", value: "aksi", width: "50px" },
-  ],
-});
-
-const selectedItems = ref<string[]>([]);
-
-const newlisitemtambahan = ref<listitemtambahanPenawaranM>({
-  keterangan_penawaran: "",
-  nominal_tambahan: 0,
-  kena_ppn: false,
-  kena_pph: false,
-  ppn_tambahan: 0,
-  pph_tambahan: 0,
-  status_item_tambahan: false,
-});
-
-const newRevisi = ref<revisipenawaranM>({
-  id_perusahaan: "",
-  id_cabang_perusahaan: "",
-  id_object_kategori: "",
-  nama_kategori_object: "",
-  nama_cabang_perusahaan: "",
-  nama_perusahaan: "",
-  nama_group_pt: "",
-  telepon_perusahaan: "",
-  nama_surat: "",
-  tanggal: "",
-  perihal: "",
-  items: [],
-  total: 0,
-  status: "",
-  item_tambahan: [],
-  createdAt: 0,
-  createdBy: "",
-});
-
-//REVISI
-
-const totalPenawaranRevisi = computed(() => {
-  const totalItem = _.sumBy(newRevisi.value.items ?? [], (item: any) => {
-    return Number(item.nominal || 0) * Number(item.jumlahUnit || 0);
-  });
-
-  const totalTambahan = _.sumBy(
-    newRevisi.value.item_tambahan ?? [],
-    (item: any) => Number(item.nominal_tambahan || 0),
-  );
-
-  return totalItem + totalTambahan;
-});
-
-const isOpeningDialogRevisi = ref(false);
-
-watch(
-  () => newRevisi.value.id_perusahaan,
-  async (idperusahaan) => {
-    if (isOpeningDialogRevisi.value) return; // ⛔ STOP saat open dialog
-    const dataperusahaan = perusahaanStore.getDataPerusahaan;
-    const b = _.find(dataperusahaan, (o: any) => o.id == idperusahaan);
-    if (!_.isUndefined(b)) {
-      newRevisi.value.nama_perusahaan = b!.nama_perusahaan;
-      newRevisi.value.nama_surat = b!.nama_surat!;
-      newRevisi.value.telepon_perusahaan = b!.telepon_perusahaan;
-      newRevisi.value.nama_group_pt = b!.nama_group_pt;
-      // Reset cabang dan item kategori ketika perusahaan berubah
-      newRevisi.value.id_cabang_perusahaan = "";
-      newRevisi.value.id_object_kategori = "";
-      masterCabangStore.clearDataItemKategori();
-      selectAll.value = false;
-      data.pageKategori = 1;
-
-      await masterCabangStore.tarikDataCabangPerusahaan(b.id!);
-
-      // Berikan notifikasi jika berhasil memuat cabang
-      if (masterCabangStore.getDataCabang.length > 0) {
-        notificationStore.showSuccess(
-          `Berhasil memuat ${masterCabangStore.getDataCabang.length} cabang`,
-        );
-      }
-    }
-  },
-);
-
-// Tambahkan watch untuk cabang
-watch(
-  () => newRevisi.value.id_cabang_perusahaan,
-  async (idcabang) => {
-    if (isOpeningDialogRevisi.value) return; // ⛔ STOP saat open dialog
-    const datacabang = masterCabangStore.getDataCabang;
-    const b = _.find(datacabang, (o: any) => o.id == idcabang);
-
-    if (!_.isUndefined(b)) {
-      newRevisi.value.nama_cabang_perusahaan = b!.nama_cabang;
-      newRevisi.value.alamat_cabang = b!.alamat_cabang;
-      // Reset object dan item kategori ketika cabang berubah
-      newRevisi.value.id_object_kategori = "";
-      masterCabangStore.clearDataItemKategori();
-      selectAll.value = false;
-      data.pageKategori = 1;
-
-      notificationStore.showInfo(
-        "Silakan pilih Object untuk melihat item kategori",
-      );
-    }
-  },
-);
-
-watch(
-  () => newRevisi.value.id_object_kategori,
-  async (idobject) => {
-    const dataobject = masterobjectstore.getDataObjectKategori;
-
-    const b = _.find(dataobject, (o: any) => o.id == idobject);
-    if (!_.isUndefined(b)) {
-      newRevisi.value.nama_kategori_object = b!.nama;
-
-      // Reset selected items ketika object berubah
-      selectAll.value = false;
-
-      // Reset pagination
-      data.pageKategori = 1;
-
-      // Cek apakah perusahaan dan cabang sudah dipilih
-      if (!newRevisi.value.id_perusahaan) {
-        notificationStore.showInfo("Silakan pilih Perusahaan terlebih dahulu");
-        masterCabangStore.clearDataItemKategori();
-        return;
-      }
-
-      if (!newRevisi.value.id_cabang_perusahaan) {
-        notificationStore.showInfo("Silakan pilih Cabang terlebih dahulu");
-        masterCabangStore.clearDataItemKategori();
-        return;
-      }
-
-      // Tunggu sampai data selesai dimuat
-      await masterCabangStore.tarikDataItemKategori(
-        newRevisi.value.id_perusahaan,
-        newRevisi.value.id_cabang_perusahaan,
-        b.id!,
-      );
-
-      // Berikan notifikasi jika berhasil memuat data
-      if (masterCabangStore.getDataItemKategori.length > 0) {
-        notificationStore.showSuccess(
-          `Berhasil memuat ${masterCabangStore.getDataItemKategori.length} item kategori`,
-        );
-      } else {
-        notificationStore.showInfo(
-          "Tidak ada item kategori untuk kombinasi ini",
-        );
-      }
-    } else {
-      // Jika object dikosongkan
-      masterCabangStore.clearDataItemKategori();
-      selectAll.value = false;
-    }
-  },
-);
-
-watch(
-  () => newRevisi.value.items,
-  (val) => {
-    newRevisi.value.total = totalPenawaran.value;
-  },
-  { deep: true },
-);
-
-watch(
-  () => newRevisi.value.items,
-  (items) => {
-    items.forEach((item: any) => {
-      item.subtotal = Number(item.nominal || 0) * Number(item.jumlahUnit || 0);
-    });
-  },
-  { deep: true },
-);
-
-const canAddItemRevisi = (item: any) => {
-  return !newRevisi.value.items.some((i) => i.id_kategori_item === item.id);
-};
-
-function tambahItemRevisi(item: any) {
-  if (!canAddItemRevisi(item)) return; // pakai helper ini
-
-  // 1. Validasi Keberadaan Data Periode
-  if (!item.periode_penawaran?.mulai || !item.periode_penawaran?.selesai) {
-    // Anda bisa mengganti alert ini dengan snackbar/toast library Anda
-    notificationStore.showError(
-      "Harap isi Periode Awal dan Periode Akhir terlebih dahulu!",
-    );
-    return;
-  }
-
-  // 2. Validasi Logika Tanggal (Selesai tidak boleh sebelum Mulai)
-  const tglMulai = item.periode_penawaran.mulai;
-  const tglSelesai = item.periode_penawaran.selesai;
-
-  if (tglSelesai < tglMulai) {
-    notificationStore.showError(
-      "Tanggal Akhir tidak boleh lebih kecil dari Tanggal Awal!",
-    );
-    return;
-  }
-
-  // // Cek status item
-  // if (item.status !== "Draft") {
-  //   return notificationStore.showError(
-  //     "Item dengan status selain Draft tidak bisa ditambahkan",
-  //   );
-  // }
-
-  // Cek jika sudah ditambahkan sebelumnya
-  if (addedItemIds.value.includes(item.id)) {
-    return notificationStore.showInfo("Item sudah ditambahkan");
-  }
-
-  const itemBaru = {
-    id_kategori_item: item.id,
-    id_object_kategori: item.id_object_kategori,
-    id_perusahaan: item.id_perusahaan,
-    id_cabang_perusahaan: item.id_cabang,
-    nama_kategori_item: item.nama_kategori_item,
-    nama_kategori_object: item.nama_kategori_object,
-    nama_perusahaan: item.nama_perusahaan,
-    nama_group_pt: item.nama_group_pt,
-    nama_cabang: item.nama_cabang,
-    kode_kategori_item: item.kode_kategori_item,
-    jumlahUnit: item.jumlahUnit,
-    ukuran: item.ukuran ?? [],
-    periode: item.periode ?? { mulai: "-", selesai: "-" },
-    periode_penawaran: item.periode_penawaran ?? { mulai: "-", selesai: "-" },
-    keterangan: item.keterangan ?? "-",
-    dokumen: item.dokumen ?? [],
-    nominal: Number(item.nominal) || 0,
-  };
-  console.log(itemBaru, "itembaru");
-  console.log(newRevisi.value.items, "cek items");
-  newRevisi.value.items.push(itemBaru);
-  addedItemIds.value.push(item.id); // tandai sudah ditambahkan
-}
-
-async function hapusitemsrevisi(index: number) {
-  if (!confirmationDialog.value)
-    return notificationStore.showError("Dialog tidak tersedia");
-
-  const confirmed = await confirmationDialog.value.show(
-    "Konfirmasi Hapus",
-    "Anda yakin ingin menghapus data ini?",
-  );
-
-  if (!confirmed) return;
-
-  const item = newRevisi.value.items[index];
-  if (!item) return;
-
-  try {
-    _.pullAt(newRevisi.value.items, index);
-
-    // 🔥 WAJIB hapus dari addedItemIds juga
-    _.pull(addedItemIds.value, item.id_kategori_item);
-
-    notificationStore.showSuccess("Item penawaran berhasil dihapus");
-  } catch (error: any) {
-    console.error(error);
-    notificationStore.showError(
-      error.message || "Gagal menghapus item penawaran",
-    );
-  }
-}
-
-//REVISI
-
-const newPenawaran = ref<penawaranM>({
-  id_perusahaan: "",
-  id_cabang_perusahaan: "",
-  nomor: "",
-  tanggal: "",
-  perihal: "",
-  items: [],
-  catatan: [],
-  total: 0,
-  terbilang: "",
-  status: "Draft",
-  createdAt: 0,
-  createdBy: "",
-  nama_cabang_perusahaan: "",
-  nama_perusahaan: "",
-  nama_group_pt: "",
-  nama_surat: "",
-  id_object_kategori: "",
-  nama_kategori_object: "",
-  telepon_perusahaan: "",
-  item_tambahan: [],
-  handle_by_aresa: false,
-  // status_terkirim_email: false,
-  item_kode_bayar: [],
-});
-
-watch(
-  () => data.new_pemberkasan.id_dokumen,
-
-  (idDokumen) => {
-    const dataDokumen = masterdokumenstore.getDataDokumen;
-
-    const b = _.find(dataDokumen, (o: any) => o.id == idDokumen);
-    // console.logb, 'si b')
-    if (!_.isUndefined(b)) {
-      data.new_pemberkasan.nama_dokumen = b!.nama_dokumen;
-    }
-  },
-);
-
-watch(
-  () => data.new_pemberkasan.id_kategori_item,
-  (id) => {
-    const b = _.find(
-      detailpenawaran.value.items,
-      (o: any) => o.id_kategori_item === id,
-    );
-    if (!_.isUndefined(b)) {
-      data.new_pemberkasan.nama_kategori_item = b!.nama_kategori_item;
-      // ensure we always assign a string (fallback to empty string if undefined)
-      data.new_pemberkasan.periode_mulai = b!.periode_penawaran?.mulai ?? "-";
-      data.new_pemberkasan.periode_selesai =
-        b!.periode_penawaran?.selesai ?? "-";
-    }
-  },
-);
-
-const tempBerkas = ref<any[]>([]);
-const tempKodeBayar = ref<any[]>([]);
-
-const groupedBerkas = computed(() => {
-  const groups: Record<string, any> = {};
-
-  const list = detailpenawaran.value?.berkas || [];
-
-  list.forEach((item: any) => {
-    if (!groups[item.id_kategori_item]) {
-      groups[item.id_kategori_item] = {
-        nama_kategori_item: item.nama_kategori_item,
-        items: [],
-      };
-    }
-
-    groups[item.id_kategori_item].items.push(item);
-  });
-
-  return Object.values(groups);
 });
 
 async function opendialogaddinv() {
   data.dialogAdd = true;
 }
-
-const opendialogspk = () => {
-  data.dialogspk = true;
-};
 
 import {
   getStorage,
@@ -563,100 +83,6 @@ const uploadFile = async (file: File): Promise<string> => {
 
   return downloadURL;
 };
-
-async function suratperintahkerja() {
-  if (data.new_spk.tanggal_spk == "") {
-    return notificationStore.showError("Tanggal tidak boleh kosong");
-  }
-  const confirmed = await confirmationDialog.value?.show(
-    "Konfirmasi Dokumen SPK",
-    "Anda yakin ingin menyimpan SPK ini?",
-  );
-
-  if (!confirmed) {
-    return notificationStore.showError("Simpan dibatalkan");
-  }
-  useloadingStore().setLoading(true);
-  const dataset = detailpenawaran.value;
-  dataset.status = "SPK";
-  dataset.tanggal_spk = data.new_spk.tanggal_spk;
-  const c = await updatepenawaran(dataset);
-  if (c == "ok") {
-    notificationStore.showSuccess("SPK Berhasil disimpan");
-  } else {
-    notificationStore.showError("SPK Gagal disimpan");
-  }
-  useloadingStore().setLoading(false);
-  data.new_spk.document_spk = [];
-  data.dialogspk = false;
-}
-
-async function prosespenawaran() {
-  const confirmed = await confirmationDialog.value?.show(
-    "Konfirmasi ke Tahap Proses",
-    "Anda yakin ingin memproses penawaran ini?",
-  );
-
-  if (!confirmed) {
-    return notificationStore.showError("Proses dibatalkan");
-  }
-  useloadingStore().setLoading(true);
-  const dataset = detailpenawaran.value;
-
-  dataset.status = "Proses";
-  const c = await updatepenawaran(dataset);
-  if (c == "ok") {
-    notificationStore.showSuccess("Penawaran berhasil masuk ke tahap Proses");
-    navigateTo("/admin/penawaran/proses");
-  } else {
-    notificationStore.showError("Penawaran Gagal diproses");
-  }
-  useloadingStore().setLoading(false);
-}
-
-async function dibatalkan() {
-  const confirmed = await confirmationDialog.value?.show(
-    "Konfirmasi Batal",
-    "Anda yakin ingin membatalkan penawaran ini?",
-  );
-
-  if (!confirmed) {
-    return notificationStore.showError("Tindakan dibatalkan");
-  }
-  useloadingStore().setLoading(true);
-  const dataset = detailpenawaran.value;
-
-  dataset.status = "Dibatalkan";
-  const c = await updatepenawaran(dataset);
-  if (c == "ok") {
-    notificationStore.showSuccess("Penawaran Berhasil dibatalkan");
-  } else {
-    notificationStore.showError("Tindakan Gagal");
-  }
-  useloadingStore().setLoading(false);
-}
-
-async function ditolak() {
-  const confirmed = await confirmationDialog.value?.show(
-    "Konfirmasi Dibatalkan",
-    "Anda yakin ingin membatalkan penawaran ini?",
-  );
-
-  if (!confirmed) {
-    return notificationStore.showError("Penawaran dibatalkan");
-  }
-  useloadingStore().setLoading(true);
-  const dataset = detailpenawaran.value;
-
-  dataset.status = "Ditolak";
-  const c = await updatepenawaran(dataset);
-  if (c == "ok") {
-    notificationStore.showSuccess("Data Penawaran Berhasil Diubah");
-  } else {
-    notificationStore.showError("Data Penawaran Gagal Diubah");
-  }
-  useloadingStore().setLoading(false);
-}
 
 // Fungsi Cetak dengan Iframe (Menjaga keutuhan gaya CSS)
 const handlePrint = () => {
@@ -781,401 +207,6 @@ const handlePrint = () => {
     printAction();
   }
 };
-const addedItemIds = ref<number[]>([]);
-const selectAll = ref(false);
-watch(
-  () => masterCabangStore.getDataItemKategori,
-  (items) => {
-    items.forEach((item: any) => {
-      if (!item.periode_penawaran) {
-        item.periode_penawaran = {
-          mulai: "",
-          selesai: "",
-        };
-      }
-    });
-  },
-  { deep: true },
-);
-
-const canAddItem = (item: any) => {
-  return !newPenawaran.value.items.some((i) => i.id_kategori_item === item.id);
-};
-
-function tambahItem(item: any) {
-  if (!canAddItem(item)) return; // pakai helper ini
-
-  // 1. Validasi Keberadaan Data Periode
-  if (!item.periode_penawaran?.mulai || !item.periode_penawaran?.selesai) {
-    // Anda bisa mengganti alert ini dengan snackbar/toast library Anda
-    notificationStore.showError(
-      "Harap isi Periode Awal dan Periode Akhir terlebih dahulu!",
-    );
-    return;
-  }
-
-  // 2. Validasi Logika Tanggal (Selesai tidak boleh sebelum Mulai)
-  const tglMulai = item.periode_penawaran.mulai;
-  const tglSelesai = item.periode_penawaran.selesai;
-
-  if (tglSelesai < tglMulai) {
-    notificationStore.showError(
-      "Tanggal Akhir tidak boleh lebih kecil dari Tanggal Awal!",
-    );
-    return;
-  }
-
-  if (addedItemIds.value.includes(item.id)) {
-    return notificationStore.showInfo("Item sudah ditambahkan");
-  }
-
-  const itemBaru = {
-    id_kategori_item: item.id,
-    id_object_kategori: item.id_object_kategori,
-    id_perusahaan: item.id_perusahaan,
-    id_cabang_perusahaan: item.id_cabang,
-    nama_kategori_item: item.nama_kategori_item,
-    nama_kategori_object: item.nama_kategori_object,
-    nama_perusahaan: item.nama_perusahaan,
-    nama_group_pt: item.nama_group_pt,
-    nama_cabang: item.nama_cabang,
-    kode_kategori_item: item.kode_kategori_item,
-    jumlahUnit: item.jumlahUnit,
-    ukuran: item.ukuran ?? [],
-    periode: item.periode ?? { mulai: "-", selesai: "-" },
-    periode_penawaran: item.periode_penawaran ?? { mulai: "-", selesai: "-" },
-    keterangan: item.keterangan ?? "-",
-    dokumen: item.dokumen ?? [],
-    nominal: Number(item.nominal) || 0,
-  };
-  console.log(itemBaru, "itembaru");
-  console.log(newPenawaran.value.items, "cek items");
-  newPenawaran.value.items.push(itemBaru);
-  addedItemIds.value.push(item.id); // tandai sudah ditambahkan
-}
-const isOpeningDialogPenawaran = ref(false);
-
-watch(
-  () => newPenawaran.value.id_object_kategori,
-  async (idobject) => {
-    const dataobject = masterobjectstore.getDataObjectKategori;
-
-    const b = _.find(dataobject, (o: any) => o.id == idobject);
-    if (!_.isUndefined(b)) {
-      newPenawaran.value.nama_kategori_object = b!.nama;
-
-      // Reset selected items ketika object berubah
-      selectAll.value = false;
-
-      // Reset pagination
-      data.pageKategori = 1;
-
-      // Cek apakah perusahaan dan cabang sudah dipilih
-      if (!newPenawaran.value.id_perusahaan) {
-        notificationStore.showInfo("Silakan pilih Perusahaan terlebih dahulu");
-        masterCabangStore.clearDataItemKategori();
-        return;
-      }
-
-      if (!newPenawaran.value.id_cabang_perusahaan) {
-        notificationStore.showInfo("Silakan pilih Cabang terlebih dahulu");
-        masterCabangStore.clearDataItemKategori();
-        return;
-      }
-
-      // Tunggu sampai data selesai dimuat
-      await masterCabangStore.tarikDataItemKategori(
-        newPenawaran.value.id_perusahaan,
-        newPenawaran.value.id_cabang_perusahaan,
-        b.id!,
-      );
-
-      // Berikan notifikasi jika berhasil memuat data
-      if (masterCabangStore.getDataItemKategori.length > 0) {
-        notificationStore.showSuccess(
-          `Berhasil memuat ${masterCabangStore.getDataItemKategori.length} item kategori`,
-        );
-      } else {
-        notificationStore.showInfo(
-          "Tidak ada item kategori untuk kombinasi ini",
-        );
-      }
-    } else {
-      // Jika object dikosongkan
-      masterCabangStore.clearDataItemKategori();
-      selectAll.value = false;
-    }
-  },
-);
-
-watch(
-  () => newPenawaran.value.id_perusahaan,
-  async (idperusahaan) => {
-    if (isOpeningDialogPenawaran.value) return; // ⛔ STOP saat open dialog
-
-    const dataperusahaan = perusahaanStore.getDataPerusahaan;
-    const b = _.find(dataperusahaan, (o: any) => o.id == idperusahaan);
-
-    if (!_.isUndefined(b)) {
-      newPenawaran.value.nama_perusahaan = b!.nama_perusahaan;
-      newPenawaran.value.nama_surat = b!.nama_surat!;
-      newPenawaran.value.telepon_perusahaan = b!.telepon_perusahaan;
-      newPenawaran.value.nama_group_pt = b!.nama_group_pt;
-
-      // Reset cabang dan item kategori ketika perusahaan berubah
-      newPenawaran.value.id_cabang_perusahaan = "";
-      newPenawaran.value.id_object_kategori = "";
-      masterCabangStore.clearDataItemKategori();
-      selectAll.value = false;
-      data.pageKategori = 1;
-
-      await masterCabangStore.tarikDataCabangPerusahaan(b.id!);
-
-      // Berikan notifikasi jika berhasil memuat cabang
-      if (masterCabangStore.getDataCabang.length > 0) {
-        notificationStore.showSuccess(
-          `Berhasil memuat ${masterCabangStore.getDataCabang.length} cabang`,
-        );
-      }
-    }
-  },
-);
-
-// Tambahkan watch untuk cabang
-watch(
-  () => newPenawaran.value.id_cabang_perusahaan,
-  async (idcabang) => {
-    if (isOpeningDialogPenawaran.value) return; // ⛔ STOP saat open dialog
-
-    const datacabang = masterCabangStore.getDataCabang;
-    const b = _.find(datacabang, (o: any) => o.id == idcabang);
-
-    if (!_.isUndefined(b)) {
-      newPenawaran.value.nama_cabang_perusahaan = b!.nama_cabang;
-      newPenawaran.value.alamat_cabang = b!.alamat_cabang;
-      // Reset object dan item kategori ketika cabang berubah
-      newPenawaran.value.id_object_kategori = "";
-      masterCabangStore.clearDataItemKategori();
-      selectAll.value = false;
-      data.pageKategori = 1;
-
-      notificationStore.showInfo(
-        "Silakan pilih Object untuk melihat item kategori",
-      );
-    }
-  },
-);
-
-watch(
-  () => newPenawaran.value.items,
-  (val) => {
-    newPenawaran.value.total = totalPenawaran.value;
-
-    // notificationStore.showInfo("Berhasil ditambahkan");
-  },
-  { deep: true },
-);
-
-watch(
-  () => newPenawaran.value.items,
-  (items) => {
-    items.forEach((item: any) => {
-      item.subtotal = Number(item.nominal || 0) * Number(item.jumlahUnit || 0);
-    });
-  },
-  { deep: true },
-);
-
-const getNoDataMessage = () => {
-  if (!newPenawaran.value.id_perusahaan) {
-    return "Silakan pilih Perusahaan terlebih dahulu";
-  }
-  if (!newPenawaran.value.id_cabang_perusahaan) {
-    return "Silakan pilih Cabang terlebih dahulu";
-  }
-  if (!newPenawaran.value.id_object_kategori) {
-    return "Silakan pilih Object untuk melihat item kategori";
-  }
-  return "Tidak ada item kategori yang tersedia";
-};
-
-const getNoDataSubMessage = () => {
-  if (!newPenawaran.value.id_perusahaan) {
-    return "Pilih perusahaan dari dropdown di atas untuk melanjutkan";
-  }
-  if (!newPenawaran.value.id_cabang_perusahaan) {
-    return "Pilih cabang dari dropdown setelah memilih perusahaan";
-  }
-  if (!newPenawaran.value.id_object_kategori) {
-    return "Pilih object dari dropdown setelah memilih cabang";
-  }
-  return "Pastikan Anda telah memilih perusahaan, cabang, dan object yang tepat";
-};
-
-const getNoDataIcon = () => {
-  if (!newPenawaran.value.id_perusahaan) {
-    return "mdi-office-building-outline";
-  }
-  if (!newPenawaran.value.id_cabang_perusahaan) {
-    return "mdi-map-marker-outline";
-  }
-  if (!newPenawaran.value.id_object_kategori) {
-    return "mdi-cube-outline";
-  }
-  return "mdi-package-variant";
-};
-
-function additemtambahan() {
-  if (newlisitemtambahan.value.keterangan_penawaran.trim() === "") {
-    return notificationStore.showError("Keterangan tambahan wajib diisi");
-  }
-  if (newlisitemtambahan.value.nominal_tambahan <= 0) {
-    return notificationStore.showError("Nominal tambahan harus lebih dari 0");
-  }
-  newPenawaran.value.item_tambahan.push(newlisitemtambahan.value);
-  newlisitemtambahan.value = {
-    keterangan_penawaran: "",
-    nominal_tambahan: 0,
-    kena_ppn: false,
-    kena_pph: false,
-    ppn_tambahan: 0,
-    pph_tambahan: 0,
-    status_item_tambahan: false,
-  };
-}
-
-function deleteitemtambahan(index: number) {
-  _.pullAt(newPenawaran.value.item_tambahan, index);
-}
-
-async function hapusitemspenawaran(index: number) {
-  if (!confirmationDialog.value)
-    return notificationStore.showError("Dialog tidak tersedia");
-
-  const confirmed = await confirmationDialog.value.show(
-    "Konfirmasi Hapus",
-    "Anda yakin ingin menghapus data ini?",
-  );
-
-  if (!confirmed) return notificationStore.showError("Penghapusan dibatalkan");
-
-  if (index < 0 || index >= newPenawaran.value.items.length) {
-    return notificationStore.showError("Index item tidak valid");
-  }
-  const item = newPenawaran.value.items[index];
-
-  try {
-    _.pullAt(newPenawaran.value.items, index);
-    // 🔥 WAJIB hapus dari addedItemIds juga
-    _.pull(addedItemIds.value, item.id_kategori_item);
-    notificationStore.showSuccess("Item penawaran berhasil dihapus");
-  } catch (error: any) {
-    console.error(error);
-    notificationStore.showError(
-      error.message || "Gagal menghapus item penawaran",
-    );
-  }
-}
-
-async function saverevisi() {
-  if (!newPenawaran.value.tanggal)
-    return notificationStore.showError("Tanggal wajib diisi");
-
-  if (!newPenawaran.value.handle_by_aresa)
-    return notificationStore.showError("Handle By wajib dipilih");
-
-  if (!newPenawaran.value.id_perusahaan)
-    return notificationStore.showError("Perusahaan wajib dipilih");
-
-  if (!newPenawaran.value.id_cabang_perusahaan)
-    return notificationStore.showError("Cabang wajib dipilih");
-
-  if (!newPenawaran.value.id_object_kategori)
-    return notificationStore.showError("Object wajib dipilih");
-  if (!newPenawaran.value.items.length)
-    return notificationStore.showError("Pilih minimal satu item");
-  useloadingStore().setLoading(true);
-  newPenawaran.value.total = totalPenawaran.value;
-  const c = await setrevisipenawaran(newPenawaran.value);
-  console.log("HASILREVISI", c);
-  console.log("DATARIVISI", newPenawaran.value);
-  if (c == "ok") {
-    await penawaranstore.tarikDataPenawaranrevisAct(
-      String(detailpenawaran.value.id_penawaran || route.params.id),
-    );
-    notificationStore.showSuccess("Data Penawaran Berhasil Di Revisi");
-  } else {
-    notificationStore.showError("Data Penawaran Gagal Di Revisi");
-  }
-  useloadingStore().setLoading(false);
-  data.dialogPenawaran = false;
-}
-
-async function saverevisitopenawaran(item: revisipenawaranM) {
-  const confirmed = await confirmationDialog.value?.show(
-    "Konfirmasi Penawaran",
-    "Anda yakin ingin menggunakan penawaran ini?",
-  );
-  if (!confirmed) return notificationStore.showError("Revisi dibatalkan");
-  const loading = useloadingStore();
-  loading.setLoading(true);
-  try {
-    const result = await setrevisitopenawaran(item, detailpenawaran.value);
-    console.log("HASILREVISI", result);
-    console.log("DATARIVISI", item);
-    if (result === "ok") {
-      notificationStore.showSuccess("Penawaran berhasil Diterapkan");
-      data.dialogRevisi = false; // tutup dialog hanya kalau sukses
-    } else {
-      notificationStore.showError(result || "Penawaran Gagal Diterapkan");
-    }
-  } catch (error) {
-    console.error(error);
-    notificationStore.showError("Terjadi kesalahan sistem");
-  } finally {
-    await masterCabangStore.tarikDataItemKategori(
-      item.id_perusahaan,
-      item.id_cabang_perusahaan,
-      item.id_object_kategori,
-    );
-    loading.setLoading(false);
-  }
-}
-
-const formatTanggal = (tanggal: string) => {
-  if (!tanggal) return "-";
-
-  return new Intl.DateTimeFormat("id-ID", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  }).format(new Date(tanggal));
-};
-
-const totalPenawaran = computed(() => {
-  const totalItem = _.sumBy(newPenawaran.value.items ?? [], (item: any) => {
-    return Number(item.nominal || 0) * Number(item.jumlahUnit || 0);
-  });
-
-  const totalTambahan = _.sumBy(
-    newPenawaran.value.item_tambahan ?? [],
-    (item: any) => Number(item.nominal_tambahan || 0),
-  );
-
-  return totalItem + totalTambahan;
-});
-
-async function openDialogRevisiPenawaran() {
-  isOpeningDialogPenawaran.value = true;
-  await masterobjectstore.tarikDataObjectKategoriAct();
-  await perusahaanStore.tarikDataPerusahaanAct();
-  await masterCabangStore.tarikDataCabangAct();
-  newPenawaran.value = _.cloneDeep(detailpenawaran.value);
-  data.dialogPenawaran = true;
-  nextTick(() => {
-    isOpeningDialogPenawaran.value = false;
-  });
-}
 </script>
 
 <template>
@@ -1191,28 +222,6 @@ async function openDialogRevisiPenawaran() {
   </v-btn>
 
   <div v-if="detailpenawaran" class="page-container">
-    <!-- // DIALOG SPK \\ -->
-    <v-dialog v-model="data.dialogspk" max-width="450" scrollable>
-      <v-card>
-        <v-card-title class="px-6 py-3 bg-primary text-center">
-          <span class="font-weight-bold text-white"> SPK </span>
-        </v-card-title>
-
-        <v-card-text>
-          <a-date-picker
-            class="mt-3"
-            label="Tanggal SPK"
-            v-model="data.new_spk.tanggal_spk"
-          />
-        </v-card-text>
-        <v-card-actions>
-          <v-btn color="error" @click="data.dialogspk = false">Batal</v-btn>
-          <v-btn color="primary" variant="flat" @click="suratperintahkerja"
-            >Simpan</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
 
     <!-- // DIALOG BUAT INVOICE \\ -->
     <CreateInvoiceDialog
@@ -1220,8 +229,6 @@ async function openDialogRevisiPenawaran() {
       :penawaran="detailpenawaran"
       @saved="navigateTo('/admin/invoice')"
     />
-
-    <!-- // PINDAH PENAWARAN \\ -->
 
     <!-- // DETAIL PENAWARAN \\ -->
     <v-card
@@ -1231,20 +238,13 @@ async function openDialogRevisiPenawaran() {
     >
       <v-card-text class="pa-4">
         <div class="d-flex align-start mb-3">
-          <img
-            v-if="detailpenawaran.handle_by_aresa == 'KAM'"
-            src="/public/aresa_typo.png"
-            alt="Aresa Logo"
-            style="height: 45px; margin-right: 12px"
-          />
-
           <div class="d-flex justify-space-between align-start flex-grow-1">
             <div>
               <div
                 class="text-caption text-primary text-uppercase font-weight-bold"
                 style="letter-spacing: 1px"
               >
-                No. Penawaran
+                Quotation Ref No.
               </div>
               <div class="text-h6 font-weight-black text-grey-darken-4">
                 {{ detailpenawaran.no_penawaran }}
@@ -1267,22 +267,18 @@ async function openDialogRevisiPenawaran() {
         <v-row no-gutters>
           <v-col cols="12" md="7" class="mb-4 mb-md-0">
             <div class="text-caption text-primary font-weight-bold">
-              PERUSAHAAN
-            </div>
-            <div class="text-body-1 font-weight-bold text-grey-darken-3">
-              {{ detailpenawaran.nama_group_pt }}
-              {{ detailpenawaran.nama_perusahaan }}
+              Client
             </div>
             <div class="text-body-2 text-grey-darken-1">
               <v-icon size="small" color="primary" class="mr-1"
                 >mdi-office-building</v-icon
               >
-              Cab. {{ detailpenawaran.nama_cabang_perusahaan }}
+              {{ detailpenawaran.nama_perusahaan }}
               <span class="mx-2 text-grey-lighten-1">|</span>
               <v-icon size="small" color="primary" class="mr-1"
                 >mdi-phone</v-icon
               >
-              {{ detailpenawaran.telepon_perusahaan }}
+              {{ detailpenawaran.no_telp }}
             </div>
           </v-col>
 
@@ -1297,7 +293,7 @@ async function openDialogRevisiPenawaran() {
                   <v-icon size="15" color="primary"
                     >mdi-file-document-outline</v-icon
                   >
-                  PERIHAL
+                  Subject
                 </div>
 
                 <div
@@ -1308,31 +304,6 @@ async function openDialogRevisiPenawaran() {
                 </div>
               </div>
 
-              <v-divider opacity="50"></v-divider>
-              <!-- Total Unit -->
-              <div class="d-flex align-center ga-2">
-                <v-icon size="18" color="primary">
-                  mdi-package-variant-closed
-                </v-icon>
-
-                <span
-                  class="text-caption text-grey-darken-1"
-                  style="letter-spacing: 0.5px"
-                >
-                  Total Unit :
-                </span>
-
-                <span class="text-body-1 font-weight-bold text-primary">
-                  {{
-                    detailpenawaran?.items?.reduce(
-                      (total, item) => total + Number(item.jumlahUnit || 0),
-                      0,
-                    )
-                  }}
-                </span>
-
-                <span class="text-caption text-grey-darken-1"> Unit </span>
-              </div>
             </div>
           </v-col>
         </v-row>
@@ -1348,33 +319,6 @@ async function openDialogRevisiPenawaran() {
       />
 
       <div class="d-flex flex-wrap gap-2">
-        <v-btn color="indigo" @click="opendialogspk" class="text-capitalize">
-          SPK
-        </v-btn>
-
-        <v-btn
-          v-if="
-            detailpenawaran.status == 'Draft' ||
-            detailpenawaran.status == 'Terkirim'
-          "
-          color="orange"
-          prepend-icon="mdi-close-circle"
-          @click="dibatalkan"
-          class="text-capitalize"
-          >Batal</v-btn
-        >
-
-        <!-- <v-btn
-          v-if="
-            detailpenawaran.status == 'Draft' ||
-            detailpenawaran.status == 'Terkirim'
-          "
-          color="red-darken-1"
-          prepend-icon="mdi-close-circle"
-          @click="ditolak"
-          class="text-capitalize"
-          >Tolak</v-btn
-        > -->
 
         <v-btn
           color="success"
@@ -1383,46 +327,8 @@ async function openDialogRevisiPenawaran() {
         >
           Buat Invoice
         </v-btn>
-
-        <!-- <v-btn
-          variant="outlined"
-          color="indigo-darken-3"
-          prepend-icon="mdi-printer"
-          @click="handlePrint"
-          class="text-capitalize"
-          v-if="
-            detailpenawaran.status != 'Pemberkasan' &&
-            detailpenawaran.status != 'Proses' &&
-            detailpenawaran.status != 'SPK' &&
-            detailpenawaran.status != 'Invoice'
-          "
-        >
-          Cetak
-        </v-btn> -->
       </div>
     </v-row>
-
-    <!-- // SPK PREVIEW \\ -->
-    <div
-      style="height: 100vw"
-      v-if="
-        detailpenawaran.status == 'Pemberkasan' ||
-        detailpenawaran.status == 'Proses' ||
-        detailpenawaran.status == 'SPK' ||
-        detailpenawaran.status == 'Invoice'
-      "
-    >
-      <div class="spk-header">
-        <v-icon size="18" class="mr-2">mdi-file-document-outline</v-icon>
-        <span class="spk-title">Dokumen SPK Penawaran</span>
-      </div>
-      <iframe
-        :src="detailpenawaran.tanggal_spk"
-        width="100%"
-        height="100%"
-        style="border: none"
-      />
-    </div>
 
     <!-- // CANVAS \\ -->
     <canvas-penawaran :detailpenawaran="detailpenawaran" />

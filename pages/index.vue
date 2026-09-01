@@ -55,7 +55,7 @@ const update = async () => {
             elevation="0"
             to="/admin"
           >
-            Masuk ke Dashboard
+            Masuk
             <v-icon end icon="mdi-arrow-right" class="btn-icon" />
           </v-btn>
         </div>

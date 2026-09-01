@@ -38,11 +38,12 @@ const logout = async () => {
       <div class="d-flex align-center ml-2">
         <img src="/public/Logo-SNS.png" alt="Logo" width="40" class="ml-4" />
       </div>
-      <div class="text-center">
-        <v-chip variant="outlined" class="text-primary"
-          ><strong>V 1</strong></v-chip
-        >
+      <div>
+        <strong>CV. SOLUSI NUSA SEGARA </strong>
       </div>
+      <v-chip variant="outlined" class="text-primary ml-4"
+        ><strong>V 1</strong></v-chip
+      >
     </template>
 
     <v-spacer />
@@ -140,7 +141,6 @@ const logout = async () => {
 </template>
 
 <style scoped>
-
 /* MENYEMBUNYIKAN SCROLLBAR */
 :deep(.v-navigation-drawer__content) {
   overflow-y: auto;

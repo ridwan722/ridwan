@@ -1,6 +1,14 @@
 <template>
   <ConfirmationDialog ref="confirmationDialog" />
-
+<v-btn
+    variant="text"
+    color="grey-darken-3"
+    prepend-icon="mdi-arrow-left"
+    @click="$router.go(-1)"
+    class="text-capitalize font-weight-bold mb-2"
+  >
+    Kembali
+  </v-btn>
   <!-- /// DIALOG TAMBAH INVOICE \\\ -->
   <v-dialog v-model="data.dialogTambahInvoice" max-width="900" scrollable>
     <v-card class="rounded-xl overflow-hidden elevation-3 border-0">
@@ -259,7 +267,7 @@
           <span class="font-weight-medium text-h5">Invoice</span>
         </v-breadcrumbs-item>
       </v-breadcrumbs>
-    </v-col>
+    </v-col> 
   </v-row>
 
   <v-card class="border rounded-lg" flat>

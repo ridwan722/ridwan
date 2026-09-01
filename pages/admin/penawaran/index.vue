@@ -1,12 +1,22 @@
 <template>
   <ConfirmationDialog ref="confirmationDialog" />
 
+  <v-btn
+    variant="text"
+    color="grey-darken-3"
+    prepend-icon="mdi-arrow-left"
+    @click="$router.go(-1)"
+    class="text-capitalize font-weight-bold mb-2"
+  >
+    Kembali
+  </v-btn>
+
   <!-- /// DIALOG TAMBAH / EDIT Penawaran \\\ -->
-  <v-dialog v-model="data.dialogTambahPenawaran" max-width="900" scrollable>
+  <v-dialog v-model="data.dialogTambahPenawaran" max-width="1300" scrollable>
     <v-card class="rounded-xl overflow-hidden elevation-3 border-0">
       <v-card-item class="bg-grey-lighten-4 pa-3 text-center">
         <h4 class="font-weight-bold text-grey-darken-3">
-          {{ data.penawaranAddEdit === "add" ? "Buat" : "Edit" }} Penawaran
+          {{ data.penawaranAddEdit === "add" ? "Create" : "Edit" }} Quotation
         </h4>
         <p class="text-caption text-grey-darken-1 m-0">
           Lengkapi rincian penawaran harga dan item pekerjaan di bawah ini.
@@ -21,8 +31,8 @@
           <v-col cols="12" md="4">
             <a-select
               v-model="newPenawaran.id_perusahaan"
-              label="Customer"
-              placeholder="Pilih Customer"
+              label="Client"
+              placeholder="Select"
               item-title="nama"
               item-value="id"
               :items="customerStore.getDataCustomer"
@@ -31,13 +41,13 @@
           <v-col cols="12" sm="6" md="4">
             <a-date-picker
               v-model="newPenawaran.tanggal_penawaran"
-              label="Tanggal Penawaran"
+              label="Quotation Date"
             />
           </v-col>
           <v-col cols="12" sm="6" md="4">
             <a-text-field
               v-model="newPenawaran.no_penawaran"
-              label="No. Penawaran"
+              label="Quotation Ref No"
               disabled
             />
           </v-col>
@@ -46,9 +56,9 @@
         <a-textarea
           v-model="newPenawaran.alamat_perusahaan"
           class="mt-2"
-          label="Alamat Customer"
+          label="Address"
           disabled
-          placeholder="Alamat customer terisi otomatis"
+          placeholder="*Auto"
         />
 
         <a-text-field
@@ -60,17 +70,19 @@
         />
 
         <a-text-field
-          v-model="newPenawaran.telp_perusahaan"
+          v-model="newPenawaran.no_telp"
           class="mt-2"
-          label="Telepon Perusahaan"
-          placeholder="Nomor telepon perusahaan"
+          label="Phone Number"
+          disabled
+          placeholder="+00 0000"
         />
+
+        <v-divider class="my-6 border-opacity-50" />
 
         <a-textarea
           v-model="newPenawaran.perihal"
-          class="mt-2"
-          label="Perihal"
-          placeholder="Perihal penawaran"
+          label="Subject"
+          placeholder="Quotation Subject"
         />
 
         <v-divider class="my-6 border-opacity-50" />
@@ -97,31 +109,41 @@
           class="bg-grey-lighten-5 rounded-lg pa-4 mb-4 border border-dashed"
         >
           <v-row align="center" density="compact">
-            <v-col cols="12" sm="5">
+            <v-col cols="12" sm="3">
               <a-textarea
                 v-model="item.nama"
-                label="Nama Item"
-                placeholder="Deskripsi barang/jasa"
+                label="Description"
+                placeholder="description"
               />
             </v-col>
             <v-col cols="10" sm="2">
               <a-field-number v-model="item.qty" label="Qty" placeholder="0" />
             </v-col>
             <v-col cols="10" sm="2">
-              <a-text-field
+              <a-select
+                :items="['Unit', 'Pcs', 'Kg']"
                 v-model="item.uom"
-                label="Satuan"
-                placeholder="Pcs/Unit"
+                label="UOM"
+                placeholder="Select"
               />
             </v-col>
             <v-col cols="10" sm="2">
               <a-field-number
                 v-model="item.amount"
-                label="Harga Satuan"
+                label="Amount/Pcs"
                 placeholder="0"
               />
             </v-col>
-            <v-col cols="2" sm="1" class="text-center">
+
+            <v-col cols="10" sm="2">
+              <a-text-field
+                v-model="item.subtotal_item"
+                label="Subtotal"
+                placeholder="0"
+                disabled
+              />
+            </v-col>
+            <v-col cols="1" sm="1" class="text-center">
               <v-btn
                 icon="mdi-trash-can-outline"
                 size="small"
@@ -233,7 +255,7 @@
             prepend-icon="mdi-plus"
             @click="openDialogTambahPenawaran"
           >
-            Tambah Penawaran
+            Create New Quotation
           </v-btn>
 
           <v-btn
@@ -263,9 +285,9 @@
     >
       <template v-slot:item.no="{ index }"> {{ index + 1 }}</template>
 
-      <template v-slot:item.no_penawaran="{ item }"
-        >{{ item.no_penawaran }}</template
-      >
+      <template v-slot:item.no_penawaran="{ item }">{{
+        item.no_penawaran
+      }}</template>
 
       <template v-slot:item.tanggal_penawaran="{ item }">{{
         rubahtanggallengkap(item.tanggal_penawaran)
@@ -301,7 +323,6 @@
             variant="tonal"
             color="warning"
             class="rounded-lg mr-1"
-            v-if="item.status === 'Draft' || item.status === 'Pending'"
             @click="openDialogEditPenawaran(item)"
           >
             <v-icon icon="mdi-pencil-outline" />
@@ -310,13 +331,11 @@
             >
           </v-btn>
 
-          <!-- Konversi Penawaran ke Invoice -->
           <v-btn
             size="27"
             variant="tonal"
             color="success"
             class="rounded-lg mr-1"
-            v-if="item.status === 'Disetujui'"
             @click="convertToInvoice(item)"
           >
             <v-icon icon="mdi-file-document-outline" />
@@ -330,7 +349,6 @@
             variant="tonal"
             color="grey"
             class="rounded-lg"
-            v-if="item.status === 'Draft' || item.status === 'Pending'"
             @click="hapusPenawaran(item)"
           >
             <v-icon icon="mdi-trash-can-outline" />
@@ -392,7 +410,7 @@ const data = reactive({
   headPenawaran: [
     { title: "No", value: "no", width: "10px" },
     { title: "Tanggal", value: "tanggal_penawaran", sortable: true },
-    { title: "No. Penawaran", value: "no_penawaran", sortable: true },
+    { title: "Quotation Ref No", value: "no_penawaran", sortable: true },
     { title: "Perusahaan", value: "nama_perusahaan", sortable: true },
     { title: "Perihal", value: "perihal", sortable: true },
     { title: "Total", value: "grand_total", sortable: true },
@@ -409,14 +427,14 @@ function emptyPenawaran(): penawaranM {
     pic: "",
     nama_perusahaan: "",
     alamat_perusahaan: "",
-    telp_perusahaan: "",
+    no_telp: "",
     tanggal_penawaran: moment().format("YYYY-MM-DD"),
     created_at: 0,
     created_by: "",
     status: "Draft",
     perihal: "",
     penawaran_item: [
-      { nama: "", qty: 1, uom: "", amount: 0, subtotal_item: 0 },
+      { nama: "", qty: 1, uom: "Unit", amount: 0, subtotal_item: 0 },
     ],
     subtotal_penawaran: 0,
     grand_total_penawaran: 0,
@@ -465,6 +483,7 @@ watch(
     newPenawaran.value.nama_perusahaan = customer.nama;
     newPenawaran.value.alamat_perusahaan = customer.alamat;
     newPenawaran.value.pic = customer.pic;
+    newPenawaran.value.no_telp = customer.no_telp;
   },
 );
 
@@ -538,10 +557,10 @@ async function simpanPenawaranDialog() {
   if (
     !newPenawaran.value.tanggal_penawaran ||
     !newPenawaran.value.perihal.trim() ||
-    !newPenawaran.value.telp_perusahaan.trim()
+    !newPenawaran.value.no_telp.trim()
   ) {
     return notificationStore.showError(
-      "Tanggal, perihal, dan telepon perusahaan wajib diisi"
+      "Tanggal, perihal, dan telepon perusahaan wajib diisi",
     );
   }
   if (
@@ -564,10 +583,8 @@ async function simpanPenawaranDialog() {
 
   if (data.penawaranAddEdit === "add") {
     newPenawaran.value.no_penawaran ||= generateNoPenawaran();
-    newPenawaran.value.id_penawaran = newPenawaran.value.no_penawaran.replaceAll(
-      "/",
-      "-",
-    );
+    newPenawaran.value.id_penawaran =
+      newPenawaran.value.no_penawaran.replaceAll("/", "-");
     newPenawaran.value.created_at = moment().unix();
     newPenawaran.value.created_by = userStore.getEmail;
 
@@ -585,43 +602,6 @@ async function simpanPenawaranDialog() {
 
   data.dialogTambahPenawaran = false;
   newPenawaran.value = emptyPenawaran();
-}
-
-async function convertToInvoice(item: penawaranM) {
-  const confirmed = await confirmationDialog.value?.show(
-    "Konversi ke Invoice",
-    `Apakah Anda ingin membuat Invoice baru berdasarkan penawaran #${item.no_penawaran}?`,
-    { variant: "info" },
-  );
-  if (!confirmed) return;
-
-  const invoicePayload = {
-    no_inv: `INV-${moment().format("YYYYMMDDHHmmss")}`,
-    id_customer: item.id_perusahaan,
-    nama_customer: item.nama_perusahaan,
-    pic: item.pic,
-    alamat_customer: item.alamat_perusahaan || "",
-    tanggal: moment().format("YYYY-MM-DD"),
-    item_pekerjaan: item.penawaran_item.map((penawaranItem) => ({
-      deskripsi_pekerjaan: penawaranItem.nama,
-      qty: penawaranItem.qty,
-      uom: penawaranItem.uom,
-      amount: penawaranItem.amount,
-    })),
-    pakai_ppn: false,
-    subtotal_invoice: Number(item.subtotal_penawaran),
-    ppn: 0,
-    grandtotal_invoice: item.grand_total_penawaran,
-    status: "Draft",
-    createdAt: moment().unix(),
-    createdBy: userStore.getEmail,
-  };
-
-  const newInv = await invoiceStore.createInvoiceAct(invoicePayload);
-  if (newInv?.id) {
-    notificationStore.showSuccess("Invoice berhasil dibuat dari Penawaran");
-    router.push(`/admin/invoice/${newInv.id}`);
-  }
 }
 
 async function hapusPenawaran(item: penawaranM) {

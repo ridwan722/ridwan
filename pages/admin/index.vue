@@ -43,7 +43,7 @@ definePageMeta({
               </div>
 
               <div class="sub-grid">
-                <NuxtLink to="/admin/master/user-management" class="app-card">
+                <NuxtLink to="/admin/master/users" class="app-card">
                   <div class="card-icon icon-blue">
                     <v-icon icon="mdi-account-group-outline" size="22" />
                   </div>
@@ -51,7 +51,7 @@ definePageMeta({
                 </NuxtLink>
               </div>
               <div class="sub-grid mt-3">
-                <NuxtLink to="/admin/master/user-management" class="app-card">
+                <NuxtLink to="/admin/master/client" class="app-card">
                   <div class="card-icon icon-blue">
                     <v-icon icon="mdi-corporate" size="22" />
                   </div>

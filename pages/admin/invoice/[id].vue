@@ -126,7 +126,16 @@ function printInvoice() {
 <template>
   <div>
     <ConfirmationDialog ref="confirmationDialog" />
-
+<v-btn
+    variant="text"
+    color="grey-darken-3"
+    prepend-icon="mdi-arrow-left"
+    @click="$router.go(-1)"
+    class="text-capitalize font-weight-bold mb-2"
+  >
+    Kembali
+  </v-btn>
+  
     <v-dialog v-model="dialogDikirim" max-width="500" persistent>
       <v-card class="rounded-lg">
         <v-card-title class="bg-primary text-white pa-4">

@@ -3,6 +3,7 @@ export interface customerM {
   nama: string;
   pic: string;
   alamat: string;
+  no_telp: string;
   createdAt: number;
   createdBy: string;
   updatedAt?: number;
