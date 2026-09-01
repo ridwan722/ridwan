@@ -50,11 +50,10 @@
 
         <div class="header-contact">
           <p class="address-line">
-            Ruko Dream Land Blok A No.05, Dreamland Square, Marina City
-          </p>
-          <p class="address-line">Tanjung Riau, Kec. Sekupang, Kota Batam 29425</p>
+            Ruko Dream Land Blok A No.05,<br> Dreamland Square,  Marina City 
+          Tanjung Riau, Kec. Sekupang, Kota Batam 29425</p>
           <p class="phone-line">
-            <v-icon size="11" class="mr-1">mdi-phone</v-icon>
+
             Telp. +62 xxx
           </p>
         </div>
@@ -88,19 +87,19 @@
               <span class="val highlight">{{ props.detailpenawaran.no_penawaran || "-" }}</span>
             </div>
             <div class="meta-row">
-              <span class="lbl">Perusahaan</span>
+              <span class="lbl">To</span>
               <span class="sep">:</span>
               <span class="val bold">{{ props.detailpenawaran.nama_perusahaan || "-" }}</span>
             </div>
             <div class="meta-row">
-              <span class="lbl">Attn / UP</span>
+              <span class="lbl">Attn</span>
               <span class="sep">:</span>
               <span class="val">{{ props.detailpenawaran.pic || "-" }}</span>
             </div>
           </div>
           <div class="grid-col">
             <div class="meta-row">
-              <span class="lbl">Perihal</span>
+              <span class="lbl">Subject</span>
               <span class="sep">:</span>
               <span class="val bold-navy">{{ props.detailpenawaran.perihal || "-" }}</span>
             </div>
@@ -211,7 +210,7 @@
 
         <!-- Closing Paragraph -->
         <p class="closing-paragraph" v-if="showTable">
-          Demikian penawaran harga ini kami sampaikan. Besar harapan kami untuk dapat bekerjasama dengan perusahaan Anda. Atas perhatian dan kerjasamanya, kami ucapkan terima kasih.
+          Demikian penawaran harga ini kami sampaikan. Atas perhatian dan kerjasamanya, kami ucapkan terima kasih.
         </p>
 
         <!-- Signature Section -->
@@ -483,7 +482,7 @@ const handlePrint = () => {
 }
 
 .company-name {
-  font-size: 19px;
+  font-size: 17px;
   font-weight: 800;
   color: #0f2b48;
   letter-spacing: 0.3px;
@@ -503,6 +502,7 @@ const handlePrint = () => {
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  max-width: 250px;
 }
 
 /* Header Divider Lines */
@@ -776,20 +776,20 @@ const handlePrint = () => {
 }
 
 .sig-img-container {
-  height: 70px;
+  height: 95px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .sig-image {
-  max-height: 65px;
+  max-height: 95px;
   max-width: 130px;
   object-fit: contain;
 }
 
 .sig-placeholder {
-  height: 70px;
+  height: 95px;
 }
 
 .sig-person-name {

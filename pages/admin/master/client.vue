@@ -78,7 +78,7 @@
         class="text-capitalize px-3"
         prepend-icon="mdi-plus"
       >
-        Tambah Customer
+        Add Client
       </v-btn>
     </v-col>
   </v-row>
