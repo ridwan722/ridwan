@@ -1,17 +1,15 @@
 <template>
-  <v-dialog v-model="dialogWarna" max-width="340px">
-    <v-card>
-      <v-card-title class="text-h6 d-flex align-center justify-space-between">
-        <span>Pilih Warna Header</span>
-        <v-btn
-          icon="mdi-close"
-          variant="text"
-          @click="dialogWarna = false"
-        ></v-btn>
+  <!-- Dialog Color Picker -->
+  <v-dialog v-model="dialogWarna" max-width="360px">
+    <v-card class="rounded-xl elevation-8">
+      <v-card-title class="d-flex align-center justify-space-between pa-4 bg-slate-50">
+        <div class="d-flex align-center gap-2">
+          <v-icon color="primary" size="20">mdi-palette-outline</v-icon>
+          <span class="text-subtitle-1 font-weight-bold color-slate-800">Tema Warna Header</span>
+        </div>
+        <v-btn icon="mdi-close" variant="text" size="small" density="comfortable" @click="dialogWarna = false" />
       </v-card-title>
-
-      <v-divider></v-divider>
-
+      <v-divider />
       <v-card-text class="d-flex justify-center pa-4">
         <v-color-picker
           v-model="warnaBackgroundCustom"
@@ -19,272 +17,260 @@
           hide-inputs
           show-swatches
           elevation="0"
-        ></v-color-picker>
+        />
       </v-card-text>
-
-      <v-divider></v-divider>
-
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="primary" variant="text" @click="dialogWarna = false">
-          Selesai
+      <v-divider />
+      <v-card-actions class="pa-3 bg-slate-50">
+        <v-spacer />
+        <v-btn color="primary" variant="flat" size="small" class="px-5 rounded-lg" @click="dialogWarna = false">
+          Terapkan
         </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 
   <div>
+    <!-- Container Penawaran -->
     <div id="offer-to-print" class="offer-card">
+      <!-- Watermark Background -->
       <div class="watermark">
-        <img src="/public/Logo-SNS.png" />
+        <img src="/public/Logo-SNS.png" alt="Logo Watermark" />
       </div>
+
+      <!-- Section Kop Surat -->
       <div class="header-section">
-        <div class="header-logo">
-          <img src="/public/Logo-SNS.png" />
+        <div class="header-brand">
+          <div class="logo-wrapper">
+            <img src="/public/Logo-SNS.png" alt="Logo Header" />
+          </div>
+          <div class="company-titles">
+            <h1 class="company-name">CV. SOLUSI NUSA SEGARA</h1>
+          </div>
         </div>
-        <div class="header-address">
-          <h2>CV. SOLUSI NUSA SEGARA</h2>
-          <p>
-            Ruko Dream Land Blok A No.05, Dreamland Square, Marina City <br />
-            Tanjung Riau, Kec. Sekupang, Kota Batam 29425
+
+        <div class="header-contact">
+          <p class="address-line">
+            Ruko Dream Land Blok A No.05, Dreamland Square, Marina City
           </p>
-          <p>Telp. +62 xxx</p>
+          <p class="address-line">Tanjung Riau, Kec. Sekupang, Kota Batam 29425</p>
+          <p class="phone-line">
+            <v-icon size="11" class="mr-1">mdi-phone</v-icon>
+            Telp. +62 xxx
+          </p>
         </div>
       </div>
 
-      <div class="content-body" style="font-size: 11px">
-        <p class="text-right mb-6">
-          Batam,
-          {{ rubahtanggalpenawaran(props.detailpenawaran.tanggal_penawaran) }}
-        </p>
+      <!-- Accent Divider Line -->
+      <div class="header-divider">
+        <div class="accent-bar" :style="{ backgroundColor: warnaBackgroundCustom }"></div>
+        <div class="secondary-bar"></div>
+      </div>
 
-        <div class="info-row">
-          <div class="label">Quotation Ref No.</div>
-          <div class="value">
-            : {{ props.detailpenawaran.no_penawaran || "-" }}
+      <!-- Main Document Content -->
+      <div class="content-body">
+        <!-- Top Info Line (Document Title & Date) -->
+        <div class="doc-meta-header">
+          <div class="doc-badge" :style="{ borderColor: warnaBackgroundCustom }">
+
+          </div>
+          <div class="doc-date">
+            <span>Batam, </span>
+            <strong>{{ rubahtanggalpenawaran(props.detailpenawaran.tanggal_penawaran) }}</strong>
           </div>
         </div>
 
-        <div class="info-row">
-          <div class="label">Nama Perusahaan</div>
-          <div class="value">
-            :
-            <span>{{ props.detailpenawaran.nama_perusahaan || "-" }}</span>
+        <!-- Info Grid (Two Columns Cards) -->
+        <div class="info-grid-card">
+          <div class="grid-col">
+            <div class="meta-row">
+              <span class="lbl">Ref. No</span>
+              <span class="sep">:</span>
+              <span class="val highlight">{{ props.detailpenawaran.no_penawaran || "-" }}</span>
+            </div>
+            <div class="meta-row">
+              <span class="lbl">Perusahaan</span>
+              <span class="sep">:</span>
+              <span class="val bold">{{ props.detailpenawaran.nama_perusahaan || "-" }}</span>
+            </div>
+            <div class="meta-row">
+              <span class="lbl">Attn / UP</span>
+              <span class="sep">:</span>
+              <span class="val">{{ props.detailpenawaran.pic || "-" }}</span>
+            </div>
+          </div>
+          <div class="grid-col">
+            <div class="meta-row">
+              <span class="lbl">Perihal</span>
+              <span class="sep">:</span>
+              <span class="val bold-navy">{{ props.detailpenawaran.perihal || "-" }}</span>
+            </div>
+            <div class="meta-row">
+              <span class="lbl">Vessel</span>
+              <span class="sep">:</span>
+              <span class="val">xxx</span>
+            </div>
           </div>
         </div>
 
-        <div class="info-row">
-          <div class="label">Attn</div>
-          <div class="value">
-            :
-            <span>{{ props.detailpenawaran.pic || "-" }}</span>
-          </div>
+        <!-- Salutation & Opening Paragraph -->
+        <div class="text-salutation">
+          <p class="salutation-title">Dengan Hormat,</p>
+          <p class="salutation-body">
+            Sehubungan dengan kebutuhan operasional perusahaan Bapak/Ibu, bersama surat ini kami mengajukan penawaran harga untuk 
+            <strong>{{ props.detailpenawaran.perihal }}</strong> kepada <strong>{{ props.detailpenawaran.nama_perusahaan }}</strong> dengan rincian sebagai berikut:
+          </p>
         </div>
 
-        <div class="info-row">
-          <div class="label">Subject</div>
-          <div class="value">
-            :
-            <span>{{ props.detailpenawaran.perihal || "-" }}</span>
-          </div>
-        </div>
-
-        <div class="info-row">
-          <div class="label">Vessel</div>
-          <div class="value">: xxx</div>
-        </div>
-
-        <p class="mt-6"><i>Dengan Hormat,</i></p>
-
-        <p class="text-justify">
-          <span>Dengan ini kami</span> memberikan Penawaran
-          {{ props.detailpenawaran.perihal }} kepada
-          {{ props.detailpenawaran.nama_perusahaan }}, Adapun penawaran yang
-          kami berikan adalah sebagai berikut:
-        </p>
-
-        <table class="modern-table">
-          <thead
-            class="row-divider2"
-            :style="{
-              fontSize: '9px',
-              backgroundColor: warnaBackgroundCustom,
-            }"
-          >
-            <tr>
-              <th width="30">
-                <v-tooltip location="left">
-                  <template #activator="{ props }">
-                    <v-btn
-                      v-bind="props"
-                      class="no-print"
-                      size="20"
-                      color="blue"
-                      icon="mdi-palette"
-                      @click="dialogWarna = true"
-                      elevation="0"
-                    />
-                  </template>
-
-                  <span style="font-size: 11px; padding: 2px 4px">
-                    Ganti warna Header
-                  </span>
-                </v-tooltip>
-              </th>
-              <th class="text-left" style="max-width: 10px">Keterangan</th>
-              <th style="width: 65px" class="text-center">QTY</th>
-              <th style="width: 65px" class="text-right">UOM</th>
-              <th style="width: 115px" class="text-right">Amount/Unit</th>
-              <th style="width: 111px" class="text-right">
-                <v-text-field
-                  v-model="labelSubTotal"
-                  variant="plain"
-                  density="compact"
-                  hide-details
-                  class="text-right-input"
-                />
-              </th>
-            </tr>
-          </thead>
-
-          <tbody ref="tableBodyRef" style="font-size: 11px">
-            <tr class="row-divider-bottom">
-              <td colspan="100%" style="padding: 0; border: none">
-                <table
-                  style="
-                    width: 100%;
-                    font-size: 11px;
-                    border-collapse: collapse;
-                  "
-                >
-                  <tr
-                    v-for="(item, index) in props.detailpenawaran
-                      .penawaran_item"
-                  >
-                    <td style="width: 20px" class="bullet-cell drag-handle">
-                      {{ index + 1 }}.
-                    </td>
-                    <td class="text-left">{{ item.nama }}</td>
-                    <td class="text-center" style="width: 65px">
-                      {{ item.qty }}
-                    </td>
-                    <td class="text-right" style="width: 65px">
-                      {{ item.uom }}
-                    </td>
-                    <td class="text-right" style="width: 115px">
-                      {{ rupiah(item.amount) }}
-                    </td>
-                    <td class="text-right" style="width: 115px">
-                      {{ rupiah(item.subtotal_item) }}
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        <table class="modern-table">
-          <tr>
-            <td>
-              <strong>Total</strong>
-              <strong style="margin-left: 37px"
-                >: Rp
-                {{
-                  rupiah(props.detailpenawaran.grand_total_penawaran)
-                }}</strong
+        <!-- Main Items Table -->
+        <div class="table-container">
+          <table class="modern-table">
+            <thead>
+              <tr :style="{ backgroundColor: warnaBackgroundCustom, color: warnaTeksHeader }">
+                <th width="36" class="text-center no-print-cell" :style="{ color: warnaTeksHeader }">
+                  <v-tooltip location="top">
+                    <template #activator="{ props }">
+                      <v-btn
+                        v-bind="props"
+                        class="no-print theme-btn"
+                        size="20"
+                        variant="flat"
+                        icon="mdi-palette"
+                        :style="{ color: warnaTeksHeader }"
+                        @click="dialogWarna = true"
+                      />
+                    </template>
+                    <span>Ubah Warna Aksentuasi</span>
+                  </v-tooltip>
+                </th>
+                <th width="32" class="text-center print-only-cell" :style="{ color: warnaTeksHeader }">NO</th>
+                <th class="text-left" :style="{ color: warnaTeksHeader }">DESCRIPTION / KETERANGAN</th>
+                <th width="60" class="text-center" :style="{ color: warnaTeksHeader }">QTY</th>
+                <th width="65" class="text-center" :style="{ color: warnaTeksHeader }">UOM</th>
+                <th width="125" class="text-right" :style="{ color: warnaTeksHeader }">UNIT PRICE</th>
+                <th width="135" class="text-right" :style="{ color: warnaTeksHeader }">
+                  <v-text-field
+                    v-model="labelSubTotal"
+                    variant="plain"
+                    density="compact"
+                    hide-details
+                    class="header-input-field"
+                    :style="{ '--header-text-color': warnaTeksHeader }"
+                  />
+                </th>
+              </tr>
+            </thead>
+            <tbody ref="tableBodyRef">
+              <tr 
+                v-for="(item, index) in props.detailpenawaran.penawaran_item" 
+                :key="index"
+                :class="{ 'zebra-row': index % 2 === 1 }"
               >
-            </td>
-          </tr>
+                <!-- Drag Handle & Numbering Cell -->
+                <td class="text-center row-num drag-handle" width="36">
+                  <v-icon size="12" class="drag-icon no-print mr-1">mdi-drag-vertical</v-icon>
+                  <span>{{ index + 1 }}.</span>
+                </td>
+                <td class="text-left font-weight-medium text-slate-800">{{ item.nama }}</td>
+                <td class="text-center font-weight-semibold">{{ item.qty }}</td>
+                <td class="text-center text-slate-500 uppercase">{{ item.uom }}</td>
+                <td class="text-right text-slate-600">Rp {{ rupiah(item.amount) }}</td>
+                <td class="text-right font-weight-bold text-navy">Rp {{ rupiah(item.subtotal_item) }}</td>
+              </tr>
+            </tbody>
 
-          <tr>
-            <td colspan="4" class="text-left" style="width: 30%">
-              <div style="display: flex">
-                <strong>Terbilang</strong>
+            <!-- Table Footer for Subtotal, Grand Total & Terbilang -->
+            <tfoot>
+              <!-- Subtotal Row -->
+              <tr class="summary-row subtotal-row">
+                <td colspan="5" class="text-right font-weight-bold text-slate-600">SUBTOTAL</td>
+                <td class="text-right font-weight-bold text-slate-800">
+                  Rp {{ rupiah(props.detailpenawaran.subtotal_penawaran || props.detailpenawaran.grand_total_penawaran) }}
+                </td>
+              </tr>
 
-                <strong style="margin-left: 9px">
-                  :
-                  {{ jadirupiah(props.detailpenawaran.grand_total_penawaran) }}
+              <!-- Grand Total Row -->
+              <tr class="summary-row grand-total-row">
+                <td colspan="5" class="text-right font-weight-extrabold text-navy">GRAND TOTAL</td>
+                <td class="text-right font-weight-extrabold text-navy gt-text">
+                  Rp {{ rupiah(props.detailpenawaran.grand_total_penawaran) }}
+                </td>
+              </tr>
 
-                  <span>Rupiah</span>
-                </strong>
-              </div>
-            </td>
-          </tr>
-        </table>
-
-        <p class="mb-5" v-if="showTable">
-          Demikian surat penawaran ini kami buat atas perhatian dan kerjasamanya
-          kami ucapkan terimakasih.
-        </p>
-
-        <div class="signature-grid">
-          <div class="sig-column">
-            <p>Hormat kami,</p>
-            <v-img width="77px" src="/public/TTD.png" />
-            <p><strong>Muhammad Ridwan</strong></p>
-          </div>
-          <div class="sig-column text-left">
-            <p>Approve</p>
-            <div class="sig-wrapper"></div>
-            <p>( .................................... )</p>
-          </div>
+              <!-- Terbilang Row -->
+              <tr class="terbilang-row">
+                <td colspan="6">
+                  <div class="terbilang-inner">
+                    <span class="terbilang-lbl">TERBILANG:</span>
+                    <span class="terbilang-val"># {{ jadirupiah(props.detailpenawaran.grand_total_penawaran) }} Rupiah #</span>
+                  </div>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
         </div>
 
-        <div class="signature-grid no-print" style="border: none">
-          <div style="height: 150px" />
+        <!-- Closing Paragraph -->
+        <p class="closing-paragraph" v-if="showTable">
+          Demikian penawaran harga ini kami sampaikan. Besar harapan kami untuk dapat bekerjasama dengan perusahaan Anda. Atas perhatian dan kerjasamanya, kami ucapkan terima kasih.
+        </p>
+
+        <!-- Signature Section -->
+        <div class="signatures-wrapper">
+          <div class="sig-block">
+            <p class="sig-header">Hormat Kami,</p>
+            <p class="sig-sub">CV. SOLUSI NUSA SEGARA</p>
+            <div class="sig-img-container">
+              <img src="/public/TTD.png" alt="Signature" class="sig-image" />
+            </div>
+            <p class="sig-person-name">Muhammad Ridwan</p>
+            <p class="sig-person-role">Authorized Representative</p>
+          </div>
+
+          <div class="sig-block">
+            <p class="sig-header">Disetujui Oleh,</p>
+            <p class="sig-sub">{{ props.detailpenawaran.nama_perusahaan || 'KLIEN' }}</p>
+            <div class="sig-placeholder"></div>
+            <p class="sig-person-name">( .................................... )</p>
+            <p class="sig-person-role">Stamp & Signature</p>
+          </div>
         </div>
       </div>
 
+      <!-- Footer Wave Graphic -->
       <div class="footer-wave">
         <svg viewBox="0 0 500 120" preserveAspectRatio="none">
           <defs>
             <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" style="stop-color: #1e467a; stop-opacity: 1" />
-              <stop
-                offset="100%"
-                style="stop-color: #0d2a4a; stop-opacity: 1"
-              />
+              <stop offset="0%" style="stop-color: #0f2b48; stop-opacity: 1" />
+              <stop offset="100%" style="stop-color: #1a4f8b; stop-opacity: 1" />
             </linearGradient>
           </defs>
-
-          <path
-            d="M0,0 C150,80 350,80 500,0 L500,120 L0,120 Z"
-            fill="#1a4f8b"
-            opacity="0.2"
-          ></path>
-
-          <path
-            d="M0,25 C150,90 350,90 500,25 L500,120 L0,120 Z"
-            fill="#1a4f8b"
-            opacity="0.4"
-          ></path>
-
-          <path
-            d="M0,50 C150,110 350,110 500,50 L500,120 L0,120 Z"
-            fill="url(#grad1)"
-          ></path>
+          <path d="M0,0 C150,80 350,80 500,0 L500,120 L0,120 Z" fill="#2563eb" opacity="0.12"></path>
+          <path d="M0,25 C150,90 350,90 500,25 L500,120 L0,120 Z" fill="#1d4ed8" opacity="0.25"></path>
+          <path d="M0,50 C150,110 350,110 500,50 L500,120 L0,120 Z" fill="url(#grad1)"></path>
         </svg>
       </div>
     </div>
 
-    <div class="d-flex justify-center align-center fill-height mt-3 mb-10">
+    <!-- Floating Print Button -->
+    <div class="d-flex justify-center align-center mt-6 mb-12 no-print">
       <v-btn
-        width="70%"
-        variant="outlined"
+        width="300"
+        height="46"
         color="indigo-darken-3"
+        elevation="3"
         prepend-icon="mdi-printer"
+        class="text-capitalize font-weight-bold rounded-lg text-subtitle-2"
         @click="handlePrint"
-        class="text-capitalize"
       >
-        Cetak Penawaran
+        Cetak Surat Penawaran
       </v-btn>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from "vue";
+import { ref, computed } from "vue";
 import type { penawaranM } from "~/types/penawaranModel";
 
 const labelSubTotal = ref("SUB TOTAL");
@@ -293,14 +279,23 @@ const props = defineProps<{
   detailpenawaran: penawaranM;
 }>();
 
-// 2. STATE REFS
 const dialogWarna = ref(false);
-const warnaBackgroundCustom = ref("#feff02");
+const warnaBackgroundCustom = ref("#F02424");
 const showTable = ref(true);
-
-const hiddenRows = ref<number[]>([]);
-
 const tableBodyRef = ref<HTMLElement | null>(null);
+
+// Menghitung kontras warna teks (gelap/terang) berdasarkan background
+const warnaTeksHeader = computed(() => {
+  const hex = warnaBackgroundCustom.value.replace("#", "");
+  if (hex.length !== 6) return "#0f2b48";
+  
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+  
+  const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+  return yiq >= 128 ? "#0f2b48" : "#ffffff";
+});
 
 const formatTanggal = (tanggal: string) => {
   if (!tanggal) return "-";
@@ -311,9 +306,8 @@ const formatTanggal = (tanggal: string) => {
   }).format(new Date(tanggal));
 };
 
-// Metode pembantu tiruan (sesuaikan internal injector mixins global Anda jika berbeda)
 const rubahtanggalpenawaran = (tgl: any) => formatTanggal(tgl);
-const rupiah = (val: number) => new Intl.NumberFormat("id-ID").format(val);
+const rupiah = (val: number) => new Intl.NumberFormat("id-ID").format(val || 0);
 
 const handlePrint = () => {
   const printContents = document.getElementById("offer-to-print")?.innerHTML;
@@ -343,65 +337,57 @@ const handlePrint = () => {
   doc.write(`
     <html>
       <head>
-        <title>Surat Penawaran - ${props.detailpenawaran?.id_penawaran}</title>
+        <title>Penawaran_${props.detailpenawaran?.no_penawaran || 'SNS'}</title>
+        <style>
+          ${styles} 
 
-<style>
-  ${styles} 
+          @media print {
+            @page {
+              size: A4;
+              margin: 0mm;
+            }
 
-  @media print {
-    @page {
-      size: A4;
-      margin: 0mm; /* Kita kontrol margin di .offer-card saja */
-      
-    }
+            html, body {
+              font-family: 'Segoe UI', Arial, sans-serif;
+              height: 100%;
+              margin: 0 !important;
+              padding: 0 !important;
+              background: #fff !important;
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
 
-    html, body {
-    font-family: Verdana, Geneva, sans-serif;
-      height: 100%;
-      margin: 0 !important;
-      padding: 0 !important;
-      overflow: hidden; /* Mencegah munculnya halaman kosong kedua */
-      -webkit-print-color-adjust: exact !important;
-      print-color-adjust: exact !important;
-    }
+            .offer-card {
+              box-shadow: none !important;
+              width: 210mm !important;
+              height: 297mm !important;
+              margin: 0 !important;
+              padding: 12mm 16mm 20mm 16mm !important;
+              box-sizing: border-box !important;
+              position: relative !important;
+              overflow: hidden !important;
+              page-break-after: avoid;
+              page-break-before: avoid;
+            }
 
-    .offer-card {
-      box-shadow: none !important;
-      width: 210mm !important;
-      height: 297mm !important; /* Paksa tinggi pas A4 */
-      margin: 0 !important;
-      padding: 10mm 15mm !important; /* Kurangi padding atas-bawah sedikit */
-      box-sizing: border-box !important;
-      position: relative !important;
-      overflow: hidden !important; /* Mengunci konten agar tidak spill-over */
-      page-break-after: avoid;
-      page-break-before: avoid;
-    }
+            .no-print, .no-print-cell, .drag-icon {
+              display: none !important;
+            }
 
-    /* FIX KHUSUS WINDOWS: Terkadang font di Windows lebih 'gemuk' */
-    .content-body {
-      font-size: 10.5px !important; /* Turunkan sedikit dari 11px untuk safety margin */
-      line-height: 1.3 !important;
-    }
+            .print-only-cell {
+              display: table-cell !important;
+            }
 
-    /* Sembunyikan elemen UI yang seringkali ikut tercetak di Windows */
-    .no-print, .btn-wrapper, .table-action, button, .v-icon, .eye-btn {
-      display: none !important;
-      height: 0 !important;
-      margin: 0 !important;
-      padding: 0 !important;
-    }
-
-    /* Fix posisi wave agar tetap di bawah tanpa mendorong halaman */
-    .footer-wave {
-      position: absolute !important;
-      bottom: 0 !important;
-      left: 0 !important;
-      height: 120px !important; /* Kurangi tinggi wave jika konten teks banyak */
-      z-index: -1;
-    }
-  }
-</style>
+            .footer-wave {
+              position: absolute !important;
+              bottom: 0 !important;
+              left: 0 !important;
+              width: 100% !important;
+              height: 130px !important;
+              z-index: 0 !important;
+            }
+          }
+        </style>
       </head>
       <body>
         <div class="offer-card">
@@ -431,47 +417,42 @@ const handlePrint = () => {
         loaded++;
         if (loaded === images.length) printAction();
       };
+      images[i].onerror = () => {
+        loaded++;
+        if (loaded === images.length) printAction();
+      };
     }
   } else {
     iframe.onload = printAction;
-
     printAction();
   }
 };
 </script>
 
 <style scoped>
+/* Page Paper Box */
 .offer-card {
   width: 210mm;
   min-height: 297mm;
-  padding: 15mm;
+  padding: 14mm 18mm 25mm 18mm;
   margin: 0 auto;
-  background: white;
+  background: #ffffff;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  font-family: Verdana, Geneva, sans-serif;
-  color: #1a1a1a;
+  box-shadow: 0 12px 35px rgba(15, 23, 42, 0.1);
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  color: #1e293b;
   box-sizing: border-box;
 }
 
-.p {
-  font-size: 9px;
-}
-.span {
-  font-size: 9px;
-}
-.strong {
-  font-size: 9px;
-}
-
+/* Background Watermark */
 .watermark {
   position: absolute;
-  top: 75%;
-  left: 40%;
+  top: 52%;
+  left: 50%;
   transform: translate(-50%, -50%);
-  opacity: 0.1;
-  width: 50%;
+  opacity: 0.035;
+  width: 440px;
   z-index: 0;
   pointer-events: none;
 }
@@ -479,330 +460,403 @@ const handlePrint = () => {
   width: 100%;
 }
 
+/* Kop Surat Header */
 .header-section {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: flex-end;
   position: relative;
   z-index: 1;
+  padding-bottom: 8px;
 }
-.header-logo img {
-  width: 120px;
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
-.header-address {
-  text-align: right;
-  line-height: 1.3;
+
+.logo-wrapper img {
+  width: 105px;
+  height: auto;
+  display: block;
 }
-.header-address h2 {
-  font-size: 20px;
-  margin-bottom: 5px;
-  font-weight: 900;
-}
-.header-address p {
-  font-size: 11px;
+
+.company-name {
+  font-size: 19px;
+  font-weight: 800;
+  color: #0f2b48;
+  letter-spacing: 0.3px;
   margin: 0;
+  line-height: 1.2;
 }
 
-.header-line {
-  border-bottom: 3px solid #1a4f8b;
-  margin: 15px 0 25px;
+.header-contact {
+  text-align: right;
+  line-height: 1.4;
 }
 
+.address-line, .phone-line {
+  font-size: 9.5px;
+  color: #475569;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Header Divider Lines */
+.header-divider {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 6px;
+  margin-bottom: 16px;
+}
+
+.accent-bar {
+  height: 4px;
+  width: 100%;
+  border-radius: 2px;
+  transition: background-color 0.2s ease;
+}
+
+.secondary-bar {
+  height: 1px;
+  width: 100%;
+  background-color: #cbd5e1;
+}
+
+/* Document Content Body */
 .content-body {
   position: relative;
   z-index: 1;
-  font-size: 13.5px;
-  line-height: 1.5;
 }
-.info-row {
+
+/* Meta Top Row (Title Badge & Date) */
+.doc-meta-header {
   display: flex;
-  margin-bottom: 2px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
 }
-.info-row .label {
-  width: 120px;
+
+.doc-badge {
+  font-size: 11px;
+  font-weight: 800;
+  color: #0f2b48;
+  letter-spacing: 0.8px;
+  padding: 3px 10px;
+
+  background: #f8fafc;
+  text-transform: uppercase;
 }
-.recipient-block {
-  margin-top: 25px;
-  line-height: 1.2;
+
+.doc-date {
+  font-size: 11px;
+  color: #475569;
+}
+
+/* Info Card */
+.info-grid-card {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+}
+
+.meta-row {
+  display: flex;
+  align-items: center;
+  font-size: 10.5px;
+  margin-bottom: 3px;
+}
+.meta-row:last-child {
+  margin-bottom: 0;
+}
+
+.meta-row .lbl {
+  width: 95px;
+  color: #64748b;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.meta-row .sep {
+  width: 12px;
+  color: #94a3b8;
+}
+
+.meta-row .val {
+  color: #334155;
+  font-weight: 500;
+}
+
+.meta-row .val.highlight {
+  font-weight: 700;
+  color: #2563eb;
+}
+
+.meta-row .val.bold {
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.meta-row .val.bold-navy {
+  font-weight: 700;
+  color: #0f2b48;
+}
+
+/* Opening Text */
+.text-salutation {
+  font-size: 11px;
+  line-height: 1.5;
+  color: #334155;
+  margin-bottom: 12px;
+}
+
+.salutation-title {
+  font-weight: 700;
+  margin-bottom: 3px;
+  color: #0f2b48;
+}
+
+.salutation-body {
+  text-align: justify;
+  margin: 0;
+}
+
+/* Modern Items Table */
+.table-container {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #cbd5e1;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
 }
 
 .modern-table {
   width: 100%;
   border-collapse: collapse;
-  margin: 15px 0;
-  font-size: 11.5px;
+  font-size: 10.5px;
 }
+
 .modern-table th {
-  padding: 2px 4px;
-  font-weight: bold;
-  text-align: center;
+  padding: 7px 10px;
+  font-weight: 700;
+  font-size: 9.5px;
   text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border-bottom: 1px solid #cbd5e1;
+  transition: color 0.3s ease;
 }
+
 .modern-table td {
-  padding: 3px 8px;
-  line-height: 1.2;
+  padding: 7px 10px;
+  color: #334155;
+  vertical-align: middle;
+  border-bottom: 1px solid #f1f5f9;
 }
 
-.total-row td {
-  font-weight: bold;
-  background: #fff;
-  padding: 8px;
-  border-top: 1px solid #000;
+.modern-table tbody tr.zebra-row {
+  background-color: #f8fafc;
 }
 
-.text-center {
-  text-align: center;
-}
-.text-right {
-  text-align: right;
-}
-.text-left {
-  text-align: left;
+.modern-table tbody tr:last-child td {
+  border-bottom: 1px solid #cbd5e1;
 }
 
-.signature-grid {
-  display: flex;
-  justify-content: space-between;
+/* Table Footer Summary Styles */
+.modern-table tfoot .summary-row td {
+  padding: 6px 10px;
+  font-size: 10px;
+  letter-spacing: 0.3px;
+  border-bottom: 1px solid #e2e8f0;
 }
-.sig-column {
-  width: 220px;
+
+.modern-table tfoot .subtotal-row {
+  background-color: #f8fafc;
 }
-.sig-wrapper {
-  height: 110px;
-  position: relative;
+
+.modern-table tfoot .grand-total-row {
+  background-color: #f1f5f9;
+}
+
+.gt-text {
+  font-size: 11.5px !important;
+}
+
+.terbilang-row td {
+  background-color: #f8fafc;
+  padding: 8px 10px !important;
+  border-bottom: none !important;
+}
+
+.terbilang-inner {
   display: flex;
   align-items: center;
+  gap: 8px;
+  font-size: 10px;
 }
 
+.terbilang-lbl {
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+.terbilang-val {
+  font-style: italic;
+  font-weight: 700;
+  color: #0f2b48;
+}
+
+/* Drag Handle Styles */
+.drag-handle {
+  cursor: move !important;
+  user-select: none;
+}
+
+.drag-icon {
+  opacity: 0.4;
+  transition: opacity 0.2s;
+}
+
+.drag-handle:hover .drag-icon {
+  opacity: 1;
+}
+
+.row-num {
+  color: #64748b;
+  font-weight: 600;
+}
+
+.print-only-cell {
+  display: none;
+}
+
+/* Closing Paragraph */
+.closing-paragraph {
+  font-size: 10.5px;
+  color: #475569;
+  line-height: 1.4;
+  margin-bottom: 20px;
+}
+
+/* Signature Grid */
+.signatures-wrapper {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  page-break-inside: avoid;
+}
+
+.sig-block {
+  width: 210px;
+  text-align: center;
+}
+
+.sig-header {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #475569;
+  margin: 0;
+}
+
+.sig-sub {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #0f2b48;
+  margin: 2px 0 0 0;
+  text-transform: uppercase;
+}
+
+.sig-img-container {
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sig-image {
+  max-height: 65px;
+  max-width: 130px;
+  object-fit: contain;
+}
+
+.sig-placeholder {
+  height: 70px;
+}
+
+.sig-person-name {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #0f2b48;
+  margin: 0;
+  border-bottom: 1px solid #94a3b8;
+  padding-bottom: 2px;
+}
+
+.sig-person-role {
+  font-size: 9px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+/* Bottom Decorative SVG Wave */
 .footer-wave {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 180px;
-  z-index: 1;
-  overflow: hidden;
-  line-height: 0;
-  margin: 0;
-  padding: 0;
+  height: 130px;
+  z-index: 0;
+  pointer-events: none;
 }
+
 .footer-wave svg {
   width: 100%;
   height: 100%;
   display: block;
-  margin-bottom: -1px;
-}
-.text-justify {
-  text-align: justify;
-}
-.no-print {
-  align-items: center;
 }
 
-.v-btn {
-  letter-spacing: 0.5px;
-  font-weight: 500;
-  border-radius: 8px;
-  transition: all 0.2s ease;
+/* Helpers & Utilities */
+.text-navy { color: #0f2b48; }
+.text-slate-800 { color: #1e293b; }
+.text-slate-600 { color: #475569; }
+.text-slate-500 { color: #64748b; }
+.text-slate-400 { color: #94a3b8; }
+.uppercase { text-transform: uppercase; }
+
+.theme-btn {
+  background: transparent !important;
+  box-shadow: none !important;
 }
-.v-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+/* Vuetify Field Overrides Dynamic Text Color */
+:deep(.header-input-field input) {
+  text-align: right !important;
+  font-size: 9.5px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+  color: var(--header-text-color, #0f2b48) !important;
+  padding: 0 !important;
+  min-height: unset !important;
+  transition: color 0.3s ease;
+}
+
+:deep(.header-input-field .v-field__input) {
+  padding: 0 !important;
+  min-height: 18px !important;
 }
 
 @media print {
   .no-print {
     display: none !important;
   }
-}
-
-.v-divider--vertical {
-  height: 24px;
-  align-self: center;
-  border-color: rgba(0, 0, 0, 0.12) !important;
-}
-
-.compact-invoice-table :deep(table) {
-  border-collapse: collapse !important;
-}
-
-.compact-invoice-table :deep(td),
-.compact-invoice-table :deep(th) {
-  height: 36px !important;
-  padding: 0 12px !important;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
-}
-
-.compact-invoice-table :deep(th) {
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  color: #616161 !important;
-}
-
-.border-dashed {
-  border-style: dashed !important;
-  border-width: 1px !important;
-  border-color: #bdbdbd !important;
-}
-
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-thumb {
-  background: #e0e0e0;
-  border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #bdbdbd;
-}
-
-.table-action {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 12px;
-}
-.btn-toggle-total {
-  padding: 6px 12px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
-  font-size: 8px;
-  font-weight: 800;
-  letter-spacing: 0.25px;
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  color: #ffffff;
-  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
-  transition: all 0.2s ease;
-}
-.btn-toggle-total:hover {
-  background: linear-gradient(135deg, #1e40af, #1e3a8a);
-  transform: translateY(-1px);
-}
-
-.btn-toggle-total1 {
-  padding: 6px 12px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
-  font-size: 8px;
-  width: 100%;
-  font-weight: 800;
-  letter-spacing: 0.25px;
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  color: #ffffff;
-  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
-  transition: all 0.2s ease;
-}
-.btn-toggle-total1:hover {
-  background: linear-gradient(135deg, #1e40af, #1e3a8a);
-  transform: translateY(-1px);
-}
-
-.btn-toggle-total2 {
-  padding: 4px 9px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
-  font-size: 7px;
-  font-weight: 800;
-  letter-spacing: 0.25px;
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  color: #ffffff;
-  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
-  transition: all 0.2s ease;
-}
-.btn-toggle-total2:hover {
-  background: linear-gradient(135deg, #1e40af, #1e3a8a);
-  transform: translateY(-1px);
-}
-
-.btn-wrapper {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.reset-btn {
-  padding: 2px 7px;
-  font-size: 12px;
-  border-radius: 6px;
-  background: #e5e7eb;
-  transition: 0.2s;
-}
-
-.reset-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.eye-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px;
-  border-radius: 6px;
-  transition:
-    background-color 0.2s,
-    transform 0.15s;
-}
-.eye-btn:hover {
-  background-color: rgba(25, 118, 210, 0.12);
-  transform: scale(1.1);
-}
-
-.eye-btn:hover .v-icon {
-  color: #1976d2;
-}
-.row-divider {
-  border-top: 0.5px solid rgba(0, 0, 0, 0.35);
-}
-
-.row-divider2 {
-  border-bottom: 0.5px solid rgba(0, 0, 0, 0.35);
-}
-
-/* DRAG & DROP STYLING */
-.drag-handle {
-  cursor: move !important;
-}
-
-.sortable-ghost {
-  opacity: 0.3;
-  background-color: #f0fdf4 !important;
-  border: 1px dashed #22c55e !important;
-}
-.row-divider-bottom {
-  border-bottom: 0.5px solid rgba(0, 0, 0, 0.2);
-}
-
-:deep(.text-right-input input) {
-  text-align: right !important;
-  font-size: 9px !important; /* Menyamakan dengan font-size thead */
-  font-weight: bold; /* Tetap tebal seperti th biasa */
-  min-height: unset !important; /* Mengizinkan input untuk lebih ceper */
-  padding-top: 0 !important; /* Menghilangkan sisa padding atas */
-  padding-bottom: 0 !important; /* Menghilangkan sisa padding bawah */
-}
-
-/* Opsional: Jika tinggi box-nya masih terasa terlalu tinggi */
-:deep(.text-right-input .v-field__input) {
-  padding: 0 !important;
-  min-height: 20px !important;
-}
-
-:deep(.text-left-input input) {
-  text-align: left !important;
-  font-size: 11px !important; /* Menyamakan dengan font-size thead */
-  min-height: unset !important; /* Mengizinkan input untuk lebih ceper */
-  padding-top: 0 !important; /* Menghilangkan sisa padding atas */
-  padding-bottom: 0 !important; /* Menghilangkan sisa padding bawah */
-}
-
-/* Opsional: Jika tinggi box-nya masih terasa terlalu tinggi */
-:deep(.text-left-input .v-field__input) {
-  padding: 0 !important;
-  min-height: 20px !important;
 }
 </style>
