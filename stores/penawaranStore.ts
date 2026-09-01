@@ -1,6 +1,6 @@
 import type { get } from "firebase/database";
 import { defineStore } from "pinia";
-import type { penawaranM, revisipenawaranM } from "~/types/penawaranModel";
+import type { penawaranM } from "~/types/penawaranModel";
 
 export const usePenawaranStore = defineStore("PenawaranStore", {
   state: () => {
@@ -13,12 +13,6 @@ export const usePenawaranStore = defineStore("PenawaranStore", {
 
       // KHUSUS COUNTER SIDEBAR
       dataPenawaranDraft: [] as penawaranM[],
-      dataPenawaranProses: [] as penawaranM[],
-      dataPenawaranPemberkasan: [] as penawaranM[],
-
-
-      dataRevisiPenawaran: [] as revisipenawaranM[],
-      detailRevisiPenawaran: {} as revisipenawaranM,
 
     };
   },
@@ -28,13 +22,7 @@ export const usePenawaranStore = defineStore("PenawaranStore", {
       return state.dataPenawaran;
     },
 
-    getDataRevisiPenawaran(state) {
-      return state.dataRevisiPenawaran;
-    },
 
-    getDetailRevisiPenawaran(state) {
-      return state.dataRevisiPenawaran;
-    },
 
     getDetailPenawaran(state) {
       return state.detailPenawaran;
@@ -60,7 +48,7 @@ export const usePenawaranStore = defineStore("PenawaranStore", {
 
         await setdatabase(
           "penawaran",
-          lemparPenawaran.nomor!,
+          lemparPenawaran.id_penawaran || lemparPenawaran.no_penawaran!,
           lemparPenawaran
         );
 
@@ -82,7 +70,7 @@ export const usePenawaranStore = defineStore("PenawaranStore", {
 
         await updatedatabase(
           "penawaran",
-          lemparPenawaran.nomor,
+          lemparPenawaran.id || lemparPenawaran.id_penawaran || lemparPenawaran.no_penawaran!,
           lemparPenawaran
         );
 
@@ -102,38 +90,10 @@ export const usePenawaranStore = defineStore("PenawaranStore", {
       try {
         useloadingStore().setLoading(true);
 
-        // await hapusdatabase("penawaran", id);
-        const uniqueKategori = [
-          ...new Set(lemparinvoice.items.map(i => i.id_kategori_item)),
-        ];
-        const databatch = [
-          {
-            type: "delete",
-            id: lemparinvoice.id!,
-            collection: "penawaran",
-            data: lemparinvoice,
-          },
-          ...uniqueKategori.map(id => ({
-            type: "delete",
-            id: lemparinvoice.id!,
-            collection: `m_item_kategori/${id}/penawaran`,
-            data: lemparinvoice,
-          })),
-          ...uniqueKategori.map(id => ({
-            type: "update",
-            id: id,
-            collection: `m_cabang/${lemparinvoice.id_cabang_perusahaan}/m_item_kategori`,
-            data: { status: 'Draft' },
-          })),
-          ...uniqueKategori.map(id => ({
-            type: "update",
-            id: id,
-            collection: `m_item_kategori`,
-            data: { status: 'Draft' },
-          })),
-        ];
-
-        await batching(databatch)
+        await hapusdatabase(
+          "penawaran",
+          lemparinvoice.id || lemparinvoice.id_penawaran || lemparinvoice.no_penawaran!
+        );
         await this.tarikDataPenawaranAct();
 
         notificationStore.showSuccess("Penawaran berhasil dihapus");
@@ -157,7 +117,7 @@ export const usePenawaranStore = defineStore("PenawaranStore", {
       this.dataPenawaranTampil = hasil; // Default tampilkan semua
     },
 
-    
+
 
     // Ambil data berdasarkan status (Panggil ini di halaman Proses/Sent/dll)
     async tarikdatapenawaranbystatus(status: string) {
@@ -179,21 +139,6 @@ export const usePenawaranStore = defineStore("PenawaranStore", {
         datatarik as unknown as penawaranM[];
     },
 
-    async tarikPenawaranProses() {
-      const datatarik =
-        await queryPenawaranBystatus("Proses");
-
-      this.dataPenawaranProses =
-        datatarik as unknown as penawaranM[];
-    },
-
-    async tarikPenawaranPemberkasan() {
-      const datatarik =
-        await queryPenawaranBystatus("Pemberkasan");
-
-      this.dataPenawaranPemberkasan =
-        datatarik as unknown as penawaranM[];
-    },
 
     async tarikdatapenawaranbystatusarray(status: string[]) {
       const datatarik = await queryPenawaranBystatusarray(status);
@@ -206,15 +151,7 @@ export const usePenawaranStore = defineStore("PenawaranStore", {
       this.detailPenawaran = datatarik as unknown as penawaranM;
     },
 
-    async tarikDataPenawaranrevisAct(id_penawaran: string) {
-      const datatarik = await queryambilid("penawaran/" + id_penawaran + "/revisi_penawaran");
-      this.dataRevisiPenawaran = datatarik as unknown as revisipenawaranM[];
-    },
 
-    async tarikDetailPenawaranrevisAct(id_penawaran: string, id_revisi_penawaran: string) {
-      const datatarik = await tarikdetaildatabase("penawaran/" + id_penawaran + "/revisi_penawaran", id_revisi_penawaran);
-      this.detailRevisiPenawaran = datatarik as unknown as revisipenawaranM;
-    },
 
     // async tarikdatapenawaranbystatus(status: string) {
     //   const datatarik = await queryPenawaranBystatus(status);

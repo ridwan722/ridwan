@@ -20,7 +20,7 @@
         <v-row density="comfortable">
           <v-col cols="12" md="4">
             <a-select
-              v-model="newPenawaran.id_customer"
+              v-model="newPenawaran.id_perusahaan"
               label="Customer"
               placeholder="Pilih Customer"
               item-title="nama"
@@ -30,20 +30,21 @@
           </v-col>
           <v-col cols="12" sm="6" md="4">
             <a-date-picker
-              v-model="newPenawaran.tanggal"
+              v-model="newPenawaran.tanggal_penawaran"
               label="Tanggal Penawaran"
             />
           </v-col>
           <v-col cols="12" sm="6" md="4">
-            <a-date-picker
-              v-model="newPenawaran.tgl_berlaku"
-              label="Berlaku Sampai"
+            <a-text-field
+              v-model="newPenawaran.no_penawaran"
+              label="No. Penawaran"
+              disabled
             />
           </v-col>
         </v-row>
 
         <a-textarea
-          v-model="newPenawaran.alamat_customer"
+          v-model="newPenawaran.alamat_perusahaan"
           class="mt-2"
           label="Alamat Customer"
           disabled
@@ -56,6 +57,20 @@
           label="PIC"
           disabled
           placeholder="PIC"
+        />
+
+        <a-text-field
+          v-model="newPenawaran.telp_perusahaan"
+          class="mt-2"
+          label="Telepon Perusahaan"
+          placeholder="Nomor telepon perusahaan"
+        />
+
+        <a-textarea
+          v-model="newPenawaran.perihal"
+          class="mt-2"
+          label="Perihal"
+          placeholder="Perihal penawaran"
         />
 
         <v-divider class="my-6 border-opacity-50" />
@@ -77,15 +92,15 @@
         </div>
 
         <div
-          v-for="(item, index) in newPenawaran.item_pekerjaan"
+          v-for="(item, index) in newPenawaran.penawaran_item"
           :key="index"
           class="bg-grey-lighten-5 rounded-lg pa-4 mb-4 border border-dashed"
         >
           <v-row align="center" density="compact">
             <v-col cols="12" sm="5">
               <a-textarea
-                v-model="item.deskripsi_pekerjaan"
-                label="Deskripsi Pekerjaan"
+                v-model="item.nama"
+                label="Nama Item"
                 placeholder="Deskripsi barang/jasa"
               />
             </v-col>
@@ -102,7 +117,7 @@
             <v-col cols="10" sm="2">
               <a-field-number
                 v-model="item.amount"
-                label="Jumlah (Amount)"
+                label="Harga Satuan"
                 placeholder="0"
               />
             </v-col>
@@ -122,50 +137,21 @@
         <v-divider class="my-6 border-opacity-50" />
 
         <div class="text-subtitle-2 font-weight-bold text-primary mb-3">
-          Catatan & Biaya
+          Ringkasan Biaya
         </div>
 
         <v-row>
-          <v-col cols="12" md="6">
-            <a-textarea
-              v-model="newPenawaran.catatan"
-              label="Syarat & Ketentuan / Catatan"
-              placeholder="Contoh: Harga belum termasuk biaya pengiriman..."
-              rows="4"
-            />
-          </v-col>
-          <v-col cols="12" md="6">
+          <v-col cols="12">
             <v-card
               variant="flat"
               class="bg-blue-grey-lighten-5 rounded-xl pa-4"
             >
-              <div
-                class="d-flex align-center justify-space-between px-3 py-1 bg-grey-lighten-5 rounded-lg border mb-3"
-              >
-                <span class="text-body-2 font-weight-medium text-grey-darken-2"
-                  >Sertakan PPN 11%</span
-                >
-                <v-switch
-                  v-model="newPenawaran.pakai_ppn"
-                  color="primary"
-                  hide-details
-                  density="compact"
-                />
-              </div>
               <div
                 class="d-flex justify-space-between text-body-2 text-grey-darken-2 mb-1"
               >
                 <span>Subtotal</span>
                 <span class="font-weight-medium text-grey-darken-3"
                   >Rp {{ rupiah(subtotalPenawaran) }}</span
-                >
-              </div>
-              <div
-                class="d-flex justify-space-between text-body-2 text-grey-darken-2 mb-2"
-              >
-                <span>PPN 11%</span>
-                <span class="font-weight-medium text-grey-darken-3"
-                  >Rp {{ rupiah(ppnPenawaran) }}</span
                 >
               </div>
               <v-divider class="my-2" />
@@ -175,7 +161,7 @@
                   >Grand Total</span
                 >
                 <span class="text-h6 font-weight-black text-primary"
-                  >Rp {{ rupiah(grandtotalPenawaran) }}</span
+                  >Rp {{ rupiah(subtotalPenawaran) }}</span
                 >
               </div>
             </v-card>
@@ -272,32 +258,27 @@
       :items="filteredPenawaran"
       :search="data.searchPenawaran"
       density="compact"
-      :sort-by="[{ key: 'createdAt', order: 'desc' }]"
+      :sort-by="[{ key: 'created_at', order: 'desc' }]"
       :hover="true"
     >
       <template v-slot:item.no="{ index }"> {{ index + 1 }}</template>
 
-      <template v-slot:item.no_penawaran="{ item }">#{{ item.no_penawaran || item.nomor }}</template>
+      <template v-slot:item.no_penawaran="{ item }"
+        >{{ item.no_penawaran }}</template
+      >
 
-      <template v-slot:item.tanggal="{ item }">{{
-        rubahtanggallengkap(item.tanggal)
+      <template v-slot:item.tanggal_penawaran="{ item }">{{
+        rubahtanggallengkap(item.tanggal_penawaran)
       }}</template>
 
-      <template v-slot:item.tgl_berlaku="{ item }">{{
-        item.tgl_berlaku ? rubahtanggallengkap(item.tgl_berlaku) : '-'
-      }}</template>
-
-      <template v-slot:item.grandtotal="{ item }"
-        >Rp {{ rupiah(item.grandtotal) }}</template
+      <template v-slot:item.grand_total="{ item }"
+        >Rp {{ rupiah(item.grand_total_penawaran) }}</template
       >
 
       <template v-slot:item.status="{ item }">
-        <v-chip
-          size="small"
-          :color="statusColor(item.status)"
-          variant="flat"
-          >{{ item.status }}</v-chip
-        >
+        <v-chip size="small" :color="statusColor(item.status)" variant="flat">{{
+          item.status
+        }}</v-chip>
       </template>
 
       <template v-slot:item.aksi="{ item }">
@@ -307,7 +288,7 @@
             variant="tonal"
             color="info"
             class="rounded-lg mr-1"
-            @click="router.push(`/admin/penawaran/${item.id}`)"
+            :to="'/admin/penawaran/' + item.id"
           >
             <v-icon icon="mdi-eye" />
             <v-tooltip activator="parent" location="top"
@@ -391,7 +372,7 @@ const invoiceStore = useinvoiceStore();
 const userStore = useUserStore();
 const notificationStore = useNotificationStore();
 const confirmationDialog = ref<InstanceType<typeof ConfirmationDialog> | null>(
-  null
+  null,
 );
 
 const filterStatusOptions = [
@@ -410,40 +391,65 @@ const data = reactive({
   editOriginalCustomerId: "",
   headPenawaran: [
     { title: "No", value: "no", width: "10px" },
-    { title: "Tanggal", value: "tanggal", sortable: true },
+    { title: "Tanggal", value: "tanggal_penawaran", sortable: true },
     { title: "No. Penawaran", value: "no_penawaran", sortable: true },
-    { title: "Customer", value: "nama_customer", sortable: true },
-    { title: "Berlaku s/d", value: "tgl_berlaku", sortable: true },
-    { title: "Total", value: "grandtotal", sortable: true },
+    { title: "Perusahaan", value: "nama_perusahaan", sortable: true },
+    { title: "Perihal", value: "perihal", sortable: true },
+    { title: "Total", value: "grand_total", sortable: true },
     { title: "Status", value: "status", sortable: true },
     { title: "Aksi", align: "center" as const, value: "aksi", width: "120px" },
   ],
 });
 
 function emptyPenawaran(): penawaranM {
-  const generatedNo = `QUO-${moment().format("YYYYMMDDHHmmss")}`;
+  const generatedNo = generateNoPenawaran();
   return {
-    
-  } as penawaranM;
+    no_penawaran: generatedNo,
+    id_perusahaan: "",
+    pic: "",
+    nama_perusahaan: "",
+    alamat_perusahaan: "",
+    telp_perusahaan: "",
+    tanggal_penawaran: moment().format("YYYY-MM-DD"),
+    created_at: 0,
+    created_by: "",
+    status: "Draft",
+    perihal: "",
+    penawaran_item: [
+      { nama: "", qty: 1, uom: "", amount: 0, subtotal_item: 0 },
+    ],
+    subtotal_penawaran: 0,
+    grand_total_penawaran: 0,
+    terbilang: "",
+  };
+}
+
+function generateNoPenawaran(): string {
+  const year = moment().format("YYYY");
+  const pattern = new RegExp(`^QT/ICI/${year}/SNS/(\\d{5})$`);
+  const lastSequence = (penawaranStore.getDataPenawaran || []).reduce(
+    (highest, penawaran) => {
+      const match = penawaran.no_penawaran?.match(pattern);
+      return match ? Math.max(highest, Number(match[1])) : highest;
+    },
+    0,
+  );
+
+  return `QT/ICI/${year}/SNS/${String(lastSequence + 1).padStart(5, "0")}`;
 }
 
 const newPenawaran = ref<penawaranM>(emptyPenawaran());
 
 const subtotalPenawaran = computed(() =>
-  (newPenawaran.value.item_pekerjaan || []).reduce(
-    (total, item) => total + (Number(item.amount) || 0),
-    0
-  )
-);
-const ppnPenawaran = computed(() =>
-  newPenawaran.value.pakai_ppn ? Math.round(subtotalPenawaran.value * 0.11) : 0
-);
-const grandtotalPenawaran = computed(
-  () => subtotalPenawaran.value + ppnPenawaran.value
+  newPenawaran.value.penawaran_item.reduce(
+    (total, item) =>
+      total + (Number(item.qty) || 0) * (Number(item.amount) || 0),
+    0,
+  ),
 );
 
 watch(
-  () => newPenawaran.value.id_customer,
+  () => newPenawaran.value.id_perusahaan,
   (idCustomer) => {
     if (
       data.penawaranAddEdit === "edit" &&
@@ -452,14 +458,14 @@ watch(
       return;
     }
     const customer = customerStore.getDataCustomer.find(
-      (item: any) => item.id === idCustomer
+      (item: any) => item.id === idCustomer,
     );
     if (!customer) return;
-    newPenawaran.value.id_customer = customer.id ?? "";
-    newPenawaran.value.nama_customer = customer.nama;
-    newPenawaran.value.alamat_customer = customer.alamat;
+    newPenawaran.value.id_perusahaan = customer.id ?? "";
+    newPenawaran.value.nama_perusahaan = customer.nama;
+    newPenawaran.value.alamat_perusahaan = customer.alamat;
     newPenawaran.value.pic = customer.pic;
-  }
+  },
 );
 
 onMounted(async () => {
@@ -470,9 +476,7 @@ onMounted(async () => {
 const filteredPenawaran = computed(() => {
   const dataset = penawaranStore.getDataPenawaran || [];
   if (!data.filterStatus) return dataset;
-  return dataset.filter(
-    (quo: penawaranM) => quo.status === data.filterStatus
-  );
+  return dataset.filter((quo: penawaranM) => quo.status === data.filterStatus);
 });
 
 function statusColor(status: string) {
@@ -492,75 +496,80 @@ function openDialogTambahPenawaran() {
 function openDialogEditPenawaran(item: penawaranM) {
   const customer = customerStore.getDataCustomer.find(
     (dataCustomer: any) =>
-      dataCustomer.id === item.id_customer ||
-      dataCustomer.nama === item.id_customer ||
-      dataCustomer.nama === item.nama_customer ||
-      dataCustomer.pic === item.pic
+      dataCustomer.id === item.id_perusahaan ||
+      dataCustomer.nama === item.id_perusahaan ||
+      dataCustomer.nama === item.nama_perusahaan ||
+      dataCustomer.pic === item.pic,
   );
 
   const penawaran = JSON.parse(JSON.stringify(item)) as penawaranM;
   if (customer?.id) {
-    penawaran.id_customer = customer.id;
-    penawaran.nama_customer = customer.nama;
+    penawaran.id_perusahaan = customer.id;
+    penawaran.nama_perusahaan = customer.nama;
   }
 
   data.penawaranAddEdit = "edit";
-  data.editOriginalCustomerId = penawaran.id_customer;
+  data.editOriginalCustomerId = penawaran.id_perusahaan;
   newPenawaran.value = penawaran;
   data.dialogTambahPenawaran = true;
 }
 
 function tambahBarisPenawaran() {
-  if (!newPenawaran.value.item_pekerjaan) {
-    newPenawaran.value.item_pekerjaan = [];
-  }
-  newPenawaran.value.item_pekerjaan.push({
-    deskripsi_pekerjaan: "",
+  newPenawaran.value.penawaran_item.push({
+    nama: "",
     amount: 0,
     uom: "",
-    qty: 0,
+    qty: 1,
+    subtotal_item: 0,
   });
 }
 
 function hapusBarisPenawaran(index: number) {
-  if (newPenawaran.value.item_pekerjaan.length === 1) {
+  if (newPenawaran.value.penawaran_item.length === 1) {
     return notificationStore.showError("Minimal harus ada 1 baris item");
   }
-  newPenawaran.value.item_pekerjaan.splice(index, 1);
+  newPenawaran.value.penawaran_item.splice(index, 1);
 }
 
 async function simpanPenawaranDialog() {
-  if (!newPenawaran.value.id_customer) {
+  if (!newPenawaran.value.id_perusahaan) {
     return notificationStore.showError("Customer belum dipilih");
   }
   if (
-    !newPenawaran.value.item_pekerjaan ||
-    newPenawaran.value.item_pekerjaan.some(
-      (item) => !item.deskripsi_pekerjaan || !item.amount
+    !newPenawaran.value.tanggal_penawaran ||
+    !newPenawaran.value.perihal.trim() ||
+    !newPenawaran.value.telp_perusahaan.trim()
+  ) {
+    return notificationStore.showError(
+      "Tanggal, perihal, dan telepon perusahaan wajib diisi"
+    );
+  }
+  if (
+    !newPenawaran.value.penawaran_item.length ||
+    newPenawaran.value.penawaran_item.some(
+      (item) => !item.nama || item.qty <= 0 || item.amount <= 0,
     )
   ) {
     return notificationStore.showError(
-      "Setiap baris item harus punya deskripsi dan amount"
+      "Setiap item harus memiliki nama, qty, dan harga satuan",
     );
   }
 
-  // Sinkronkan items jika tipe data mewajibkannya
-  if (!newPenawaran.value.items) {
-    newPenawaran.value.items = [];
-  }
-
-  // Isi nomor default jika kosong
-  if (!newPenawaran.value.nomor) {
-    newPenawaran.value.nomor = newPenawaran.value.no_penawaran || `QUO-${moment().format("YYYYMMDDHHmmss")}`;
-  }
-
-  newPenawaran.value.subtotal = subtotalPenawaran.value;
-  newPenawaran.value.ppn = ppnPenawaran.value;
-  newPenawaran.value.grandtotal = grandtotalPenawaran.value;
+  newPenawaran.value.penawaran_item.forEach((item) => {
+    item.subtotal_item = Number(item.qty) * Number(item.amount);
+  });
+  newPenawaran.value.subtotal_penawaran = subtotalPenawaran.value;
+  newPenawaran.value.grand_total_penawaran = subtotalPenawaran.value;
+  newPenawaran.value.terbilang = terbilang(subtotalPenawaran.value);
 
   if (data.penawaranAddEdit === "add") {
-    newPenawaran.value.createdAt = moment().unix();
-    newPenawaran.value.createdBy = userStore.getEmail;
+    newPenawaran.value.no_penawaran ||= generateNoPenawaran();
+    newPenawaran.value.id_penawaran = newPenawaran.value.no_penawaran.replaceAll(
+      "/",
+      "-",
+    );
+    newPenawaran.value.created_at = moment().unix();
+    newPenawaran.value.created_by = userStore.getEmail;
 
     // Memanggil action addPenawaranAct di Store
     await penawaranStore.addPenawaranAct(newPenawaran.value);
@@ -571,9 +580,6 @@ async function simpanPenawaranDialog() {
   }
 
   // Mode Edit
-  newPenawaran.value.updatedAt = moment().unix();
-  newPenawaran.value.updatedBy = userStore.getEmail;
-  
   // Memanggil action updatePenawaranAct di Store (1 parameter)
   await penawaranStore.updatePenawaranAct(newPenawaran.value);
 
@@ -584,22 +590,28 @@ async function simpanPenawaranDialog() {
 async function convertToInvoice(item: penawaranM) {
   const confirmed = await confirmationDialog.value?.show(
     "Konversi ke Invoice",
-    `Apakah Anda ingin membuat Invoice baru berdasarkan penawaran #${item.no_penawaran || item.nomor}?`,
-    { variant: "info" }
+    `Apakah Anda ingin membuat Invoice baru berdasarkan penawaran #${item.no_penawaran}?`,
+    { variant: "info" },
   );
   if (!confirmed) return;
 
   const invoicePayload = {
-    id_customer: item.id_customer,
-    nama_customer: item.nama_customer,
+    no_inv: `INV-${moment().format("YYYYMMDDHHmmss")}`,
+    id_customer: item.id_perusahaan,
+    nama_customer: item.nama_perusahaan,
     pic: item.pic,
-    alamat_customer: item.alamat_customer,
+    alamat_customer: item.alamat_perusahaan || "",
     tanggal: moment().format("YYYY-MM-DD"),
-    item_pekerjaan: [...(item.item_pekerjaan || [])],
-    pakai_ppn: item.pakai_ppn,
-    subtotal: item.subtotal,
-    ppn: item.ppn,
-    grandtotal: item.grandtotal,
+    item_pekerjaan: item.penawaran_item.map((penawaranItem) => ({
+      deskripsi_pekerjaan: penawaranItem.nama,
+      qty: penawaranItem.qty,
+      uom: penawaranItem.uom,
+      amount: penawaranItem.amount,
+    })),
+    pakai_ppn: false,
+    subtotal_invoice: Number(item.subtotal_penawaran),
+    ppn: 0,
+    grandtotal_invoice: item.grand_total_penawaran,
     status: "Draft",
     createdAt: moment().unix(),
     createdBy: userStore.getEmail,
@@ -616,10 +628,10 @@ async function hapusPenawaran(item: penawaranM) {
   const confirmed = await confirmationDialog.value?.show(
     "Konfirmasi Hapus",
     "Anda yakin ingin menghapus penawaran ini?",
-    { variant: "danger" }
+    { variant: "danger" },
   );
   if (!confirmed) return notificationStore.showError("Penghapusan dibatalkan");
-  
+
   // Memanggil action deletePenawaranAct di Store (Passing seluruh objek item penawaran)
   await penawaranStore.deletePenawaranAct(item);
 }

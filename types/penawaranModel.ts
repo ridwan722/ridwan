@@ -25,8 +25,8 @@ export interface penawaranM {
 
   perihal: string; 
   penawaran_item: penawaranItemM[]; 
-  subtotal: string;
-  grand_total: number;
+  subtotal_penawaran: number;
+  grand_total_penawaran: number;
   terbilang: string;
 
   spk_at?: number;
@@ -42,7 +42,7 @@ export interface penawaranItemM {
   qty: number;
   uom: string;
   amount: number;
-  subtotal: number;
+  subtotal_item: number;
 }
 
 
