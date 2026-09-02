@@ -17,7 +17,6 @@ import { getAuth } from "firebase/auth";
 import type { invoiceM } from "~/types/invoice";
 import type { penawaranM } from "~/types/penawaranModel";
 import { arrayUnion } from "firebase/firestore";
-import type { beritaAcaraCacheM } from "~/types/akutansi";
 import type { CompanyInspectionReport } from "~/types/beritaAcaraModel";
 
 // export const setinvoice = async (data: invoiceM) => {
@@ -116,413 +115,6 @@ import type { CompanyInspectionReport } from "~/types/beritaAcaraModel";
 //         });
 // };
 
-
-export const setinvoice = async (data: invoiceM) => {
-    const db = useFirestore();
-    const auth = getAuth();
-    const now = moment().unix();
-    const email = auth.currentUser?.email || "system";
-
-    return await runTransaction(db, async (transaction) => {
-
-        const nomorInvRef = doc(db, "penomoran", "nomor");
-        const penawaranRef = doc(db, "penawaran", data.id_penawaran);
-
-        const penawaranDoc = await transaction.get(penawaranRef);
-
-        if (!penawaranDoc.exists()) {
-            throw new Error("Penawaran tidak ditemukan");
-        }
-
-        const penawaranData = penawaranDoc.data();
-
-        const count = penawaranData?.invoice_count || 0;
-
-        const isSpecial =
-            data.nama_perusahaan === "Daihatsu" &&
-            data.kategori_object === "Reklame";
-
-        const maxInvoice = isSpecial ? 2 : 1;
-
-        if (count >= maxInvoice) {
-            throw new Error("Invoice sudah mencapai batas maksimal");
-        }
-
-        // =====================================
-        // 🔥 BASE NUMBER (INI KUNCI)
-        // =====================================
-        let padnumber = "";
-
-        if (penawaranData.id_penomoran_invoice) {
-            // 🔥 selalu pakai nomor lama kalau ada
-            padnumber = penawaranData.id_penomoran_invoice;
-        } else {
-            // 🔥 baru ambil nomor global kalau belum pernah ada
-            const getnomor = await transaction.get(nomorInvRef);
-
-            if (!getnomor.exists()) {
-                throw new Error("Nomor invoice tidak ditemukan");
-            }
-            const datanomor = getnomor.data();
-            const newnumber = datanomor!.no_inv + 1;
-            padnumber = _.toString(newnumber).padStart(5, "0");
-            transaction.update(penawaranRef, {
-                id_penomoran_invoice: padnumber,
-            });
-
-            transaction.update(nomorInvRef, {
-                no_inv: newnumber,
-            });
-        }
-
-        // =====================================
-        // 🔥 SUFFIX
-        // =====================================
-        let suffix = "";
-        if (isSpecial) {
-            suffix = count === 0 ? "A" : "AB";
-        }
-
-        const id_inv = `${padnumber}${suffix}`;
-        const no_inv = id_inv;
-
-        // =====================================
-        // 🔥 KWITANSI (SEMUA DAPAT)
-        // =====================================
-        const year = moment().format("YYYY");
-        const bulan = moment().format("MM");
-        const getromawi = await romawian(_.toNumber(bulan));
-        const type = data.handle_by_aresa == "KAM" ? "KAM" : "ABK";
-
-        const no_invoice_kwitansi = `${id_inv}/${type}/${getromawi}/${year}`;
-        const id_revisi_invoice = id_inv + "-01"
-        // =====================================
-        // 🔥 STATUS
-        // =====================================
-        let newStatus = "Invoice";
-
-        if (isSpecial && count === 0) {
-            newStatus = "Pemberkasan";
-        }
-
-        const setdata = {
-            ...data,
-            id_inv,
-            no_inv,
-            no_invoice_kwitansi,
-            id_penomoran_invoice: padnumber,
-            urutan: count + 1,
-            createdAt: now,
-            createdBy: email,
-        };
-
-        const invoiceRef = doc(db, "invoice", id_inv);
-
-        const penawaraninvRef = doc(
-            db,
-            "penawaran",
-            data.id_penawaran,
-            "invoice",
-            id_inv
-        );
-
-        // =====================================
-        // 🔥 ITEMS
-        // =====================================
-        for (const element of data.items) {
-
-            const itemRef = doc(db, "m_item_kategori", element.id_kategori_item!);
-
-            const iteminvRef = doc(
-                db,
-                "m_item_kategori",
-                element.id_kategori_item!,
-                "invoice",
-                id_inv
-            );
-
-            const itempenawaranRef = doc(
-                db,
-                "m_item_kategori",
-                element.id_kategori_item!,
-                "penawaran",
-                data.id_penawaran
-            );
-
-            const cabangRef = doc(
-                db,
-                `m_cabang/${data.id_cabang_perusahaan}/m_item_kategori`,
-                element.id_kategori_item!
-            );
-
-            const invoiceRevisiRef = doc(db, 'invoice', id_inv, 'revisi_invoice', id_revisi_invoice)
-            transaction.set(invoiceRevisiRef, { ...data, id_inv, no_inv, id_revisi: id_revisi_invoice })
-
-
-            transaction.update(cabangRef, {
-                status: "Invoice",
-                updatedAt: now,
-                updatedBy: email,
-            });
-
-            transaction.set(iteminvRef, setdata);
-
-            transaction.update(itemRef, {
-                status: "Invoice",
-                updatedAt: now,
-                updatedBy: email,
-            });
-
-            transaction.update(itempenawaranRef, {
-                status: "Invoice",
-                updatedAt: now,
-                updatedBy: email,
-            });
-        }
-
-        // =====================================
-        // 🔥 SAVE
-        // =====================================
-        transaction.set(invoiceRef, setdata);
-        transaction.set(penawaraninvRef, setdata);
-
-        transaction.update(penawaranRef, {
-            status: newStatus,
-            jumlah_invoice: count + 1,
-            invoice_count: count + 1,
-            updatedAt: now,
-            updatedBy: email,
-            invoiceAt: now,
-            invoiceBy: email,
-        });
-
-        return;
-    })
-        .then(() => "ok")
-        .catch((error) => {
-            console.error(error);
-            return error?.message || "error";
-        });
-};
-
-
-export const setipenawaran = async (data: penawaranM) => {
-    console.log(data, "cek data composables");
-    console.log(data.items, "cek data items");
-
-    const db = useFirestore();
-    const auth = getAuth();
-    const now = moment().unix();
-    const email = auth.currentUser?.email;
-
-    try {
-        return await runTransaction(db, async (transaction) => {
-            // 1️⃣ Ambil nomor terakhir
-            const nomorInvRef = doc(db, "penomoran", "nomor");
-            const getnomor = await transaction.get(nomorInvRef);
-
-            if (!getnomor.exists()) {
-                throw new Error("Dokumen penomoran/nomor tidak ditemukan");
-            }
-
-            const datanomor = getnomor.data();
-            const newnumber = datanomor!.no_penawaran + 1;
-            const stringnewnumber = _.toString(newnumber).padStart(5, "0");
-            const year = moment().format("YYYY");
-            const bulan = moment().format("MM");
-            const getromawi = await romawian(_.toNumber(bulan));
-
-            // 2️⃣ Generate nomor & id penawaran
-            const no_penawaran = `${stringnewnumber}/KAM/${getromawi}/${year}`;
-            const id_penawaran = `${stringnewnumber}-KAM-${getromawi}-${year}`;
-            const id_revisi_penawaran = id_penawaran + "-01"
-            const setdata = {
-                ...data,
-                no_penawaran,
-                id_penawaran,
-                updatedAt: now,
-                updatedBy: email,
-            };
-
-            // 3️⃣ Ref dokumen utama penawaran
-            const penawaranRef = doc(db, "penawaran", id_penawaran);
-
-            // 4️⃣ Loop items
-            for (const element of data.items) {
-                console.log(element, "cek data element");
-
-                // Dokumen kategori global
-                const itemRef = doc(db, "m_item_kategori", element.id_kategori_item!);
-
-                // Subcollection penawaran di kategori
-                const iteminvRef = doc(
-                    db,
-                    "m_item_kategori",
-                    element.id_kategori_item!,
-                    "penawaran",
-                    id_penawaran,
-                );
-
-                // Subcollection kategori per cabang
-                const cabangitemkategoriRef = doc(
-                    db,
-                    "m_cabang",
-                    data.id_cabang_perusahaan!,
-                    "m_item_kategori",
-                    element.id_kategori_item!,
-                );
-
-                // Update dokumen cabang kategori
-                transaction.set(
-                    cabangitemkategoriRef,
-                    {
-                        status: "Penawaran",
-                        updatedAt: now,
-                        updatedBy: email,
-                        penawaranAt: now,
-                        penawaranBy: email,
-                    },
-                    { merge: true }, // merge supaya tidak overwrite seluruh doc
-                );
-
-                // Simpan penawaran di subcollection kategori
-                transaction.set(iteminvRef, setdata, { merge: true });
-
-                // Update kategori global
-                transaction.set(
-                    itemRef,
-                    {
-                        status: "Penawaran",
-                        updatedAt: now,
-                        updatedBy: email,
-                        penawaranAt: now,
-                        penawaranBy: email,
-                    },
-                    { merge: true },
-                );
-            }
-
-            // Update nomor terakhir
-            const penawaranRevisiRef = doc(db, 'penawaran', id_penawaran, 'revisi_penawaran', id_revisi_penawaran)
-            transaction.update(nomorInvRef, { no_penawaran: newnumber });
-
-            // Simpan dokumen utama penawaran
-            transaction.set(penawaranRevisiRef, { ...data, id_penawaran, no_penawaran, id_revisi: id_revisi_penawaran, no_revisi: id_revisi_penawaran })
-            transaction.set(penawaranRef, setdata, { merge: true });
-        }).then(() => {
-            return "ok";
-        });
-    } catch (error: any) {
-        console.error("Firestore transaction error:", error);
-        return error.message;
-    }
-};
-
-export const setipenawaranauto2000danpeugeot = async (data: penawaranM) => {
-    const db = useFirestore();
-    const auth = getAuth();
-    const now = moment().unix();
-    const email = auth.currentUser?.email;
-    try {
-        return await runTransaction(db, async (transaction) => {
-            // 1️⃣ Ambil nomor terakhir
-            const nomorInvRef = doc(db, "penomoran", "nomor");
-            const getnomor = await transaction.get(nomorInvRef);
-
-            if (!getnomor.exists()) {
-                throw new Error("Dokumen penomoran/nomor tidak ditemukan");
-            }
-            const datanomor = getnomor.data();
-            const newnumber = datanomor!.no_penawaran + 1;
-            const stringnewnumber = _.toString(newnumber).padStart(5, "0");
-            const padnumber = stringnewnumber.padStart(5, "0"); // 03
-            const year = moment().format("YYYY");
-            const bulan = moment().format("MM");
-            const getromawi = await romawian(_.toNumber(bulan));
-
-            // 2️⃣ Generate nomor & id penawaran
-            const no_penawaran =
-                padnumber + "/" + "ABK" + "/" + getromawi + "/" + year; // FI-03/PT-TAP/VII/2024
-            const id_penawaran =
-                padnumber + "-" + "ABK" + "-" + getromawi + "-" + year; // FI-03/PT-TAP/VII/2024
-
-            const setdata = {
-                ...data,
-                no_penawaran,
-                id_penawaran,
-                updatedAt: now,
-                updatedBy: email,
-            };
-
-            // 3️⃣ Ref dokumen utama penawaran
-            const penawaranRef = doc(db, "penawaran", id_penawaran);
-
-            // 4️⃣ Loop items
-            for (const element of data.items) {
-                // Dokumen kategori global
-                const itemRef = doc(db, "m_item_kategori", element.id_kategori_item!);
-                // Subcollection penawaran di kategori
-                const iteminvRef = doc(
-                    db,
-                    "m_item_kategori",
-                    element.id_kategori_item!,
-                    "penawaran",
-                    id_penawaran,
-                );
-                // Subcollection kategori per cabang
-                const cabangitemkategoriRef = doc(
-                    db,
-                    "m_cabang",
-                    data.id_cabang_perusahaan!,
-                    "m_item_kategori",
-                    element.id_kategori_item!,
-                );
-                // Update dokumen cabang kategori
-                transaction.set(
-                    cabangitemkategoriRef,
-                    {
-                        status: "Penawaran",
-                        updatedAt: now,
-                        updatedBy: email,
-                        penawaranAt: now,
-                        penawaranBy: email,
-                    },
-                    { merge: true }, // merge supaya tidak overwrite seluruh doc
-                );
-
-                // Simpan penawaran di subcollection kategori
-                transaction.set(iteminvRef, setdata, { merge: true });
-
-                // Update kategori global
-                transaction.set(
-                    itemRef,
-                    {
-                        status: "Penawaran",
-                        updatedAt: now,
-                        updatedBy: email,
-                        penawaranAt: now,
-                        penawaranBy: email,
-                    },
-                    { merge: true },
-                );
-            }
-            const id_revisi_penawaran = id_penawaran + "-01"
-            const penawaranRevisiRef = doc(db, 'penawaran', id_penawaran, 'revisi_penawaran', id_revisi_penawaran)
-            transaction.set(penawaranRevisiRef, { ...data, id_penawaran, no_penawaran, id_revisi: id_revisi_penawaran, no_revisi: id_revisi_penawaran })
-
-            // Update nomor terakhir
-            transaction.update(nomorInvRef, { no_penawaran: newnumber });
-
-            // Simpan dokumen utama penawaran
-            transaction.set(penawaranRef, setdata, { merge: true });
-        }).then(() => {
-            return "ok";
-        });
-    } catch (error: any) {
-        console.error("Firestore transaction error:", error);
-        return error.message;
-    }
-};
 
 export const updatepenawaran = async (data: penawaranM) => {
     console.log("DATAUPDATE", data);
@@ -1375,7 +967,9 @@ export const setberitaacara = async (data: CompanyInspectionReport) => {
     const db = useFirestore();
     const auth = getAuth();
     const now = moment().unix();
-    const email = auth.currentUser?.email;
+    // Auth may still be restoring its session when the form is submitted.
+    // Fall back to the already-hydrated Pinia user, and never write undefined.
+    const email = auth.currentUser?.email || useUserStore().getEmail || "-";
 
     try {
         return await runTransaction(db, async (transaction) => {
@@ -1401,10 +995,8 @@ export const setberitaacara = async (data: CompanyInspectionReport) => {
 
             // 3️⃣ Ref dokumen utama laporan
             const beritaAcaraRef = doc(db, "berita_acara", id_berita_acara);
-            const itemkategoriLaoranRef = doc(db, "m_item_kategori", data.id_kategori_item!, "berita_acara", id_berita_acara);
             // Simpan dokumen utama laporan
             transaction.set(beritaAcaraRef, setdata, { merge: true });
-            transaction.set(itemkategoriLaoranRef, setdata, { merge: true });
             transaction.update(nomorInvRef, { no_berita_acara: newnumber });
         }).then(() => {
             return "ok";
@@ -1415,3 +1007,49 @@ export const setberitaacara = async (data: CompanyInspectionReport) => {
     }
 };
 
+export const setPenawaran = async (data: penawaranM) => {
+    console.log(data, "cek data composables");
+    const db = useFirestore();
+    // const auth = getAuth();
+    const now = moment().unix();
+    // Firebase Auth can still be restoring its session when this function runs.
+    // The form already supplies created_by from the user store, so use it as a
+    // fallback and never send an undefined value to Firestore.
+    // const email = auth.currentUser?.email || data.created_by || "-";
+
+    try {
+        return await runTransaction(db, async (transaction) => {
+            const nomorInvRef = doc(db, "penomoran", "nomor");
+            const getnomor = await transaction.get(nomorInvRef);
+
+            if (!getnomor.exists()) {
+                throw new Error("Dokumen penomoran/nomor tidak ditemukan");
+            }
+
+            const datanomor = getnomor.data();
+            const newnumber = datanomor!.no_penawaran + 1;
+            const stringnewnumber = _.toString(newnumber).padStart(5, "0");
+            const year = moment().format("YYYY");
+            const no_penawaran = `QT/ICI/${year}/SNS/${stringnewnumber}`;
+            const id_penawaran = `QT-ICI-${year}-SNS-${stringnewnumber}`;
+            const setdata = {
+                ...data,
+                no_penawaran,
+                id_penawaran,
+                createdAt: now,
+                createdBy: 'Administrator',
+            };
+
+            // 3️⃣ Ref dokumen utama laporan
+            const penawaranRef = doc(db, "penawaran", id_penawaran);
+            // Simpan dokumen utama laporan
+            transaction.set(penawaranRef, setdata, { merge: true });
+            transaction.update(nomorInvRef, { no_penawaran: newnumber });
+        }).then(() => {
+            return "ok";
+        });
+    } catch (error: any) {
+        console.error("Firestore transaction error:", error);
+        return error.message;
+    }
+};

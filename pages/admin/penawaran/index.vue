@@ -141,7 +141,11 @@
 
             <v-col cols="10" sm="2">
               <a-text-field-new
-                v-model="item.subtotal_item"
+                :model-value="
+                  (
+                    Number(item.qty || 0) * Number(item.amount || 0)
+                  ).toLocaleString('id-ID')
+                "
                 label="Subtotal"
                 placeholder="0"
                 disabled
@@ -569,7 +573,11 @@ async function simpanPenawaranDialog() {
     newPenawaran.value.created_by = userStore.getEmail;
 
     // Memanggil action addPenawaranAct di Store
-    await penawaranStore.addPenawaranAct(newPenawaran.value);
+    const result = await setPenawaran(newPenawaran.value);
+    if (result !== "ok") {
+      notificationStore.showError(result || "Gagal menyimpan penawaran");
+      return;
+    }
 
     data.dialogTambahPenawaran = false;
     newPenawaran.value = emptyPenawaran();

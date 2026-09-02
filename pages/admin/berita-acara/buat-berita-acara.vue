@@ -257,7 +257,8 @@ const simpanBeritaAcara = async () => {
   try {
     loadingSubmit.value = true;
     const payload = _.cloneDeep(form);
-    await beritaAcaraStore.addBeritaAcaraAct(payload);
+    const saved = await beritaAcaraStore.addBeritaAcaraAct(payload);
+    if (!saved) return;
     await navigateTo("/admin/berita_acara");
   } catch (error) {
     console.error("Gagal menyimpan data:", error);

@@ -30,14 +30,19 @@ export const useBeritaAcaraStore = defineStore("beritaAcaraStore", {
       const notificationStore = useNotificationStore();
       try {
         useloadingStore().setLoading(true);
-        await setberitaacara(lempar);
+        const result = await setberitaacara(lempar);
+        if (result !== "ok") {
+          throw new Error(result || "Gagal menyimpan laporan Berita Acara");
+        }
         sessionStorage.removeItem("berita_acara");
 
         await this.tarikDataBeritaAcaraAct();
         notificationStore.showSuccess("Laporan berhasil ditambahkan");
-        useloadingStore().setLoading(false);
+        return true;
       } catch (error) {
         notificationStore.showError("Gagal menyimpan laporan Berita Acara");
+        return false;
+      } finally {
         useloadingStore().setLoading(false);
       }
     },
@@ -53,9 +58,11 @@ export const useBeritaAcaraStore = defineStore("beritaAcaraStore", {
 
         await this.tarikDataBeritaAcaraAct();
         notificationStore.showSuccess("Perubahan berhasil disimpan");
-        useloadingStore().setLoading(false);
+        return true;
       } catch (error) {
         notificationStore.showError("Gagal memperbarui data Laporann");
+        return false;
+      } finally {
         useloadingStore().setLoading(false);
       }
     },

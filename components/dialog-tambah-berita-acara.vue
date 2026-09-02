@@ -800,6 +800,8 @@ const submitBeritaAcara = async () => {
 
     console.log("=== Response Backend ===", res);
 
+    if (!res) return;
+
     // alert("Laporan berhasil disimpan ke database!");
     emit("saved");
     emit("close");
