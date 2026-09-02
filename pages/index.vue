@@ -37,8 +37,8 @@ const update = async () => {
 
         <div class="text-group">
           <h1 class="hero-title">
-           I LOVE YOU <br />
-            <span class="brand-gradient">RENATA FEBRIANI</span>
+            Selamat Datang di <br />
+            <span class="brand-gradient">SNS ADMIN</span>
           </h1>
           <p class="hero-subtitle">
             Platform administrasi terpadu untuk mengelola operasional, performa, dan data bisnis Anda secara presisi.
