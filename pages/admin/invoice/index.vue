@@ -61,6 +61,13 @@
         />
         <v-divider class="my-6 border-opacity-50" />
 
+        <a-textarea-new
+          v-model="newInvoice.perihal"
+          class="mt-2"
+          label="Subject"
+          placeholder="subject"
+        />
+
         <div class="d-flex align-center justify-space-between mb-3">
           <span class="text-subtitle-2 font-weight-bold text-primary">
             Rincian Item & Layanan
@@ -576,7 +583,7 @@ function emptyInvoice(): invoiceM {
     pic: "",
     alamat_customer: "",
     tanggal: moment().format("YYYY-MM-DD"),
-    item_pekerjaan: [{ deskripsi_pekerjaan: "", qty: 0, uom: "", amount: 0 }],
+    item_pekerjaan: [{ nama: "", qty: 0, uom: "", amount: 0, subtotal_item: 0 }],
     pakai_ppn: true,
     subtotal_invoice: 0,
     ppn: 0,

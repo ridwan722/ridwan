@@ -34,9 +34,9 @@ export const createInvoice = async (data: invoiceM) => {
     };
 
     //Ref dokumen utama laporan
-    const laporanRef = doc(db, "invoice", id_invoice);
+    const beritaAcaraRef = doc(db, "invoice", id_invoice);
     // Simpan dokumen utama laporan
-    transaction.set(laporanRef, setdata, { merge: true });
+    transaction.set(beritaAcaraRef, setdata, { merge: true });
     transaction.update(nomorInvRef, { no_inv: newnumber });
 
     return { ...setdata, id: id_invoice };

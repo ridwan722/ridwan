@@ -1,19 +1,19 @@
 <template>
   <div class="page-shell">
-    <form @submit.prevent="simpanLaporan" class="form-container">
+    <form @submit.prevent="simpanBeritaAcara" class="form-container">
       
       <header class="top-bar">
         <div class="top-bar-left">
           <nav class="breadcrumbs">
-            <a href="/admin/perusahaan">Data Inspeksi</a>
+            <a href="/admin/perusahaan">Data Berita Acara</a>
             <span class="divider">/</span>
-            <span class="active">Tambah Laporan</span>
+            <span class="active">Tambah Berita Acara</span>
           </nav>
-          <h1 class="page-title">Buat Laporan Inspeksi Baru</h1>
+          <h1 class="page-title">Buat Berita Acara Baru</h1>
         </div>
 
         <div class="top-bar-actions">
-          <a href="/admin/laporan" class="btn btn-ghost">Batal</a>
+          <a href="/admin/berita_acara" class="btn btn-ghost">Batal</a>
           <button type="submit" class="btn btn-primary" :disabled="loadingSubmit">
             <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
@@ -63,11 +63,11 @@
 
               <div class="form-field">
                 <label class="label">Judul Laporan <span class="dot-required">*</span></label>
-                <input type="text" v-model="form.judul_laporan" placeholder="Contoh: RANGKUMAN HASIL INSPEKSI" class="input-control" required />
+                <input type="text" v-model="form.judul_berita_acara" placeholder="Contoh: RANGKUMAN HASIL INSPEKSI" class="input-control" required />
               </div>
 
               <div class="form-field">
-                <label class="label">Tanggal Inspeksi <span class="dot-required">*</span></label>
+                <label class="label">Tanggal Berita Acara <span class="dot-required">*</span></label>
                 <input type="date" v-model="tanggalInput" class="input-control" required />
               </div>
             </div>
@@ -178,14 +178,14 @@
 import { ref, reactive, watch, onMounted } from "vue";
 import _ from "lodash";
 import moment from "moment";
-import { useLaporanStore } from "~/stores/laporanStore";
-import type { CompanyInspectionReport } from "~/types/laporanModel";
+import { useBeritaAcaraStore } from "~/stores/beritaAcaraStore";
+import type { CompanyInspectionReport } from "~/types/beritaAcaraModel";
 import { useMasterPerusahaanStore } from "~/stores/master/perusahaanStore";
 
 definePageMeta({ layout: "admin" });
 
 const perusahaanStore = useMasterPerusahaanStore();
-const laporanStore = useLaporanStore();
+const beritaAcaraStore = useBeritaAcaraStore();
 const loadingSubmit = ref(false);
 const tanggalInput = ref(moment().format("YYYY-MM-DD"));
 
@@ -194,7 +194,7 @@ const form = reactive<CompanyInspectionReport>({
   nama_perusahaan: "",
   id_cabang: "",
   nama_cabang: "",
-  judul_laporan: "RANGKUMAN HASIL INSPEKSI",
+  judul_berita_acara: "RANGKUMAN HASIL INSPEKSI",
   daftar_alat: [
     {
       no: 1,
@@ -248,8 +248,8 @@ const hapusBarisAlat = (index: number) => {
   form.daftar_alat.forEach((item, idx) => { item.no = idx + 1; });
 };
 
-const simpanLaporan = async () => {
-  if (!form.id_perusahaan || !form.id_cabang || !form.judul_laporan) {
+const simpanBeritaAcara = async () => {
+  if (!form.id_perusahaan || !form.id_cabang || !form.judul_berita_acara) {
     alert("Lengkapi field mandatory terlebih dahulu!");
     return;
   }
@@ -257,8 +257,8 @@ const simpanLaporan = async () => {
   try {
     loadingSubmit.value = true;
     const payload = _.cloneDeep(form);
-    await laporanStore.addLaporannAct(payload);
-    await navigateTo("/admin/laporan");
+    await beritaAcaraStore.addBeritaAcaraAct(payload);
+    await navigateTo("/admin/berita_acara");
   } catch (error) {
     console.error("Gagal menyimpan data:", error);
   } finally {

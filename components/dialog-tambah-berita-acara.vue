@@ -20,15 +20,15 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <form @submit.prevent="submitLaporan" class="form-container">
+    <form @submit.prevent="submitBeritaAcara" class="form-container">
       <!-- HEADER BAR -->
       <header class="top-bar">
         <div class="top-bar-left">
           <h1 class="page-title">
             {{
               props.mode == "create"
-                ? "Buat Laporan Inspeksi Baru"
-                : "Update Laporan Inspeksi"
+                ? "Buat Berita Acara Baru"
+                : "Update Berita Acara"
             }}
           </h1>
         </div>
@@ -69,7 +69,7 @@
                 d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"
               />
             </svg>
-            {{ loadingSubmit ? "Memproses..." : "Simpan Laporan" }}
+            {{ loadingSubmit ? "Memproses..." : "Simpan Berita Acara" }}
           </button>
         </div>
       </header>
@@ -104,11 +104,11 @@
                   >Nama Perusahaan <span class="dot-required">*</span></label
                 >
                 <div class="select-wrapper">
-                  <select
+                  <a-text-field
                     v-model="form.id_perusahaan"
                     class="input-control select-control"
                     style="cursor: pointer;"
-                    required
+                    
                   >
                     <option value="" disabled selected>
                       Pilih Perusahaan...
@@ -120,21 +120,21 @@
                     >
                       {{ item.nama_perusahaan }}
                     </option>
-                  </select>
+                  </a-text-field>
                 </div>
               </div>
 
               <!-- Judul Laporan -->
               <div class="form-field">
                 <label class="label"
-                  >Judul Laporan <span class="dot-required">*</span></label
+                  >Judul Berita Acara <span class="dot-required">*</span></label
                 >
                 <input
                   type="text"
-                  v-model="form.judul_laporan"
+                  v-model="form.judul_berita_acara"
                   placeholder="Cth. RANGKUMAN HASIL INSPEKSI"
                   class="input-control"
-                  required
+
                 />
               </div>
 
@@ -147,7 +147,7 @@
                   <select
                     v-model="form.id_cabang"
                     class="input-control select-control"
-                    required
+                    
                     style="cursor: pointer;"
                     :disabled="!form.id_perusahaan"
                   >
@@ -163,16 +163,16 @@
                 </div>
               </div>
 
-              <!-- Tanggal Inspeksi -->
+              <!-- Tanggal Berita Acara -->
               <div class="form-field">
                 <label class="label">
-                  Tanggal Inspeksi <span class="dot-required">*</span>
+                  Tanggal Berita Acara <span class="dot-required">*</span>
                 </label>
                 <input
                   type="date"
                   v-model="tanggalInput"
                   class="input-control"
-                  required
+                  
                   style="cursor: pointer;"
                 />
               </div>
@@ -194,7 +194,7 @@
                     hide-details
                     :disabled="form.id_cabang === ''"
                     clearable
-                    required
+                    
                   />
                 </div>
               </div>
@@ -260,7 +260,7 @@
                         v-model="item.alat"
                         placeholder="Nama alat/instalasi..."
                         class="cell-input"
-                        required
+                        
                       />
                     </td>
                     <td>
@@ -291,7 +291,7 @@
                         <select
                           v-model="item.kesimpulan"
                           class="cell-input select-status"
-                          required
+                          
                         >
                           <option value="memenuhi persyaratan K3">
                             Memenuhi K3
@@ -533,8 +533,8 @@
 import { ref, reactive, watch, onMounted } from "vue";
 import _ from "lodash";
 import moment from "moment";
-import { useLaporanStore } from "~/stores/laporanStore";
-import type { CompanyInspectionReport } from "~/types/laporanModel";
+import { useBeritaAcaraStore } from "~/stores/beritaAcaraStore";
+import type { CompanyInspectionReport } from "~/types/beritaAcaraModel";
 import { useMasterPerusahaanStore } from "~/stores/master/perusahaanStore";
 import { useMasterKategoriStore } from "~/stores/master/kategoriStore";
 const props = defineProps({
@@ -559,15 +559,15 @@ interface DokumentasiItem {
   images: string[];
 }
 
-interface FormLaporanFull extends CompanyInspectionReport {
-  tanggal_inspeksi?: string;
+interface FormBeritaAcaraFull extends CompanyInspectionReport {
+  tanggal_berita_acara?: string;
   dokumentasi: DokumentasiItem[];
 }
 
 definePageMeta({ layout: "admin" });
 
 const perusahaanStore = useMasterPerusahaanStore();
-const laporanStore = useLaporanStore();
+const beritaAcaraStore = useBeritaAcaraStore();
 const loadingSubmit = ref(false);
 const tanggalInput = ref(moment().format("YYYY-MM-DD"));
 const fileInputs = ref<any[]>([]);
@@ -575,12 +575,12 @@ const dialogImage = ref(false);
 const selectedImage = ref("");
 const masterKategoriItemStore = useMasterKategoriStore();
 
-const form = reactive<FormLaporanFull>({
+const form = reactive<FormBeritaAcaraFull>({
   id_perusahaan: "",
   nama_perusahaan: "",
   id_cabang: "",
   nama_cabang: "",
-  judul_laporan: "",
+  judul_berita_acara: "",
   daftar_alat: [
     {
       no: 1,
@@ -609,7 +609,7 @@ watch(
 
     Object.assign(form, _.cloneDeep(val));
 
-    tanggalInput.value = moment(val.tanggal_inspeksi).format("YYYY-MM-DD");
+    tanggalInput.value = moment(val.tanggal_berita_acara).format("YYYY-MM-DD");
 
     await perusahaanStore.tarikDataCabangPerusahaan(form.id_perusahaan);
   },
@@ -769,11 +769,11 @@ const hapusGambar = (docIndex: number, imgIndex: number) => {
 };
 
 /* SIMPAN LAPORAN ke STORE / DATABASE */
-const submitLaporan = async () => {
-  if (!form.id_perusahaan || !form.id_cabang || !form.judul_laporan) {
-    alert("Mohon lengkapi Perusahaan, Cabang, dan Judul Laporan!");
-    return;
-  }
+const submitBeritaAcara = async () => {
+  // if (!form.id_perusahaan || !form.id_cabang || !form.judul_berita_acara) {
+  //   alert("Mohon lengkapi Perusahaan, Cabang, dan Judul Laporan!");
+  //   return;
+  // }
 
   try {
     loadingSubmit.value = true;
@@ -781,21 +781,21 @@ const submitLaporan = async () => {
     // Susun payload yang dikirim ke backend
     const payload = {
       ..._.cloneDeep(form),
-      tanggal_inspeksi: tanggalInput.value,
+      tanggal_berita_acara: tanggalInput.value,
       // Kirim juga variasi snake_case jika backend membutuhkannya
       daftar_alat: form.daftar_alat,
       dokumentasi: form.dokumentasi,
     };
 
-    console.log("=== Mengirim Payload Laporan ===", payload);
+    console.log("=== Mengirim Payload Berita Acara ===", payload);
 
     // Panggil aksi Simpan
     let res;
 
     if (props.mode == "create") {
-      res = await laporanStore.addLaporannAct(payload);
+      res = await beritaAcaraStore.addBeritaAcaraAct(payload);
     } else {
-      res = await laporanStore.updateLaporannAct(payload);
+      res = await beritaAcaraStore.updateBeritaAcaraAct(payload);
     }
 
     console.log("=== Response Backend ===", res);

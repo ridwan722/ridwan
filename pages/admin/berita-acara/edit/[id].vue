@@ -70,7 +70,7 @@
             />
 
             <v-text-field
-              v-model="form.judul_laporan"
+              v-model="form.judul_berita_acara"
               label="Judul Laporan *"
               placeholder="Contoh: RANGKUMAN HASIL INSPEKSI"
               variant="outlined"
@@ -81,7 +81,7 @@
 
             <v-text-field
               v-model="tanggalInput"
-              label="Tanggal Inspeksi *"
+              label="Tanggal Berita Acara *"
               type="date"
               variant="outlined"
               density="comfortable"
@@ -222,14 +222,14 @@ import { ref, reactive, watch, onMounted } from "vue";
 import _ from "lodash";
 import moment from "moment";
 import { useRoute } from "vue-router";
-import { useLaporanStore } from "~/stores/laporanStore";
-import type { CompanyInspectionReport } from "~/types/laporanModel";
+import { useBeritaAcaraStore } from "~/stores/beritaAcaraStore";
+import type { CompanyInspectionReport } from "~/types/beritaAcaraModel";
 import { useMasterPerusahaanStore } from "~/stores/master/perusahaanStore";
 
 // 1. Inisialisasi Stores & Nuxt Utilities
 const route = useRoute();
 const perusahaanStore = useMasterPerusahaanStore();
-const laporanStore = useLaporanStore();
+const beritaAcaraStore = useBeritaAcaraStore();
 const formRef = ref<any>(null);
 const loadingSubmit = ref(false);
 
@@ -246,7 +246,7 @@ const form = reactive<CompanyInspectionReport>({
   nama_perusahaan: "",
   id_cabang: "",
   nama_cabang: "",
-  judul_laporan: "RANGKUMAN HASIL INSPEKSI",
+  judul_berita_acara: "RANGKUMAN HASIL INSPEKSI",
   daftar_alat: [
     {
       no: 1,
@@ -267,37 +267,37 @@ onMounted(async () => {
   await perusahaanStore.tarikDataPerusahaanAct();
 
   // Pastikan data laporan di store sudah ter-update paling baru
-  await laporanStore.tarikDataLaporannAct();
+  await beritaAcaraStore.tarikDataBeritaAcaraAct();
 
   // Ambil ID dari parameter URL (misal: /admin/perusahaan/edit/[id])
-  const laporanId = route.params.id as string;
+  const beritaAcaraId = route.params.id as string;
 
-  if (laporanId) {
-    const dataLaporan = laporanStore.getDataLaporan;
-    const detailLaporan = _.find(dataLaporan, (o: any) => o.id === laporanId);
+  if (beritaAcaraId) {
+    const dataBeritaAcara = beritaAcaraStore.getDataBeritaAcara;
+    const detailBeritaAcara = _.find(dataBeritaAcara, (o: any) => o.id === beritaAcaraId);
 
-    if (detailLaporan) {
+    if (detailBeritaAcara) {
       // Masukkan data detail ke dalam form
-      form.id = detailLaporan.id;
-      form.id_perusahaan = detailLaporan.id_perusahaan;
-      form.nama_perusahaan = detailLaporan.nama_perusahaan;
+      form.id = detailBeritaAcara.id;
+      form.id_perusahaan = detailBeritaAcara.id_perusahaan;
+      form.nama_perusahaan = detailBeritaAcara.nama_perusahaan;
 
       // Ambil data cabang dari perusahaan terkait agar a-select-new cabang memiliki items data
       await perusahaanStore.tarikDataCabangPerusahaan(
-        detailLaporan.id_perusahaan,
+        detailBeritaAcara.id_perusahaan,
       );
 
-      form.id_cabang = detailLaporan.id_cabang;
-      form.nama_cabang = detailLaporan.nama_cabang;
-      form.judul_laporan = detailLaporan.judul_laporan;
+      form.id_cabang = detailBeritaAcara.id_cabang;
+      form.nama_cabang = detailBeritaAcara.nama_cabang;
+      form.judul_berita_acara = detailBeritaAcara.judul_berita_acara;
 
-      // if (detailLaporan.tanggal_inspeksi) {
-      //   tanggalInput.value = moment(detailLaporan.tanggal_inspeksi).format(
+      // if (detailBeritaAcara.tanggal_berita_acara) {
+      //   tanggalInput.value = moment(detailBeritaAcara.tanggal_berita_acara).format(
       //     "YYYY-MM-DD",
       //   );
       // }
 
-      form.daftar_alat = _.cloneDeep(detailLaporan.daftar_alat);
+      form.daftar_alat = _.cloneDeep(detailBeritaAcara.daftar_alat);
     }
   }
 
@@ -368,10 +368,10 @@ const updateLaporan = async () => {
 
   try {
     loadingSubmit.value = true;
-    // form.tanggal_inspeksi = moment(tanggalInput.value).toDate();
+    // form.tanggal_berita_acara = moment(tanggalInput.value).toDate();
 
     const payload = _.cloneDeep(form);
-    await laporanStore.updateLaporannAct(payload);
+    await beritaAcaraStore.updateBeritaAcaraAct(payload);
     await navigateTo("/admin/perusahaan");
   } catch (error) {
     console.error("Gagal memperbarui data:", error);

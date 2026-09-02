@@ -384,6 +384,16 @@ const isCurrentMonth = (dateString: string): boolean => {
 </script>
 
 <template>
+   <v-btn
+    variant="text"
+    color="grey-darken-3"
+    prepend-icon="mdi-arrow-left"
+    @click="$router.go(-1)"
+    class="text-capitalize font-weight-bold mb-2"
+  >
+    Kembali
+  </v-btn>
+  
   <div class="petty-cash-container">
     <div class="pc-header">
       <div class="header-info">

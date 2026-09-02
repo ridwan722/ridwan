@@ -1,57 +1,57 @@
 import { defineStore } from "pinia";
-import type { CompanyInspectionReport } from "~/types/laporanModel";
+import type { CompanyInspectionReport } from "~/types/beritaAcaraModel";
 
-export const useLaporanStore = defineStore("laporanStore", {
+export const useBeritaAcaraStore = defineStore("beritaAcaraStore", {
   state: () => {
     return {
-      dataLaporan: [] as CompanyInspectionReport[],
+      dataBeritaAcara: [] as CompanyInspectionReport[],
     };
   },
 
   getters: {
-    getDataLaporan(state) {
-      return state.dataLaporan;
+    getDataBeritaAcara(state) {
+      return state.dataBeritaAcara;
     },
   },
 
   actions: {
     // 1. Aksi untuk menarik data dari database
-    async tarikDataLaporannAct() {
+    async tarikDataBeritaAcaraAct() {
       try {
-        const datatarik = await queryambilidsesion("laporan");
-        this.dataLaporan = datatarik as unknown as CompanyInspectionReport[];
+        const datatarik = await queryambilidsesion("berita_acara");
+        this.dataBeritaAcara = datatarik as unknown as CompanyInspectionReport[];
       } catch (error) {
-        console.error("Gagal menarik data Laporann:", error);
+        console.error("Gagal menarik data Berita Acara:", error);
       }
     },
 
-    // 2. Aksi untuk menambahkan laporan Laporann baru
-    async addLaporannAct(lempar: CompanyInspectionReport) {
+    // 2. Aksi untuk menambahkan laporan Berita Acara baru
+    async addBeritaAcaraAct(lempar: CompanyInspectionReport) {
       const notificationStore = useNotificationStore();
       try {
         useloadingStore().setLoading(true);
-        await setlaporan(lempar);
-        sessionStorage.removeItem("laporan");
+        await setberitaacara(lempar);
+        sessionStorage.removeItem("berita_acara");
 
-        await this.tarikDataLaporannAct();
-        notificationStore.showSuccess("Laporan Laporann berhasil ditambahkan");
+        await this.tarikDataBeritaAcaraAct();
+        notificationStore.showSuccess("Laporan berhasil ditambahkan");
         useloadingStore().setLoading(false);
       } catch (error) {
-        notificationStore.showError("Gagal menyimpan laporan Laporann");
+        notificationStore.showError("Gagal menyimpan laporan Berita Acara");
         useloadingStore().setLoading(false);
       }
     },
 
     // 3. Aksi untuk memperbarui laporan Laporann yang ada
-    async updateLaporannAct(lempar: CompanyInspectionReport) {
+    async updateBeritaAcaraAct(lempar: CompanyInspectionReport) {
       const notificationStore = useNotificationStore();
       try {
         useloadingStore().setLoading(true);
 
-        await updatedatabase("laporan", lempar.id!, lempar);
-        sessionStorage.removeItem("laporan");
+        await updatedatabase("berita_acara", lempar.id!, lempar);
+        sessionStorage.removeItem("berita_acara");
 
-        await this.tarikDataLaporannAct();
+        await this.tarikDataBeritaAcaraAct();
         notificationStore.showSuccess("Perubahan berhasil disimpan");
         useloadingStore().setLoading(false);
       } catch (error) {
@@ -61,15 +61,15 @@ export const useLaporanStore = defineStore("laporanStore", {
     },
 
     // 4. Aksi untuk menghapus data laporan Laporann
-    async deleteLaporannAct(id: string) {
+    async deleteBeritaAcaraAct(id: string) {
       const notificationStore = useNotificationStore();
       try {
         useloadingStore().setLoading(true);
 
-        await hapusdatabase("laporan", id);
-        sessionStorage.removeItem("laporan");
+        await hapusdatabase("berita_acara", id);
+        sessionStorage.removeItem("berita_acara");
 
-        await this.tarikDataLaporannAct();
+        await this.tarikDataBeritaAcaraAct();
         notificationStore.showSuccess("Laporan berhasil dihapus");
         useloadingStore().setLoading(false);
       } catch (error) {

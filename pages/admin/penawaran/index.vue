@@ -117,7 +117,11 @@
               />
             </v-col>
             <v-col cols="10" sm="2">
-              <a-field-number-new v-model="item.qty" label="Qty" placeholder="0" />
+              <a-field-number-new
+                v-model="item.qty"
+                label="Qty"
+                placeholder="0"
+              />
             </v-col>
             <v-col cols="10" sm="2">
               <a-select-new
@@ -220,12 +224,25 @@
 
   <!-- /// HEADER & TOOLBAR \\\ -->
   <v-row align="center">
-    <v-col cols="12">
+    <v-col cols="10">
       <v-breadcrumbs>
         <v-breadcrumbs-item>
           <span class="font-weight-medium text-h5">Penawaran</span>
         </v-breadcrumbs-item>
       </v-breadcrumbs>
+    </v-col>
+
+    <v-col>
+      <v-btn
+        color="primary"
+        variant="flat"
+        size="small"
+        class="text-capitalize px-3 ml-2"
+        prepend-icon="mdi-plus"
+        @click="openDialogTambahPenawaran"
+      >
+        Create New Quotation
+      </v-btn>
     </v-col>
   </v-row>
 
@@ -239,25 +256,7 @@
             style="max-width: 280px"
           />
         </v-col>
-        <v-col cols="12" sm="3">
-          <a-select-new
-            v-model="data.filterStatus"
-            placeholder="Semua Status"
-            :items="filterStatusOptions"
-          />
-        </v-col>
         <v-col cols="12" sm="5" class="text-right">
-          <v-btn
-            color="primary"
-            variant="flat"
-            size="small"
-            class="text-capitalize px-3 ml-2"
-            prepend-icon="mdi-plus"
-            @click="openDialogTambahPenawaran"
-          >
-            Create New Quotation
-          </v-btn>
-
           <v-btn
             size="35"
             variant="outlined"
@@ -277,7 +276,7 @@
 
     <v-data-table
       :headers="data.headPenawaran"
-      :items="filteredPenawaran"
+      :items="penawaranStore.getDataPenawaran"
       :search="data.searchPenawaran"
       density="compact"
       :sort-by="[{ key: 'created_at', order: 'desc' }]"
@@ -390,17 +389,17 @@ const filterStatusOptions = [
 
 const data = reactive({
   searchPenawaran: "",
-  filterStatus: "",
+
   dialogTambahPenawaran: false,
   penawaranAddEdit: "add" as "add" | "edit",
   editOriginalCustomerId: "",
   headPenawaran: [
     { title: "No", value: "no", width: "10px" },
-    { title: "Tanggal", value: "tanggal_penawaran", sortable: true },
+    { title: "Date", value: "tanggal_penawaran", sortable: true },
     { title: "Quotation Ref No", value: "no_penawaran", sortable: true },
-    { title: "Perusahaan", value: "nama_perusahaan", sortable: true },
-    { title: "Perihal", value: "perihal", sortable: true },
-    { title: "Total", value: "grand_total", sortable: true },
+    { title: "Client", value: "nama_perusahaan", sortable: true },
+    { title: "Subject", value: "perihal", sortable: true },
+    { title: "Total Amount", value: "grand_total", sortable: true },
     { title: "Status", value: "status", sortable: true },
     { title: "Aksi", align: "center" as const, value: "aksi", width: "120px" },
   ],
@@ -477,12 +476,6 @@ watch(
 onMounted(async () => {
   await customerStore.tarikDataCustomerAct();
   await penawaranStore.tarikDataPenawaranAct();
-});
-
-const filteredPenawaran = computed(() => {
-  const dataset = penawaranStore.getDataPenawaran || [];
-  if (!data.filterStatus) return dataset;
-  return dataset.filter((quo: penawaranM) => quo.status === data.filterStatus);
 });
 
 function statusColor(status: string) {

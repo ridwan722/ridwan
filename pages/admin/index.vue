@@ -7,617 +7,498 @@ definePageMeta({
 </script>
 
 <template>
-  <div class="mobile-app-page">
-    <div class="content-inner">
-      <!-- Dashboard Banner -->
-      <div class="dashboard-banner">
-        <div class="banner-icon">
-          <v-icon icon="mdi-view-dashboard" size="26" color="#ffffff" />
+  <div class="admin-dashboard-page">
+    <div class="content-container">
+      <!-- Header Banner dengan Brand Color Line -->
+      <header class="dashboard-header">
+        <div class="header-info">
+          <div class="header-tag">ENTERPRISE SYSTEM</div>
+          <h1 class="header-title">Ringkasan Sistem & Directory Menu</h1>
         </div>
-
-        <div class="banner-text">
-          <span class="banner-title"> Dashboard & Menu </span>
-          <span class="banner-sub"> Ringkasan data & statistik bisnis </span>
+        <div class="header-metrics">
+          <div class="metric-pill">
+            <span class="metric-label">Status Server</span>
+            <span class="metric-value status-online">
+              <span class="dot"></span> Normal
+            </span>
+          </div>
         </div>
-      </div>
+      </header>
 
-      <!-- ================= MASTER ================= -->
-      <section class="menu-section">
-        <div class="section-header">
-          <span class="section-title"> MASTER </span>
-        </div>
+      <!-- Main Bento Grid -->
+      <main class="bento-grid">
+        <!-- CARD 1: TRANSACTION CENTER -->
+        <section class="bento-card col-span-2">
+          <div class="card-header">
+            <div class="header-title-group">
+              <v-icon icon="mdi-file-document-multiple-outline" size="18" class="header-icon" />
+              <h2>Penjualan & Modul Transaksi</h2>
+            </div>
+            <span class="badge-count">6 Direct Links</span>
+          </div>
 
-        <v-expand-transition>
-          <div class="grid-container">
-            <!-- Master Data -->
-            <div class="menu-card-group">
-              <div class="group-label">
-                <div class="group-label-left">
-                  <v-icon
-                    icon="mdi-layers-outline"
-                    size="18"
-                    class="label-icon"
-                  />
-                  <span> Master Data </span>
-                </div>
+          <div class="card-body">
+            <!-- Sub Group: Quotation -->
+            <div class="group-section">
+              <div class="group-header">
+                <span class="group-title">QUOTATION (PENAWARAN)</span>
               </div>
-
-              <div class="sub-grid">
-                <NuxtLink to="/admin/master/users" class="app-card">
-                  <div class="card-icon icon-blue">
-                    <v-icon icon="mdi-account-group-outline" size="22" />
+              <div class="action-grid-1">
+                <NuxtLink to="/admin/penawaran" class="compact-action-card">
+                  <div class="action-icon">
+                    <v-icon icon="mdi-file-edit-outline" size="18" />
                   </div>
-                  <span class="card-label"> System Users </span>
-                </NuxtLink>
-              </div>
-              <div class="sub-grid mt-3">
-                <NuxtLink to="/admin/master/client" class="app-card">
-                  <div class="card-icon icon-blue">
-                    <v-icon icon="mdi-account-group" size="22" />
+                  <div class="action-text">
+                    <span class="title">Main Quotation</span>
+                    <span class="sub">Kelola draft & estimasi harga</span>
                   </div>
-                  <span class="card-label"> Client </span>
+                  <v-icon icon="mdi-chevron-right" size="16" class="arrow" />
                 </NuxtLink>
               </div>
             </div>
 
-            <!-- Invoice -->
-            <div class="menu-card-group">
-              <div class="group-label clickable">
-                <div class="group-label-left">
-                  <v-icon
-                    icon="mdi-receipt-text-outline"
-                    size="18"
-                    class="label-icon"
-                  />
-                  <span> Penawaran </span>
-                </div>
+
+
+            <!-- Sub Group: SPK -->
+            <div class="group-section">
+
+              <div class="action-grid-1">
+                <NuxtLink to="/admin/spk" class="compact-action-card">
+                  <div class="action-icon">
+                    <v-icon icon="mdi-file-cog-outline" size="18" />
+                  </div>
+                  <div class="action-text">
+                    <span class="title">Daftar SPK</span>
+                    <span class="sub">Kelola perintah kerja & penugasan</span>
+                  </div>
+                  <v-icon icon="mdi-chevron-right" size="16" class="arrow" />
+                </NuxtLink>
               </div>
-
-              <v-expand-transition>
-                <div class="grid-3-col">
-                  <NuxtLink to="/admin/penawaran" class="app-card">
-                    <div class="card-icon icon-indigo">
-                      <v-icon icon="mdi-file-document-outline" size="20" />
-                    </div>
-                    <span class="card-label"> Penawaran </span>
-                  </NuxtLink>
-
-                  <!-- <NuxtLink to="/admin/penawaran/dikirim" class="app-card">
-                    <div class="card-icon icon-purple">
-                      <v-icon icon="mdi-truck-delivery-outline" size="20" />
-                    </div>
-                    <span class="card-label"> Penawaran Dikirim </span>
-                  </NuxtLink>
-
-                  <NuxtLink to="/admin/penawaran/selesai" class="app-card">
-                    <div class="card-icon icon-teal">
-                      <v-icon icon="mdi-check-circle-outline" size="20" />
-                    </div>
-                    <span class="card-label"> Penawaran Selesai </span>
-                  </NuxtLink> -->
-                </div>
-              </v-expand-transition>
-
-              <div class="group-label clickable mt-2">
-                <div class="group-label-left">
-                  <v-icon
-                    icon="mdi-receipt-text-outline"
-                    size="18"
-                    class="label-icon"
-                  />
-                  <span> Invoice </span>
-                </div>
-              </div>
-
-              <v-expand-transition>
-                <div class="grid-3-col">
-                  <NuxtLink to="/admin/invoice" class="app-card">
-                    <div class="card-icon icon-indigo">
-                      <v-icon icon="mdi-file-document-outline" size="20" />
-                    </div>
-                    <span class="card-label"> Invoice </span>
-                  </NuxtLink>
-
-                  <NuxtLink to="/admin/invoice/dikirim" class="app-card">
-                    <div class="card-icon icon-purple">
-                      <v-icon icon="mdi-truck-delivery-outline" size="20" />
-                    </div>
-                    <span class="card-label"> Invoice Dikirim </span>
-                  </NuxtLink>
-
-                  <NuxtLink to="/admin/invoice/selesai" class="app-card">
-                    <div class="card-icon icon-teal">
-                      <v-icon icon="mdi-check-circle-outline" size="20" />
-                    </div>
-                    <span class="card-label"> Invoice Selesai </span>
-                  </NuxtLink>
-                </div>
-              </v-expand-transition>
             </div>
 
-            <!-- Petty Cash -->
-            <div class="menu-card-group direct-menu">
-              <div class="group-label clickable">
-                <div class="group-label-left">
-                  <v-icon
-                    icon="mdi-cash-multiple"
-                    size="18"
-                    class="label-icon"
-                  />
-                  <span> Keuangan </span>
-                </div>
-              </div>
 
-              <v-expand-transition>
-                <div class="sub-grid">
-                  <NuxtLink to="/admin/petty-cash" class="app-card">
-                    <div class="card-icon icon-emerald">
-                      <v-icon icon="mdi-cash-multiple" size="22" />
-                    </div>
-                    <span class="card-label"> Petty Cash </span>
-                  </NuxtLink>
-                </div>
-              </v-expand-transition>
+
+            <!-- Sub Group: Berita Acara -->
+            <div class="group-section">
+
+              <div class="action-grid-1">
+                <NuxtLink to="/admin/berita-acara" class="compact-action-card">
+                  <div class="action-icon">
+                    <v-icon icon="mdi-file-certificate-outline" size="18" />
+                  </div>
+                  <div class="action-text">
+                    <span class="title">Berita Acara</span>
+                    <span class="sub">Kelola BAST & serah terima pekerjaan</span>
+                  </div>
+                  <v-icon icon="mdi-chevron-right" size="16" class="arrow" />
+                </NuxtLink>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Sub Group: Invoice -->
+            <div class="group-section">
+              <div class="group-header">
+                <span class="group-title">INVOICE (FAKTUR TAGIHAN)</span>
+              </div>
+              <div class="action-grid-3">
+                <NuxtLink to="/admin/invoice" class="compact-action-card">
+                  <div class="action-icon">
+                    <v-icon icon="mdi-receipt-text-outline" size="18" />
+                  </div>
+                  <div class="action-text">
+                    <span class="title">Semua Invoice</span>
+                    <span class="sub">Database utama</span>
+                  </div>
+                </NuxtLink>
+
+                <NuxtLink to="/admin/invoice/dikirim" class="compact-action-card">
+                  <div class="action-icon">
+                    <v-icon icon="mdi-send-outline" size="18" />
+                  </div>
+                  <div class="action-text">
+                    <span class="title">Send Invoice</span>
+                    <span class="sub">Status terkirim</span>
+                  </div>
+                </NuxtLink>
+
+                <NuxtLink to="/admin/invoice/selesai" class="compact-action-card">
+                  <div class="action-icon">
+                    <v-icon icon="mdi-check-decagram-outline" size="18" />
+                  </div>
+                  <div class="action-text">
+                    <span class="title">Invoice Success</span>
+                    <span class="sub">Lunas & selesai</span>
+                  </div>
+                </NuxtLink>
+              </div>
             </div>
           </div>
-        </v-expand-transition>
-      </section>
+        </section>
+
+        <!-- CARD 2: KEUANGAN (PETTY CASH) -->
+        <section class="bento-card">
+          <div class="card-header">
+            <div class="header-title-group">
+              <v-icon icon="mdi-wallet-outline" size="18" class="header-icon" />
+              <h2>OPERASIONAL</h2>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="group-section">
+              <div class="group-header">
+                <span class="group-title">KAS</span>
+              </div>
+              <NuxtLink to="/admin/petty-cash" class="compact-action-card highlight">
+                <div class="action-icon primary">
+                  <v-icon icon="mdi-cash-register" size="20" />
+                </div>
+                <div class="action-text">
+                  <span class="title">Petty Cash</span>
+                  <span class="sub">Pencatatan kas kecil & pengeluaran Harian</span>
+                </div>
+                <v-icon icon="mdi-arrow-top-right" size="16" class="arrow" />
+              </NuxtLink>
+            </div>
+          </div>
+        </section>
+
+        <!-- CARD 3: MASTER DATA -->
+        <section class="bento-card col-span-3">
+          <div class="card-header">
+            <div class="header-title-group">
+              <v-icon icon="mdi-database-outline" size="18" class="header-icon" />
+              <h2>Master Data System</h2>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="action-grid-2">
+              <NuxtLink to="/admin/master/users" class="compact-action-card">
+                <div class="action-icon">
+                  <v-icon icon="mdi-account-group-outline" size="18" />
+                </div>
+                <div class="action-text">
+                  <span class="title">System Users</span>
+                  <span class="sub">Kelola akun, role, dan hak akses pengguna</span>
+                </div>
+                <v-icon icon="mdi-chevron-right" size="16" class="arrow" />
+              </NuxtLink>
+
+              <NuxtLink to="/admin/master/client" class="compact-action-card">
+                <div class="action-icon">
+                  <v-icon icon="mdi-domain" size="18" />
+                </div>
+                <div class="action-text">
+                  <span class="title">Master Client</span>
+                  <span class="sub">Direktori klien dan data kontak perusahaan</span>
+                </div>
+                <v-icon icon="mdi-chevron-right" size="16" class="arrow" />
+              </NuxtLink>
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
-
-    <!-- ================= BOTTOM NAV ================= -->
-    <!-- <nav v-if="mobile" class="bottom-nav">
-      <NuxtLink to="/admin/dashboard" class="nav-item active">
-        <v-icon icon="mdi-home-variant" size="22" />
-        <span> Beranda </span>
-      </NuxtLink>
-
-      <NuxtLink to="/admin/petty-cash" class="nav-item">
-        <v-icon icon="mdi-wallet-outline" size="22" />
-        <span> Keuangan </span>
-      </NuxtLink>
-
-      <NuxtLink to="/admin/" class="nav-item text-danger">
-        <v-icon icon="mdi-logout" size="22" />
-        <span> Keluar </span>
-      </NuxtLink>
-    </nav> -->
   </div>
 </template>
 
 <style scoped>
 /* =========================================================
-   BASE & MOBILE FIRST (0px - 767px)
+   PALET WARNA BRAND LOGO (CYAN, NAVY, RED ACCENT)
 ========================================================= */
 
-.mobile-app-page {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  font-family:
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    sans-serif;
-}
-
-/* CONTENT */
-.content-scroll {
-  position: relative;
-  z-index: 2;
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px 16px 100px;
-}
-
-.content-inner {
-  width: 100%;
-  max-width: 1180px;
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-/* DASHBOARD BANNER */
-.dashboard-banner {
-  display: flex;
-  align-items: center;
-  gap: 14px;
+.admin-dashboard-page {
+  min-height: 100vh;
+  background-color: #f1f5f9;
+  color: #0f172a;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   padding: 16px;
-  border-radius: 20px;
-  background: linear-gradient(135deg, #eb2525 0%, #d81d1d 100%);
-  text-decoration: none;
-  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
 }
 
-.dashboard-banner:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.28);
-}
-
-.banner-icon {
-  flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.banner-text {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.banner-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: #ffffff;
-}
-
-.banner-sub {
-  margin-top: 2px;
-  font-size: 11px;
-  color: #bfdbfe;
-}
-
-.banner-arrow {
-  color: #ffffff;
-}
-
-/* SECTION */
-.menu-section {
+.content-container {
+  max-width: 1200px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 4px;
-  cursor: pointer;
-}
-
-.section-title {
-  color: #2563eb;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 1px;
-}
-
-/* =========================================================
-   GRID RESPONSIVE (MOBILE FIX)
-========================================================= */
-
-/* Default Mobile: Standard 1 Kolom */
-.grid-container {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 14px;
-}
-
-.menu-card-group {
+/* ---------------------------------------------------------
+   HEADER
+--------------------------------------------------------- */
+.dashboard-header {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 20px;
-  padding: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-}
-
-.direct-menu {
-  height: fit-content;
-}
-
-.group-label {
+  border: 1px solid #cbd5e1;
+  border-left: 4px solid #f83b3b; /* Merah Brand Logo */
+  border-radius: 6px;
+  padding: 14px 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
-  font-size: 13px;
-  font-weight: 700;
-  color: #334155;
 }
 
-.group-label-left {
+.header-tag {
+  font-size: 10px;
+  font-weight: 800;
+  color: #005792; /* Navy Brand Logo */
+  letter-spacing: 0.8px;
+}
+
+.header-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 2px 0 0 0;
+}
+
+.metric-pill {
   display: flex;
   align-items: center;
+  gap: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
 }
 
-.label-icon {
-  color: #eb2525;
-  margin-right: 6px;
+.metric-label {
+  color: #64748b;
 }
 
-.clickable {
-  cursor: pointer;
+.status-online {
+  color: #15803d;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.sub-grid {
+.dot {
+  width: 6px;
+  height: 6px;
+  background-color: #22c55e;
+  border-radius: 50%;
+}
+
+/* ---------------------------------------------------------
+   BENTO GRID LAYOUT
+--------------------------------------------------------- */
+.bento-grid {
   display: grid;
   grid-template-columns: 1fr;
+  gap: 12px;
 }
 
-/* Grid 3 Kolom di Mobile disesuaikan ke 2-3 kolom otomatis berdasarkan lebar */
-.grid-3-col {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+.bento-card {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-header {
+  padding: 10px 14px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-icon {
+  color: #005792; /* Navy Brand Logo */
+}
+
+.card-header h2 {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #005792; /* Navy Brand Logo */
+  margin: 0;
+}
+
+.badge-count {
+  font-size: 10px;
+  background: #e0f2fe; /* Light Cyan Soft Tint */
+  color: #005792;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.card-body {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
   gap: 10px;
 }
 
-/* APP CARD */
-.app-card {
-  height: 100%;
-  min-height: 90px;
+.divider {
+  height: 1px;
+  background-color: #f1f5f9;
+  margin: 2px 0;
+}
+
+/* ---------------------------------------------------------
+   GROUP SECTIONS & CARDS
+--------------------------------------------------------- */
+.group-header {
+  margin-bottom: 3px;
+}
+
+.group-title {
+  font-size: 10px;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+.compact-action-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 12px 8px;
+  border-radius: 4px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.12s ease;
+}
+
+.compact-action-card:hover {
+  border-color: #38bdf8; /* Light Cyan Border on Hover */
+  background: #f0f9ff;
+}
+
+.compact-action-card.highlight {
+  border-color: #cbd5e1;
+  background: #fafafa;
+}
+
+.compact-action-card.highlight:hover {
+  border-color: #f83b3b; /* Touch of Red Accent on Hover */
+  background: #fff5f5;
+}
+
+.action-icon {
+  width: 30px;
+  height: 30px;
+  background: #e0f2fe; /* Light Cyan Tint */
+  color: #005792; /* Navy Icon Color */
+  border-radius: 4px;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  text-decoration: none;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
-  transition:
-    transform 0.2s ease,
-    background 0.2s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+  flex-shrink: 0;
+  transition: all 0.12s ease;
 }
 
-.app-card:hover {
-  transform: translateY(-2px);
-  border-color: #cbd5e1;
-  background: #f8fafc;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.06);
+.action-icon.primary {
+  background: #ffe4e6;
+  color: #f83b3b;
 }
 
-.app-card:active {
-  transform: scale(0.97);
+.compact-action-card:hover .action-icon {
+  background: #005792; /* Navy Background on Active Hover */
+  color: #ffffff;
 }
 
-.card-label {
-  font-size: 11px;
+.compact-action-card.highlight:hover .action-icon.primary {
+  background: #f83b3b;
+  color: #ffffff;
+}
+
+.action-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.action-text .title {
+  font-size: 12px;
   font-weight: 600;
-  color: #334155;
-  text-align: center;
+  color: #0f172a;
   line-height: 1.2;
 }
 
-/* ICONS */
-.card-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.action-text .sub {
+  font-size: 10.5px;
+  color: #64748b;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.icon-blue {
-  background: #eff6ff;
-  color: #2563eb;
+.arrow {
+  color: #cbd5e1;
 }
 
-.icon-emerald {
-  background: #ecfdf5;
-  color: #059669;
+.compact-action-card:hover .arrow {
+  color: #005792;
 }
 
-.icon-indigo {
-  background: #e0e7ff;
-  color: #4f46e5;
+/* GRIDS INSIDE CARDS */
+.action-grid-1 {
+  display: grid;
+  grid-template-columns: 1fr;
 }
 
-.icon-purple {
-  background: #faf5ff;
-  color: #9333ea;
+.action-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
 }
 
-.icon-teal {
-  background: #ccfbf1;
-  color: #0d9488;
+.action-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
 }
 
-/* BOTTOM NAV */
-.bottom-nav {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 50;
-  background: #ffffff;
-  border-top: 1px solid #e2e8f0;
-  display: flex;
-  justify-content: space-around;
-  padding: 10px 0 14px;
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.03);
-}
-
-.nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  text-decoration: none;
-  color: #94a3b8;
-  font-size: 10px;
-  font-weight: 600;
-}
-
-.nav-item.active {
-  color: #eb2525;
-}
-
-.text-danger {
-  color: #ef4444;
-}
-
-/* =========================================================
-   TABLET (min-width: 640px / 768px)
+/* ---------------------------------------------------------
+   DESKTOP RESPONSIVE
 ========================================================= */
 
-@media (min-width: 640px) {
-  .grid-container {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
 @media (min-width: 768px) {
-  .content-scroll {
-    padding: 24px 24px 110px;
-  }
-
-  .dashboard-banner {
+  .admin-dashboard-page {
     padding: 20px;
   }
 
-  .banner-title {
-    font-size: 17px;
+  .action-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
   }
 
-  .banner-sub {
-    font-size: 12px;
-  }
-
-  .grid-container {
-    gap: 16px;
-  }
-
-  .menu-card-group {
-    padding: 18px;
-  }
-
-  .app-card {
-    min-height: 110px;
-    padding: 14px 10px;
-  }
-
-  .card-label {
-    font-size: 11.5px;
-  }
-
-  .card-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 14px;
+  .action-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
-
-/* =========================================================
-   DESKTOP (min-width: 1024px)
-========================================================= */
 
 @media (min-width: 1024px) {
-  .content-scroll {
-    padding: 32px 32px 40px;
+  .bento-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
 
-  .content-inner {
-    max-width: 1180px;
-    gap: 24px;
+  .col-span-2 {
+    grid-column: span 2;
   }
 
-  .dashboard-banner {
-    min-height: 86px;
-    padding: 20px 24px;
-    border-radius: 18px;
-  }
-
-  .banner-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 15px;
-  }
-
-  .banner-title {
-    font-size: 17px;
-  }
-
-  .banner-sub {
-    font-size: 12px;
-  }
-
-  .section-title {
-    font-size: 13px;
-  }
-
-  /* Desktop layout 3 kolom */
-  .grid-container {
-    grid-template-columns: 1fr 1.5fr 0.7fr;
-    align-items: start;
-    gap: 16px;
-  }
-
-  .menu-card-group {
-    min-height: 170px;
-    padding: 18px;
-    border-radius: 18px;
-  }
-
-  .app-card {
-    min-height: 115px;
-    border-radius: 14px;
-  }
-
-  .bottom-nav {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: auto;
-    left: auto;
-    width: auto;
-    height: 76px;
-    padding: 0 32px;
-    background: transparent;
-    border: 0;
-    box-shadow: none;
-    gap: 20px;
-    justify-content: flex-end;
-    pointer-events: none;
-  }
-
-  .nav-item {
-    pointer-events: auto;
-    display: flex;
-    flex-direction: row;
-    gap: 6px;
-    padding: 9px 14px;
-    border-radius: 10px;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-    font-size: 11px;
-  }
-}
-
-/* =========================================================
-   LARGE DESKTOP (min-width: 1400px)
-========================================================= */
-
-@media (min-width: 1400px) {
-  .content-inner {
-    max-width: 1280px;
-  }
-
-  .content-scroll {
-    padding-top: 36px;
-  }
-
-  .app-card {
-    min-height: 125px;
+  .col-span-3 {
+    grid-column: span 3;
   }
 }
 </style>

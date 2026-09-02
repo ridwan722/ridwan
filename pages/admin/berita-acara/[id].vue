@@ -7,17 +7,17 @@
         size="48"
       ></v-progress-circular>
       <div class="mt-3 text-body-2 text-grey-darken-1 font-weight-medium">
-        Memuat detail laporan...
+        Memuat detail Berita Acara...
       </div>
     </div>
 
     <div v-else-if="!detailData" class="text-center py-12 empty-state no-print">
       <v-icon size="64" color="error">mdi-alert-circle-outline</v-icon>
       <h3 class="text-h6 font-weight-bold mt-3 text-grey-darken-3">
-        Data Laporan Tidak Ditemukan
+        Data Berita Acara Tidak Ditemukan
       </h3>
       <p class="text-body-2 text-grey">
-        Laporan yang Anda cari mungkin telah dihapus atau ID tidak valid.
+        Berita Acara yang Anda cari mungkin telah dihapus atau ID tidak valid.
       </p>
       <v-btn
         color="grey-darken-1"
@@ -43,7 +43,7 @@
           ></v-btn>
           <div>
             <h1 class="text-h5 font-weight-bold text-slate-900">
-              Detail Laporan  <span class="text-primary">#{{ detailData.id }}</span>
+              Detail Berita Acara  <span class="text-primary">#{{ detailData.id }}</span>
             </h1>
             <p class="text-caption text-grey">
               Ringkasan dokumen inspeksi alat
@@ -57,9 +57,9 @@
             prepend-icon="mdi-printer"
             class="text-none rounded-lg px-4"
             elevation="0"
-            @click="cetakLaporan"
+            @click="cetakBeritaAcara"
           >
-            Cetak Laporan
+            Cetak Berita Acara
           </v-btn>
         </div>
       </div>
@@ -70,7 +70,7 @@
             <div class="flex-grow-1">
               <!-- <span class="badge-category mb-2">Laporan Resmi Inspeksi</span> -->
               <h2 class="text-h5 font-weight-bold text-slate-900 mb-2">
-                {{ detailData.judul_laporan }}
+                {{ detailData.judul_berita_acara }}
               </h2>
               <v-chip
                 :href="`/admin/master/kategori/item/${detailData.id_kategori_item}`"
@@ -287,8 +287,8 @@ import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import _ from "lodash";
 import moment from "moment";
-import { useLaporanStore } from "~/stores/laporanStore";
-import type { CompanyInspectionReport } from "~/types/laporanModel";
+import { useBeritaAcaraStore } from "~/stores/beritaAcaraStore";
+import type { CompanyInspectionReport } from "~/types/beritaAcaraModel";
 
 definePageMeta({
   layout: "admin",
@@ -296,7 +296,7 @@ definePageMeta({
 
 const route = useRoute();
 const router = useRouter();
-const laporanStore = useLaporanStore();
+const beritaAcaraStore = useBeritaAcaraStore();
 
 // State
 const loading = ref(true);
@@ -318,15 +318,15 @@ const kembali = () => {
 };
 
 // Ambil data detail saat halaman di-load
-const loadDetailLaporan = async () => {
+const loaddetailBeritaAcara = async () => {
   try {
     loading.value = true;
-    await laporanStore.tarikDataLaporannAct();
-    const laporanId = route.params.id as string;
+    await beritaAcaraStore.tarikDataBeritaAcaraAct();
+    const beritaAcaraId = route.params.id as string;
 
-    if (laporanId) {
-      const allLaporan = laporanStore.getDataLaporan;
-      const match = _.find(allLaporan, (o: any) => o.id === laporanId);
+    if (beritaAcaraId) {
+      const allBeritaAcara = beritaAcaraStore.getDataBeritaAcara;
+      const match = _.find(allBeritaAcara, (o: any) => o.id === beritaAcaraId);
 
       if (match) {
         detailData.value = _.cloneDeep(match);
@@ -340,12 +340,12 @@ const loadDetailLaporan = async () => {
 };
 
 // Fungsi Print Laporan
-const cetakLaporan = () => {
+const cetakBeritaAcara = () => {
   window.print();
 };
 
 onMounted(() => {
-  loadDetailLaporan();
+  loaddetailBeritaAcara();
 });
 
 // Format Tanggal

@@ -15,8 +15,8 @@ export interface CompanyInspectionReport {
     id_cabang: string; // Contoh: "DAIHATSU CAB. PLUIT"
     nama_perusahaan: string; // Contoh: "PT. ASTRA INTERNASIONAL TBK."
     nama_cabang: string; // Contoh: "DAIHATSU CAB. PLUIT"
-    judul_laporan: string; // Contoh: "RANGKUMAN HASIL INSPEKSI"
-    // tanggal_inspeksi?: Date; // Sangat disarankan ditambahkan untuk tracking waktu
+    judul_berita_acara: string; // Contoh: "RANGKUMAN HASIL INSPEKSI"
+    // tanggal_berita_acara?: Date; // Sangat disarankan ditambahkan untuk tracking waktu
     daftar_alat: InspectionItem[]; // Array dari alat-alat di atas
     dokumentasi?: string[]; // Array dari nama file dokumen pendukung
     id_kategori_item: string; // ID kategori dari master kategorinam

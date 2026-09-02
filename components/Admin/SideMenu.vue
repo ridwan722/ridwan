@@ -49,7 +49,7 @@
       class="nav-item mb-1"
       title="Laporan Inspeksi"
       prepend-icon="mdi-chart-box-outline"
-      to="/admin/laporan"
+      to="/admin/berita_acara"
     />
 
     <v-list-group value="penawaran" class="nav-group mb-1">

@@ -1,10 +1,10 @@
 <template>
   <ConfirmationDialog ref="confirmationDialog" />
-  <v-dialog v-model="data.dialog_tambah_laporan">
+  <v-dialog v-model="data.dialog_tambah_berita_acara">
     <v-card class="d-flex flex-column h-100">
       <v-card-text class="flex-grow-1 overflow-y-auto pa-0">
-        <dialog-tambah-laporan
-          @close="data.dialog_tambah_laporan = false"
+        <dialog-tambah-berita-acara
+          @close="data.dialog_tambah_berita_acara = false"
           @saved="handleSaved"
           mode="create"
         />
@@ -12,13 +12,13 @@
     </v-card>
   </v-dialog>
 
-  <v-dialog v-model="data.dialog_edit_laporan">
+  <v-dialog v-model="data.dialog_edit_berita_acara">
     <v-card class="d-flex flex-column h-100">
       <v-card-text class="flex-grow-1 overflow-y-auto pa-0">
-        <dialog-tambah-laporan
+        <dialog-tambah-berita-acara
           mode="edit"
-          :data-edit="data.selectedLaporan"
-          @close="data.dialog_edit_laporan = false"
+          :data-edit="data.selectedBeritaAcara"
+          @close="data.dialog_edit_berita_acara = false"
           @saved="handleSaved"
         />
       </v-card-text>
@@ -29,7 +29,7 @@
     <v-col cols="9">
       <v-breadcrumbs>
         <v-breadcrumbs-item active>
-          <span class="font-weight-medium text-h5"> Laporan </span>
+          <span class="font-weight-medium text-h5"> Berita Acara </span>
         </v-breadcrumbs-item>
       </v-breadcrumbs>
     </v-col>
@@ -54,7 +54,7 @@
         class="text-capitalize px-3"
         prepend-icon="mdi-plus"
       >
-        Tambah Laporan
+        Tambah Berita Acara
       </v-btn>
     </v-col>
   </v-row>
@@ -71,7 +71,7 @@
         </v-col>
 
         <v-col cols="12" sm="2" class="text-caption text-grey-darken-1">
-          Total: {{ masterLaporanStore.getDataLaporan.length }} laporan
+          <!-- Total: {{ masterBeritaAcaraStore.getDataBeritaAcara.length }} Berita Acara -->
         </v-col>
       </v-row>
     </v-card-title>
@@ -81,7 +81,7 @@
     <v-data-table
       :headers="data.headUser"
       :search="data.search"
-      :items="masterLaporanStore.getDataLaporan"
+      :items="masterBeritaAcaraStore.getDataBeritaAcara"
       density="compact"
       :hover="true"
       :items-per-page="data.itemsPerPage"
@@ -94,7 +94,7 @@
 
       <template v-slot:item.total_alat="{ item }">
         <span class="text-caption font-weight-bold text-grey-darken-1">
-          {{ item.daftar_alat.length }}
+          <!-- {{ item.daftar_alat.length }} -->
         </span>
       </template>
 
@@ -105,7 +105,7 @@
             variant="tonal"
             color="primary"
             class="rounded-lg mr-1"
-            :to="'/admin/laporan/' + item.id"
+            :to="'/admin/berita_acara/' + item.id"
           >
             <v-icon icon="mdi-eye" />
             <v-tooltip activator="parent" location="top">Detail</v-tooltip>
@@ -116,7 +116,7 @@
             variant="tonal"
             color="info"
             class="rounded-lg mr-1"
-            @click="editLaporan(item)"
+            @click="editBeritaAcara(item)"
           >
             <v-icon icon="mdi-pencil-outline" />
             <v-tooltip activator="parent" location="top">Edit</v-tooltip>
@@ -127,7 +127,7 @@
             variant="tonal"
             color="grey"
             class="rounded-lg"
-            @click="hapusLaporan(item.id!)"
+            @click="hapusBeritaAcara(item.id!)"
           >
             <v-icon icon="mdi-trash-can-outline" />
             <v-tooltip activator="parent" location="top">Hapus</v-tooltip>
@@ -170,18 +170,18 @@
                 />
                 <span class="text-caption font-weight-medium">
                   <span class="text-grey">Menampilkan</span>
-                  <strong class="text-primary ml-1">
+                  <!-- <strong class="text-primary ml-1">
                     {{ (data.page - 1) * data.itemsPerPage + 1 }}-{{
                       Math.min(
                         data.page * data.itemsPerPage,
-                        masterLaporanStore.getDataLaporan.length,
+                        masterBeritaAcaraStore.getDataBeritaAcara.length,
                       )
                     }}
                   </strong>
                   <span class="text-grey mx-1">/</span>
                   <strong>{{
-                    masterLaporanStore.getDataLaporan.length
-                  }}</strong>
+                    masterBeritaAcaraStore.getDataBeritaAcara.length
+                  }}</strong> -->
                   <span class="text-grey mx-1">Data</span>
                 </span>
               </div>
@@ -241,23 +241,23 @@
 import _ from "lodash";
 import type { ConfirmationDialog } from "#components";
 import type { usersM } from "~/types/master/usersModel";
-import DialogTambahLaporan from "~/components/dialog-tambah-laporan.vue";
+import DialogTambahBeritaAcara from "~/components/dialog-tambah-berita-acara.vue";
 
 definePageMeta({
   layout: "admin",
 });
 
-const masterLaporanStore = useLaporanStore();
+const masterBeritaAcaraStore = useBeritaAcaraStore();
 const notificationStore = useNotificationStore();
 const confirmationDialog = ref<InstanceType<typeof ConfirmationDialog> | null>(
   null,
 );
 
 onMounted(async () => {
-  await masterLaporanStore.tarikDataLaporannAct();
+  await masterBeritaAcaraStore.tarikDataBeritaAcaraAct();
 });
 
-const newLaporan = ref<usersM>({
+const newBeritaAcara = ref<usersM>({
   email: "",
   displayName: "",
   role: "",
@@ -267,9 +267,9 @@ const newLaporan = ref<usersM>({
 const data = reactive({
   search: "",
   dialogAdd: false,
-  dialog_tambah_laporan: false,
-  dialog_edit_laporan: false,
-  selectedLaporan: null,
+  dialog_tambah_berita_acara: false,
+  dialog_edit_berita_acara: false,
+  selectedBeritaAcara: null,
   dialogEdit: false,
   page: 1,
   itemsPerPage: 15,
@@ -277,11 +277,10 @@ const data = reactive({
 
   headUser: [
     { title: "No", align: "center" as const, value: "no", width: "50px" },
-    { title: "Tanggal", value: "tanggal_inspeksi", sortable: true },
-    { title: "ID Laporan", value: "id_laporan", sortable: true },
-    { title: "Nama Perusahaan", value: "nama_perusahaan", sortable: true },
-    { title: "Cabang", value: "nama_cabang", sortable: true },
-    { title: "Judul Laporan", value: "judul_laporan", sortable: true },
+    { title: "Tanggal", value: "tanggal_berita_acara", sortable: true },
+    { title: "ID", value: "id_berita_acara", sortable: true },
+    { title: "Client", value: "nama_perusahaan", sortable: true },
+    { title: "Subject", value: "judul_berita_acara", sortable: true },
     {
       title: "Total Alat",
       value: "total_alat",
@@ -298,11 +297,11 @@ const data = reactive({
 });
 
 const openDialogAdd = () => {
-  data.dialog_tambah_laporan = true;
-  // navigateTo("/admin/laporan/buat-laporan");
+  data.dialog_tambah_berita_acara = true;
+  // navigateTo("/admin/berita_acara/buat-laporan");
 };
 
-const hapusLaporan = async (id: string) => {
+const hapusBeritaAcara = async (id: string) => {
   const confirmed = await confirmationDialog.value?.show(
     "Konfirmasi Hapus",
     "Anda yakin ingin menghapus user ini?",
@@ -312,28 +311,28 @@ const hapusLaporan = async (id: string) => {
     return notificationStore.showError("Penghapusan dibatalkan");
   }
 
-  await masterLaporanStore.deleteLaporannAct(id);
+  await masterBeritaAcaraStore.deleteBeritaAcaraAct(id);
 };
 
 async function refreshData() {
   useloadingStore().setLoading(true);
-  sessionStorage.removeItem("laporan");
-  await masterLaporanStore.tarikDataLaporannAct();
+  sessionStorage.removeItem("berita_acara");
+  await masterBeritaAcaraStore.tarikDataBeritaAcaraAct();
   useloadingStore().setLoading(false);
   notificationStore.showSuccess("Data berhasil diperbarui");
 }
 
 const handleSaved = async () => {
-  data.dialog_tambah_laporan = false;
+  data.dialog_tambah_berita_acara = false;
 
   // refresh data jika diperlukan
-  await masterLaporanStore.tarikDataLaporannAct();
+  await masterBeritaAcaraStore.tarikDataBeritaAcaraAct();
 };
 
-const editLaporan = (item: any) => {
-  data.selectedLaporan = _.cloneDeep(item);
+const editBeritaAcara = (item: any) => {
+  data.selectedBeritaAcara = _.cloneDeep(item);
 
-  data.dialog_edit_laporan = true;
+  data.dialog_edit_berita_acara = true;
 };
 </script>
 

@@ -15,10 +15,10 @@ import _, { update } from "lodash";
 import moment from "moment";
 import { getAuth } from "firebase/auth";
 import type { invoiceM } from "~/types/invoice";
-import type { penawaranM, revisipenawaranM } from "~/types/penawaranModel";
+import type { penawaranM } from "~/types/penawaranModel";
 import { arrayUnion } from "firebase/firestore";
-import type { laporanCacheM } from "~/types/akutansi";
-import type { CompanyInspectionReport } from "~/types/laporanModel";
+import type { beritaAcaraCacheM } from "~/types/akutansi";
+import type { CompanyInspectionReport } from "~/types/beritaAcaraModel";
 
 // export const setinvoice = async (data: invoiceM) => {
 //     const db = useFirestore();
@@ -1370,7 +1370,7 @@ export const setrevisitoinvoice = async (
     }
 };
 
-export const setlaporan = async (data: CompanyInspectionReport) => {
+export const setberitaacara = async (data: CompanyInspectionReport) => {
     console.log(data, "cek data composables");
     const db = useFirestore();
     const auth = getAuth();
@@ -1387,25 +1387,25 @@ export const setlaporan = async (data: CompanyInspectionReport) => {
             }
 
             const datanomor = getnomor.data();
-            const newnumber = datanomor!.no_laporan + 1;
+            const newnumber = datanomor!.no_berita_acara + 1;
             const stringnewnumber = _.toString(newnumber).padStart(3, "0");
-            const no_laporan = `INSP-${stringnewnumber}`;
-            const id_laporan = `INSP-${stringnewnumber}`;
+            const no_berita_acara = `INSP-${stringnewnumber}`;
+            const id_berita_acara = `INSP-${stringnewnumber}`;
             const setdata = {
                 ...data,
-                no_laporan,
-                id_laporan,
+                no_berita_acara,
+                id_berita_acara,
                 createdAt: now,
                 createdBy: email,
             };
 
             // 3️⃣ Ref dokumen utama laporan
-            const laporanRef = doc(db, "laporan", id_laporan);
-            const itemkategoriLaoranRef = doc(db, "m_item_kategori", data.id_kategori_item!, "laporan", id_laporan);
+            const beritaAcaraRef = doc(db, "berita_acara", id_berita_acara);
+            const itemkategoriLaoranRef = doc(db, "m_item_kategori", data.id_kategori_item!, "berita_acara", id_berita_acara);
             // Simpan dokumen utama laporan
-            transaction.set(laporanRef, setdata, { merge: true });
+            transaction.set(beritaAcaraRef, setdata, { merge: true });
             transaction.set(itemkategoriLaoranRef, setdata, { merge: true });
-            transaction.update(nomorInvRef, { no_laporan: newnumber });
+            transaction.update(nomorInvRef, { no_berita_acara: newnumber });
         }).then(() => {
             return "ok";
         });
