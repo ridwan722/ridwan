@@ -28,7 +28,7 @@
           Informasi Utama
         </div>
         <v-row density="comfortable">
-          <v-col cols="12" md="4">
+          <v-col cols="12" md="6">
             <a-select-new
               v-model="newPenawaran.id_perusahaan"
               label="Client"
@@ -38,22 +38,15 @@
               :items="customerStore.getDataCustomer"
             />
           </v-col>
-          <v-col cols="12" sm="6" md="4">
+          <v-col cols="12" sm="6">
             <a-date-picker-new
               v-model="newPenawaran.tanggal_penawaran"
               label="Quotation Date"
             />
           </v-col>
-          <v-col cols="12" sm="6" md="4">
-            <a-text-field-new
-              v-model="newPenawaran.no_penawaran"
-              label="Quotation Ref No"
-              disabled
-            />
-          </v-col>
         </v-row>
 
-        <a-textarea-new
+        <a-text-field-new
           v-model="newPenawaran.alamat_perusahaan"
           class="mt-2"
           label="Address"
@@ -61,23 +54,28 @@
           placeholder="*Auto"
         />
 
-        <a-text-field-new
+       <v-row>
+        <v-col>
+           <a-text-field-new
           v-model="newPenawaran.pic"
           class="mt-2"
           label="PIC"
           disabled
-          placeholder="PIC"
+          placeholder="*Auto"
         />
-
-        <a-text-field-new
+        </v-col>
+        <v-col>
+          <a-text-field-new
           v-model="newPenawaran.no_telp"
           class="mt-2"
           label="Phone Number"
           disabled
-          placeholder="+00 0000"
+          placeholder="*Auto"
         />
+        </v-col>
+       </v-row>
 
-        <v-divider class="my-6 border-opacity-50" />
+        <v-divider class="my-2 border-opacity-50" />
 
         <a-textarea-new
           v-model="newPenawaran.perihal"
@@ -85,7 +83,7 @@
           placeholder="Quotation Subject"
         />
 
-        <v-divider class="my-6 border-opacity-50" />
+        <v-divider class="my-2 border-opacity-50" />
 
         <div class="d-flex align-center justify-space-between mb-3">
           <span class="text-subtitle-2 font-weight-bold text-primary">
@@ -108,22 +106,20 @@
           :key="index"
           class="bg-grey-lighten-5 rounded-lg pa-4 mb-4 border border-dashed"
         >
-          <v-row align="center" density="compact">
-            <v-col cols="12" sm="3">
-              <a-textarea-new
+        <a-text-field-new
                 v-model="item.nama"
                 label="Description"
                 placeholder="description"
               />
-            </v-col>
-            <v-col cols="10" sm="2">
+          <v-row  density="compact">
+            <v-col cols="6" sm="2">
               <a-field-number-new
                 v-model="item.qty"
                 label="Qty"
                 placeholder="0"
               />
             </v-col>
-            <v-col cols="10" sm="2">
+            <v-col cols="6" sm="3">
               <a-select-new
                 :items="['Unit', 'Pcs', 'Kg']"
                 v-model="item.uom"
@@ -131,15 +127,15 @@
                 placeholder="Select"
               />
             </v-col>
-            <v-col cols="10" sm="2">
+            <v-col cols="6" sm="3">
               <a-field-number-new
                 v-model="item.amount"
-                label="Amount/Pcs"
+                label="Amount/Pcs *Rp"
                 placeholder="0"
               />
             </v-col>
 
-            <v-col cols="10" sm="2">
+            <v-col cols="6" sm="3">
               <a-text-field-new
                 :model-value="
                   (
@@ -176,19 +172,10 @@
               variant="flat"
               class="bg-blue-grey-lighten-5 rounded-xl pa-4"
             >
-              <div
-                class="d-flex justify-space-between text-body-2 text-grey-darken-2 mb-1"
-              >
-                <span>Subtotal</span>
-                <span class="font-weight-medium text-grey-darken-3"
-                  >Rp {{ rupiah(subtotalPenawaran) }}</span
-                >
-              </div>
-              <v-divider class="my-2" />
               <div class="d-flex justify-space-between align-center">
                 <span
                   class="text-subtitle-1 font-weight-bold text-grey-darken-4"
-                  >Grand Total</span
+                  >Total</span
                 >
                 <span class="text-h6 font-weight-black text-primary"
                   >Rp {{ rupiah(subtotalPenawaran) }}</span
@@ -253,14 +240,14 @@
   <v-card class="border rounded-lg" flat>
     <v-card-title class="pa-3">
       <v-row align="center">
-        <v-col cols="12" sm="4">
+        <v-col cols="12" sm="10">
           <a-text-field-new
             v-model="data.searchPenawaran"
             placeholder="Cari no. penawaran / customer"
             style="max-width: 280px"
           />
         </v-col>
-        <v-col cols="12" sm="5" class="text-right">
+        <v-col cols="12" sm="2" class="text-right">
           <v-btn
             size="35"
             variant="outlined"

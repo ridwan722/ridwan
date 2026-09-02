@@ -983,8 +983,8 @@ export const setberitaacara = async (data: CompanyInspectionReport) => {
             const datanomor = getnomor.data();
             const newnumber = datanomor!.no_berita_acara + 1;
             const stringnewnumber = _.toString(newnumber).padStart(3, "0");
-            const no_berita_acara = `INSP-${stringnewnumber}`;
-            const id_berita_acara = `INSP-${stringnewnumber}`;
+            const no_berita_acara = `BA-SNS-${stringnewnumber}`;
+            const id_berita_acara = `BA-SNS-${stringnewnumber}`;
             const setdata = {
                 ...data,
                 no_berita_acara,

@@ -26,18 +26,18 @@
       <v-card-text>
         <a-text-field-new
           v-model="newCustomer.nama"
-          label="Nama Perusahaan"
-          placeholder="Nama Customer"
+          label="Client"
+          placeholder="PT."
         />
         <a-textarea-new
           v-model="newCustomer.alamat"
-          label="Alamat"
+          label="Address"
           placeholder="Alamat Customer"
         />
         <a-text-field-new
           v-model="newCustomer.pic"
           label="PIC"
-          placeholder="Nama Customer"
+          placeholder="isi"
         />
         <a-text-field-new
           v-model="newCustomer.no_telp"
@@ -217,7 +217,11 @@ async function simpanCustomer() {
     return notificationStore.showError("Nama Client tidak boleh kosong");
   }
   if (!newCustomer.value.alamat) {
-    return notificationStore.showError("Address customer tidak boleh kosong");
+    return notificationStore.showError("Address tidak boleh kosong");
+  }
+
+  if (!newCustomer.value.pic) {
+    return notificationStore.showError("PIC tidak boleh kosong");
   }
 
   if (!newCustomer.value.no_telp) {

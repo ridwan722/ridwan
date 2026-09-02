@@ -11,274 +11,137 @@
       </div>
     </div>
 
-    <div v-else-if="!detailData" class="text-center py-12 empty-state no-print">
-      <v-icon size="64" color="error">mdi-alert-circle-outline</v-icon>
-      <h3 class="text-h6 font-weight-bold mt-3 text-grey-darken-3">
-        Data Berita Acara Tidak Ditemukan
-      </h3>
-      <p class="text-body-2 text-grey">
-        Berita Acara yang Anda cari mungkin telah dihapus atau ID tidak valid.
-      </p>
-      <v-btn
-        color="grey-darken-1"
-        variant="outlined"
-        prepend-icon="mdi-arrow-left"
-        class="text-none rounded-lg mt-4"
-        @click="kembali"
-      >
-        Kembali
-      </v-btn>
-    </div>
-
     <div v-else class="laporan-wrapper">
-      <div class="d-flex justify-space-between align-center mb-6 no-print">
-        <div class="d-flex align-center ga-3">
-          <v-btn
-            icon="mdi-arrow-left"
-            variant="tonal"
-            color="grey-darken-2"
-            class="rounded-lg"
-            density="comfortable"
-            @click="kembali"
-          ></v-btn>
-          <div>
-            <h1 class="text-h5 font-weight-bold text-slate-900">
-              Detail Berita Acara  <span class="text-primary">#{{ detailData.id }}</span>
-            </h1>
-            <p class="text-caption text-grey">
-              Ringkasan dokumen inspeksi alat
-            </p>
-          </div>
-        </div>
-        <div class="d-flex ga-2">
+      <v-card class="mx-auto" max-width="900" flat>
+        <v-card-text>
+          <!-- Tombol Kembali -->
           <v-btn
             color="primary"
-            variant="flat"
-            prepend-icon="mdi-printer"
-            class="text-none rounded-lg px-4"
-            elevation="0"
-            @click="cetakBeritaAcara"
+            variant="text"
+            prepend-icon="mdi-arrow-left"
+            @click="kembali"
+            class="mb-6 no-print"
           >
-            Cetak Berita Acara
+            Kembali
           </v-btn>
-        </div>
-      </div>
 
-      <div class="printable-area">
-        <div class="modern-card info-card mb-6 pa-6">
-          <div class="d-flex justify-space-between align-start ga-4">
-            <div class="flex-grow-1">
-              <!-- <span class="badge-category mb-2">Laporan Resmi Inspeksi</span> -->
-              <h2 class="text-h5 font-weight-bold text-slate-900 mb-2">
-                {{ detailData.judul_berita_acara }}
-              </h2>
-              <v-chip
-                :href="`/admin/master/kategori/item/${detailData.id_kategori_item}`"
-                target="_blank"
-                rel="noopener noreferrer"
-                color="primary"
-                variant="tonal"
-                size="small"
-                append-icon="mdi-open-in-new"
-                link
-                class="cursor-pointer mb-3"
-              >
-                {{ detailData.nama_kategori_item }}
-              </v-chip>
-              <div
-                class="d-flex flex-wrap align-center ga-3 text-body-2 text-grey-darken-1"
-              >
-                <div class="d-flex align-center ga-1">
-                  <v-icon size="18" color="grey-darken-1" class="no-print"
-                    >mdi-domain</v-icon
-                  >
-                  <span class="font-weight-medium text-slate-800">{{
-                    detailData.nama_perusahaan
-                  }}</span>
-                  <span v-if="detailData.nama_cabang"
-                    >({{ detailData.nama_cabang }})</span
-                  >
-                </div>
-                <span>•</span>
-                <div class="d-flex align-center ga-1">
-                  <v-icon size="18" color="grey-darken-1" class="no-print"
-                    >mdi-account-outline</v-icon
-                  >
-                  <span>{{ detailData.createdBy }}</span>
-                </div>
-                <span>•</span>
-                <div class="d-flex align-center ga-1">
-                  <v-icon size="18" color="grey-darken-1" class="no-print"
-                    >mdi-calendar-clock-outline</v-icon
-                  >
-                  <span>{{ rubahtanggalbulanunix(detailData.createdAt) }}</span>
-                </div>
-              </div>
+          <!-- Area Cetak Laporan -->
+          <div class="print-area">
+            <!-- Judul Tengah -->
+            <div class="text-center mb-8">
+              <h1 class="text-h6 font-weight-bold uppercase">
+                {{ detailData?.judul_berita_acara || 'BERITA ACARA' }}
+              </h1>
             </div>
 
-            <div class="logo-container">
-              <img src="/Logo-SNS.png" alt="Logo Aresa" class="header-logo" />
+            <!-- Paragraf Pembuka -->
+            <div class="mb-4">
+              <p class="text-body-1">Dengan ini saya yang bertanda tangan di bawah ini :</p>
             </div>
+
+            <!-- Detail PIC & Customer -->
+            <div class="mb-6 detail-table">
+              <v-table density="compact" class="font-size-body-1" style="width: auto;">
+                <tbody>
+                  <tr>
+                    <td class="font-weight-medium px-1" style="width: 140px;">Nama / PIC</td>
+                    <td class="px-1">:</td>
+                    <td class="px-1">{{ detailData?.pic || '-' }}</td>
+                  </tr>
+                  <tr>
+                    <td class="font-weight-medium px-1">Jabatan</td>
+                    <td class="px-1">:</td>
+                    <td class="px-1">Master</td>
+                  </tr>
+                  <tr>
+                    <td class="font-weight-medium px-1">Kapal / Perusahaan</td>
+                    <td class="px-1">:</td>
+                    <td class="px-1">{{ detailData?.nama_customer || '-' }}</td>
+                  </tr>
+                  <tr>
+                    <td class="font-weight-medium px-1">No. Telp</td>
+                    <td class="px-1">:</td>
+                    <td class="px-1">{{ detailData?.no_telp || '-' }}</td>
+                  </tr>
+                </tbody>
+              </v-table>
+            </div>
+
+            <!-- Isi Laporan -->
+            <div class="mb-4 description-section">
+              <p class="text-body-1 mb-3">
+                Pada Hari ini,
+                {{ detailData?.tanggal_berita_acara ? moment(detailData.tanggal_berita_acara).format('dddd') : 'Senin' }}
+                tanggal
+                {{ detailData?.tanggal_berita_acara ? moment(detailData.tanggal_berita_acara).format('DD MMMM YYYY') : '-' }}
+                Pukul 22:00 LT Kapal ikat di {{ detailData?.alamat || 'PT. BES Batam' }} dan telah dilakukan pemasangan radar (Terminasi dan komisinning).
+              </p>
+              <p class="text-body-1 mb-3">
+                Dengan hasil radar sudah berfungsi dengan normal dan sesuai regulasi.
+              </p>
+              <p class="text-body-1 mb-3">
+                Demikian Berita Acara ini saya buat dengan sebenar-benarnya dan untuk digunakan sebagaimana mestinya.
+              </p>
+              <p class="text-body-1 mb-3">
+                Atas perhatian dan kerjasamanya saya ucapkan terima kasih.
+              </p>
+            </div>
+
+            <!-- Bagian Tanda Tangan -->
+            <v-row class="signature-section mt-12" no-gutters>
+              <!-- Kolom Kiri: Diketahui -->
+              <v-col cols="6" class="text-left signature-col">
+                <p class="text-body-1 mb-10">Diketahui,</p>
+                <div class="signature-area text-center" style="width: 250px;">
+                  <div class="signature-image-wrapper mb-2">
+                    <!-- Ilustrasi Coretan Tanda Tangan Tangan -->
+                    <svg width="150" height="60" viewBox="0 0 150 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M10 40 C 30 10, 40 50, 50 20 C 60 5, 70 45, 90 25 C 100 15, 120 40, 140 20" stroke="black" stroke-width="2" fill="none"/>
+                      <path d="M30 35 C 50 45, 80 15, 120 30" stroke="black" stroke-width="1.5" fill="none"/>
+                    </svg>
+                  </div>
+                  <p class="text-body-1 font-weight-medium mb-0">Muhammad Ridwan</p>
+                  <p class="text-body-2 text-grey-darken-1 mb-0">CV. Solusi Nusa Segara</p>
+                </div>
+              </v-col>
+
+              <!-- Kolom Kanan: Yang Membuat / Customer -->
+              <v-col cols="6" class="text-right signature-col">
+                <div class="mb-10 text-right">
+                  <p class="text-body-1 mb-1">
+                    Batam, {{ detailData?.tanggal_berita_acara ? moment(detailData.tanggal_berita_acara).format('DD MMMM YYYY') : '-' }}
+                  </p>
+                  <p class="text-body-1 font-weight-bold mb-1">Yang Membuat,</p>
+                </div>
+
+                <div class="text-right d-flex flex-column align-end">
+                  <!-- Stempel Stamp Kotak -->
+                  <div class="ship-stamp-box pa-3 text-left mb-4" style="width: 260px; border: 2px solid #000;">
+                    <p class="text-body-1 font-weight-bold mb-1 text-center text-uppercase">
+                      {{ detailData?.nama_customer || 'LIMIN INFINITY' }}
+                    </p>
+                    <v-divider class="my-2 border-black" />
+                    <p class="text-caption mb-0">CALL SIGN : YD AK 2</p>
+                    <p class="text-caption mb-0">IMO No. : 9705570</p>
+                    <p class="text-caption mb-0">GRT/NRT : 1023 / 406</p>
+                    <p class="text-caption mb-0">ID CUST : {{ detailData?.id_customer || '-' }}</p>
+                  </div>
+
+                  <!-- Tanda Tangan Master / PIC -->
+                  <div class="text-center" style="width: 260px;">
+                    <p class="text-body-1 font-weight-medium mb-0 text-decoration-underline">
+                      {{ detailData?.pic || 'Amos Simba Rapa' }}
+                    </p>
+                    <p class="text-body-2 text-grey-darken-1 mb-0">Master</p>
+                  </div>
+                </div>
+              </v-col>
+            </v-row>
+
           </div>
-        </div>
-
-        <div class="modern-card mb-6 pa-0 overflow-hidden">
-          <div class="card-section-header pa-4 border-b">
-            <h3 class="text-subtitle-1 font-weight-bold text-slate-800">
-              Daftar Alat & Hasil Inspeksi
-            </h3>
-          </div>
-
-          <div class="table-responsive">
-            <table class="modern-table">
-              <thead>
-                <tr>
-                  <th style="width: 50px" class="text-center">No</th>
-                  <th style="width: 20%" class="text-left">Nama Alat</th>
-                  <th style="width: 15%" class="text-left">Kapasitas</th>
-                  <th style="width: 20%" class="text-left">Merk / Serial No</th>
-                  <th class="text-left">Kesimpulan</th>
-                  <th style="width: 110px" class="text-center">Ijin</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                  v-for="(item, index) in detailData.daftar_alat || []"
-                  :key="index"
-                >
-                  <td class="text-center font-weight-medium text-grey-darken-1">
-                    {{ index + 1 }}
-                  </td>
-                  <td class="text-left font-weight-semibold text-slate-800">
-                    {{ item.alat }}
-                  </td>
-                  <td class="text-left">{{ item.kapasitas || "-" }}</td>
-                  <td class="text-left text-slate-700 font-mono">
-                    {{ item.merk_serial || "-" }}
-                  </td>
-                  <td class="text-left">
-                    <span class="text-slate-700">{{
-                      item.kesimpulan || "-"
-                    }}</span>
-                  </td>
-                  <td class="text-center">
-                    <span
-                      :class="[
-                        'status-chip',
-                        item.ijin && item.ijin.toLowerCase().includes('ada')
-                          ? 'status-success'
-                          : 'status-warning',
-                      ]"
-                    >
-                      {{ item.ijin || "-" }}
-                    </span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div
-            v-if="
-              !detailData.daftar_alat || detailData.daftar_alat.length === 0
-            "
-            class="text-center py-8 text-grey"
-          >
-            Tidak ada daftar alat pada laporan ini.
-          </div>
-        </div>
-
-        <div class="modern-card pa-0 overflow-hidden">
-          <div class="card-section-header pa-4 border-b">
-            <h3 class="text-subtitle-1 font-weight-bold text-slate-800">
-              Dokumentasi Lapangan
-            </h3>
-          </div>
-
-          <div class="table-responsive">
-            <table class="modern-table">
-              <thead>
-                <tr>
-                  <th style="width: 50px" class="text-center">No.</th>
-                  <th style="width: 280px" class="text-left">
-                    Foto Dokumentasi
-                  </th>
-                  <th class="text-left">Keterangan</th>
-                  <th class="text-left">Catatan Tambahan</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                  v-for="(item, index) in detailData.dokumentasi || []"
-                  :key="index"
-                >
-                  <td class="text-center font-weight-medium text-grey-darken-1">
-                    {{ index + 1 }}
-                  </td>
-                  <td class="text-left">
-                    <div class="image-gallery">
-                      <template v-if="item.images && item.images.length">
-                        <div
-                          v-for="(img, imgIdx) in item.images"
-                          :key="imgIdx"
-                          class="img-box clickable"
-                          @click="openImageDialog(img)"
-                        >
-                          <img :src="img" alt="Dokumentasi" />
-                        </div>
-                      </template>
-                      <span v-else class="text-caption text-grey italic"
-                        >Tidak ada foto</span
-                      >
-                    </div>
-                  </td>
-                  <td class="text-left text-slate-700 align-top">
-                    {{ item.keterangan || "-" }}
-                  </td>
-                  <td class="text-left text-slate-700 align-top">
-                    {{ item.notes || "-" }}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div
-            v-if="
-              !detailData.dokumentasi || detailData.dokumentasi.length === 0
-            "
-            class="text-center py-8 text-grey"
-          >
-            Tidak ada data dokumentasi.
-          </div>
-        </div>
-
-        <div class="system-footer mt-6 text-center">
-          <em>Generated by System - ARESA</em>
-        </div>
-      </div>
-    </div>
-
-    <v-dialog v-model="imageDialog" max-width="800" class="no-print">
-      <v-card class="rounded-lg overflow-hidden position-relative">
-        <v-btn
-          icon="mdi-close"
-          size="x-small"
-          variant="flat"
-          color="grey-darken-3"
-          class="position-absolute"
-          style="top: 10px; right: 10px; z-index: 10"
-          @click="imageDialog = false"
-        ></v-btn>
-        <div class="d-flex justify-center align-center pa-2">
-          <img
-            :src="selectedImage"
-            alt="Preview Foto"
-            style="max-width: 100%; max-height: 80vh; object-fit: contain"
-          />
-        </div>
+        </v-card-text>
       </v-card>
-    </v-dialog>
+    </div>
   </div>
 </template>
 
@@ -287,6 +150,9 @@ import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import _ from "lodash";
 import moment from "moment";
+import "moment/locale/id";
+moment.locale("id");
+
 import { useBeritaAcaraStore } from "~/stores/beritaAcaraStore";
 import type { CompanyInspectionReport } from "~/types/beritaAcaraModel";
 
@@ -302,16 +168,6 @@ const beritaAcaraStore = useBeritaAcaraStore();
 const loading = ref(true);
 const detailData = ref<CompanyInspectionReport | null>(null);
 
-// State Dialog Gambar
-const imageDialog = ref(false);
-const selectedImage = ref("");
-
-// Fungsi Buka Dialog Gambar
-const openImageDialog = (imgUrl: string) => {
-  selectedImage.value = imgUrl;
-  imageDialog.value = true;
-};
-
 // Fungsi Kembali ke Halaman Sebelumnya
 const kembali = () => {
   router.back();
@@ -326,7 +182,7 @@ const loaddetailBeritaAcara = async () => {
 
     if (beritaAcaraId) {
       const allBeritaAcara = beritaAcaraStore.getDataBeritaAcara;
-      const match = _.find(allBeritaAcara, (o: any) => o.id === beritaAcaraId);
+      const match = _.find(allBeritaAcara, (o: CompanyInspectionReport) => o.id === beritaAcaraId);
 
       if (match) {
         detailData.value = _.cloneDeep(match);
@@ -339,275 +195,62 @@ const loaddetailBeritaAcara = async () => {
   }
 };
 
-// Fungsi Print Laporan
-const cetakBeritaAcara = () => {
-  window.print();
-};
-
 onMounted(() => {
   loaddetailBeritaAcara();
 });
-
-// Format Tanggal
-const formatTanggal = (dateString: string) => {
-  if (!dateString) return "-";
-  return moment(dateString).format("DD MMMM YYYY, HH:mm");
-};
 </script>
 
 <style scoped>
 .laporan-wrapper {
-  margin: 0 auto;
+  background-color: #f5f5f5;
+  min-height: calc(100vh - 128px);
 }
 
-/* Base Modern Card Style */
-.modern-card {
-  background: #ffffff;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+.print-area {
+  font-family: 'Times New Roman', Times, serif;
+  line-height: 1.6;
+  color: #000;
+  padding: 20px;
 }
 
-.info-card {
-  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+.detail-table :deep(td) {
+  border-bottom: none !important;
+  height: auto !important;
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
 }
 
-.border-b {
-  border-bottom: 1px solid #e2e8f0;
+.detail-table :deep(tr:hover) {
+  background-color: transparent !important;
 }
 
-.card-section-header {
-  background-color: #f8fafc;
+.description-section p {
+  text-align: justify;
 }
 
-/* Header & Logo Container */
-.logo-container {
-  flex-shrink: 0;
-  display: flex;
-  align-items: flex-start;
-  padding-top: 2px;
+.border-black {
+  border-color: #000 !important;
+  opacity: 1 !important;
 }
 
-.header-logo {
-  height: 75px;
-  width: auto;
-  object-fit: contain;
-}
-
-/* Badge Categories */
-.badge-category {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 700;
+.uppercase {
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-radius: 9999px;
 }
 
-/* Modern Tables */
-.table-responsive {
-  width: 100%;
-  overflow-x: auto;
-}
-
-.modern-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-  table-layout: fixed;
-}
-
-.modern-table th {
-  background-color: #f8fafc;
-  color: #475569;
-  font-weight: 600;
-  padding: 12px 16px;
-  border-bottom: 1px solid #e2e8f0;
-  text-transform: uppercase;
-  font-size: 12px;
-  letter-spacing: 0.04em;
-  text-align: left;
-  word-wrap: break-word;
-}
-
-.modern-table td {
-  padding: 14px 16px;
-  border-bottom: 1px solid #f1f5f9;
-  vertical-align: middle;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-}
-
-.modern-table td.align-top {
-  vertical-align: top;
-}
-
-.modern-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-/* Status Chips */
-.status-chip {
-  display: inline-block;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 6px;
-}
-
-.status-success {
-  background-color: #dcfce7;
-  color: #15803d;
-}
-
-.status-warning {
-  background-color: #fef3c7;
-  color: #b45309;
-}
-
-/* Gallery & Images */
-.image-gallery {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.img-box {
-  width: 120px;
-  height: 120px;
-  border-radius: 8px;
-  border: 1px solid #cbd5e1;
-  overflow: hidden;
-  background-color: #f8fafc;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-/* Effect hover untuk menandakan gambar dapat diklik */
-.img-box.clickable {
-  cursor: pointer;
-}
-
-.img-box.clickable:hover {
-  transform: scale(1.03);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-}
-
-.img-box img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* System Footer */
-.system-footer {
-  font-size: 11px;
-  color: #94a3b8;
-  letter-spacing: 0.03em;
-}
-
-.text-slate-900 {
-  color: #0f172a;
-}
-.text-slate-800 {
-  color: #1e293b;
-}
-.text-slate-700 {
-  color: #334155;
-}
-.font-mono {
-  font-family: monospace;
-}
-</style>
-
-<style>
+/* Penyesuaian Cetak */
 @media print {
-  /* 1. Hilangkan tanggal, waktu, dan URL halaman bawaan browser */
-  @page {
-    margin: 0;
-    size: A4 portrait;
-  }
-
-  /* 2. Sembunyikan navigasi, tombol, dan overlay Vuetify */
-  .no-print,
-  .v-navigation-drawer,
-  .v-app-bar,
-  .v-footer,
-  .v-overlay-container {
+  .no-print {
     display: none !important;
   }
-
-  /* 3. Reset layout halaman */
-  html,
-  body,
-  #__nuxt,
-  .v-application,
-  .v-application--wrap,
-  main.v-main {
-    background: #ffffff !important;
+  .laporan-wrapper {
+    background-color: #fff !important;
     padding: 0 !important;
-    margin: 0 !important;
-    position: static !important;
-    overflow: visible !important;
-    height: auto !important;
-    min-height: auto !important;
   }
-
-  main.v-main {
-    display: block !important;
-  }
-
-  .page-container {
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-
-  /* Berikan padding internal pada area cetak pengganti margin kertas */
-  .printable-area {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    padding: 15mm 12mm !important;
-    box-sizing: border-box !important;
-  }
-
-  /* 4. Style komponen saat dicetak */
-  .modern-card {
-    border: 1px solid #cbd5e1 !important;
+  .v-card {
     box-shadow: none !important;
-    margin-bottom: 12px !important;
-    border-radius: 6px !important;
-    padding: 12px !important;
-    page-break-inside: avoid;
   }
-
-  .modern-table th,
-  .modern-table td {
-    padding: 8px 10px !important;
-    font-size: 11px !important;
-  }
-
-  .status-chip {
-    border: 1px solid #ccc;
-    padding: 2px 6px !important;
-    font-size: 10px !important;
-  }
-
-  .img-box {
-    width: 100px !important;
-    height: 100px !important;
-  }
-
-  .header-logo {
-    height: 60px !important;
-  }
-
-  .system-footer {
-    margin-top: 16px !important;
-    font-size: 10px !important;
-    color: #64748b !important;
+  .print-area {
+    padding: 0 !important;
   }
 }
 </style>

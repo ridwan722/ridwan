@@ -1,6 +1,6 @@
 <template>
   <ConfirmationDialog ref="confirmationDialog" />
-<v-btn
+  <v-btn
     variant="text"
     color="grey-darken-3"
     prepend-icon="mdi-arrow-left"
@@ -9,35 +9,36 @@
   >
     Kembali
   </v-btn>
-  <!-- /// DIALOG TAMBAH INVOICE \\\ -->
+
+  <!-- /// DIALOG BUAT INVOICE \\\ -->
   <v-dialog v-model="data.dialogTambahInvoice" max-width="900" scrollable>
-    <v-card class="rounded-xl overflow-hidden elevation-3 border-0">
+    <v-card class="overflow-hidden elevation-3 border-0">
       <v-card-item class="bg-grey-lighten-4 pa-3 text-center">
         <h4 class="font-weight-bold text-grey-darken-3">
           {{ data.invoiceAddEdit === "add" ? "Buat" : "Edit" }} Invoice
-          <!-- <span class="text-primary">Solusi Nusa Segara</span> -->
+          <span class="text-primary">Solusi Nusa Segara</span>
         </h4>
         <p class="text-caption text-grey-darken-1 m-0">
           Lengkapi rincian tagihan dan item pekerjaan di bawah ini.
         </p>
       </v-card-item>
 
-      <v-card-text class="pa-6">
+      <v-card-text class="pa-3">
         <div class="text-subtitle-2 font-weight-bold text-primary mb-3">
           Informasi Utama
         </div>
         <v-row density="comfortable">
-          <v-col cols="12" md="8">
+          <v-col cols="12" sm="6">
             <a-select-new
               v-model="newInvoice.id_customer"
               label="Customer"
-              placeholder="Pilih Customer"
+              placeholder="Select"
               item-title="nama"
               item-value="id"
               :items="customerStore.getDataCustomer"
             />
           </v-col>
-          <v-col cols="12" sm="6" md="4">
+          <v-col cols="12" sm="6">
             <a-date-picker-new
               v-model="newInvoice.tanggal"
               label="Tanggal Invoice"
@@ -47,25 +48,38 @@
         <a-textarea-new
           v-model="newInvoice.alamat_customer"
           class="mt-2"
-          label="Alamat Customer"
+          label="Address"
           disabled
-          placeholder="Alamat customer terisi otomatis, bisa diedit"
+          placeholder="*Auto"
         />
 
-        <a-text-field-new
-          v-model="newInvoice.pic"
-          class="mt-2"
-          label="PIC"
-          disabled
-          placeholder="PIC"
-        />
-        <v-divider class="my-6 border-opacity-50" />
+        <v-row>
+          <v-col>
+            <a-text-field-new
+              v-model="newInvoice.pic"
+              class="mt-2"
+              label="PIC"
+              disabled
+              placeholder="*Auto"
+            />
+          </v-col>
+          <v-col>
+            <a-text-field-new
+              v-model="newInvoice.no_telp"
+              class="mt-2"
+              label="No Telp"
+              disabled
+              placeholder="*Auto"
+            />
+          </v-col>
+        </v-row>
+        <v-divider class="my-2 border-opacity-50" />
 
         <a-textarea-new
           v-model="newInvoice.perihal"
           class="mt-2"
           label="Subject"
-          placeholder="subject"
+          placeholder="*Auto"
         />
 
         <div class="d-flex align-center justify-space-between mb-3">
@@ -89,32 +103,43 @@
           :key="index"
           class="bg-grey-lighten-5 rounded-lg pa-4 mb-4 border border-dashed"
         >
+          <a-text-field-new
+            v-model="item.nama"
+            label="Deskripsi"
+            placeholder="Deskripsi"
+          />
           <v-row align="center" density="compact" class="mb-2">
-            <v-col cols="12" sm="5">
-              <a-textarea-new
-                v-model="item.deskripsi_pekerjaan"
-                label="Deskripsi"
-                placeholder="Deskripsi"
-              />
-            </v-col>
-            <v-col cols="10" sm="2">
-              <a-field-number-new v-model="item.qty" label="Qty" placeholder="0" />
-            </v-col>
-            <v-col cols="10" sm="2">
-              <a-text-field-new
-                v-model="item.uom"
-                label="Satuan"
-                placeholder="Pcs"
-              />
-            </v-col>
-            <v-col cols="10" sm="2">
+            <v-col cols="6" md="2">
               <a-field-number-new
-                v-model="item.amount"
-                label="Jumlah (Amount)"
+                v-model="item.qty"
+                label="Qty"
                 placeholder="0"
               />
             </v-col>
-            <v-col cols="2" sm="1" class="text-center">
+            <v-col cols="6" md="3">
+              <a-select-new
+                :items="['Unit', 'Pcs', 'Kg']"
+                v-model="item.uom"
+                label="UOM"
+                placeholder="Select"
+              />
+            </v-col>
+            <v-col cols="6" md="3">
+              <a-field-number-new
+                v-model="item.amount"
+                label="Amount/unit"
+                placeholder="0"
+              />
+            </v-col>
+            <v-col cols="6" md="3">
+              <a-field-number-new
+                v-model="item.subtotal_item"
+                label="Subtotal"
+                placeholder="0"
+                disabled
+              />
+            </v-col>
+            <v-col cols="1" class="text-center">
               <v-btn
                 icon="mdi-trash-can-outline"
                 size="small"
@@ -125,12 +150,6 @@
               />
             </v-col>
           </v-row>
-        </div>
-
-        <v-divider class="my-6 border-opacity-50" />
-
-        <div class="text-subtitle-2 font-weight-bold text-primary mb-3">
-          Rincian Biaya
         </div>
 
         <v-card
@@ -163,6 +182,7 @@
                 >
               </div>
               <div
+                v-if="newInvoice.pakai_ppn == true"
                 class="d-flex justify-space-between text-body-2 text-grey-darken-2 mb-2"
               >
                 <span>PPN 11%</span>
@@ -189,9 +209,10 @@
       <v-card-actions class="pa-4 bg-grey-lighten-5">
         <v-spacer />
         <v-btn
+          size="x-small"
           variant="outlined"
           color="grey-darken-1"
-          class="px-5 text-none rounded-lg"
+          class="px-5 text-none"
           @click="data.dialogTambahInvoice = false"
         >
           Batal
@@ -199,7 +220,8 @@
         <v-btn
           color="primary"
           variant="flat"
-          class="px-6 text-none rounded-lg font-weight-bold"
+          size="x-small"
+          class="px-6 text-none font-weight-bold"
           @click="simpanInvoiceDialog"
         >
           {{
@@ -212,61 +234,6 @@
     </v-card>
   </v-dialog>
 
-  <!-- /// DIALOG TAMBAH CUTOMER \\\ -->
-  <v-dialog
-    v-model="data.dialogCustomer"
-    :width="$vuetify.display.mdAndUp ? '380px' : '90%'"
-  >
-    <v-card class="rounded-lg">
-      <v-card-title
-        class="px-4 text-subtitle-1 font-weight-bold bg-primary pa-3"
-      >
-        {{
-          data.customerAddEdit === "add" ? "TAMBAH CUSTOMER" : "EDIT CUSTOMER"
-        }}
-      </v-card-title>
-
-      <v-card-text>
-        <a-text-field-new
-          v-model="newCustomer.nama"
-          label="Nama Perusahaan"
-          placeholder="Nama Customer"
-        />
-        <a-textarea-new
-          v-model="newCustomer.alamat"
-          label="Alamat"
-          placeholder="Alamat Customer"
-        />
-        <a-text-field-new
-          v-model="newCustomer.pic"
-          label="PIC"
-          placeholder="Nama Customer"
-        />
-      </v-card-text>
-
-      <v-card-actions class="pa-3 bg-grey-lighten-4">
-        <v-btn
-          variant="flat"
-          color="grey-darken-2"
-          @click="data.dialogCustomer = false"
-          class="text-capitalize px-3"
-          size="small"
-        >
-          Batal
-        </v-btn>
-        <v-btn
-          color="primary"
-          @click="simpanCustomer"
-          variant="flat"
-          class="text-capitalize px-3"
-          size="small"
-        >
-          Simpan
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
-
   <v-row align="center">
     <v-col cols="12">
       <v-breadcrumbs>
@@ -274,234 +241,146 @@
           <span class="font-weight-medium text-h5">Invoice</span>
         </v-breadcrumbs-item>
       </v-breadcrumbs>
-    </v-col> 
+    </v-col>
   </v-row>
 
   <v-card class="border rounded-lg" flat>
-    <v-tabs v-model="data.tab" color="primary" class="w-100">
-      <v-tab value="invoice">Invoice</v-tab>
-      <v-tab value="customer">Customer</v-tab>
-    </v-tabs>
+    <v-card-title class="pa-3">
+      <v-row align="center">
+        <v-col>
+          <a-text-field-new
+            v-model="data.searchInvoice"
+            placeholder="Cari no. invoice / customer"
+            style="max-width: 280px"
+          />
+        </v-col>
+        <v-col>
+          <a-select-new
+            v-model="data.filterStatus"
+            label=""
+            placeholder="Semua Status"
+            :items="filterStatusOptions"
+          />
+        </v-col>
+        <v-col class="text-right">
+          <v-btn
+            color="primary"
+            variant="flat"
+            size="small"
+            class="text-capitalize px-3 ml-2"
+            prepend-icon="mdi-plus"
+            @click="openDialogTambahInvoice"
+          >
+            Create Invoice
+          </v-btn>
+
+          <v-btn
+            color="green"
+            variant="flat"
+            size="small"
+            class="text-capitalize px-3 ml-2"
+            prepend-icon="mdi-database-export"
+            @click="getallinvoice()"
+          >
+            Get All Invoice
+          </v-btn>
+
+          <v-btn
+            size="35"
+            variant="outlined"
+            class="border ml-3"
+            @click="refreshData"
+          >
+            <v-icon size="23" icon="mdi-refresh" />
+            <v-tooltip activator="parent" location="top">
+              Refresh Data
+            </v-tooltip>
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-card-title>
 
     <v-divider />
 
-    <v-window v-model="data.tab">
-      <v-window-item value="invoice">
-        <v-card-title class="pa-3">
-          <v-row align="center">
-            <v-col>
-              <a-text-field-new
-                v-model="data.searchInvoice"
-                placeholder="Cari no. invoice / customer"
-                style="max-width: 280px"
-              />
-            </v-col>
-            <v-col>
-              <a-select-new
-                v-model="data.filterStatus"
-                label=""
-                placeholder="Semua Status"
-                :items="filterStatusOptions"
-              />
-            </v-col>
-            <v-col class="text-right">
-              <v-btn
-                color="primary"
-                variant="flat"
-                size="small"
-                class="text-capitalize px-3 ml-2"
-                prepend-icon="mdi-plus"
-                @click="openDialogTambahInvoice"
-              >
-                Tambah Invoice
-              </v-btn>
+    <v-data-table
+      :headers="data.headInvoice"
+      :items="filteredInvoice"
+      :search="data.searchInvoice"
+      density="compact"
+      :sort-by="[{ key: 'createdAt', order: 'desc' }]"
+      :hover="true"
+    >
+      <template v-slot:item.no="{ index }"> {{ index + 1 }}</template>
 
-              <v-btn
-                color="green"
-                variant="flat"
-                size="small"
-                class="text-capitalize px-3 ml-2"
-                prepend-icon="mdi-database-export"
-                @click="getallinvoice()"
-              >
-                Get All Invoice
-              </v-btn>
+      <template v-slot:item.no_inv="{ item }">#{{ item.no_inv }}</template>
 
-              <v-btn
-                size="35"
-                variant="outlined"
-                class="border ml-3"
-                @click="refreshData"
-              >
-                <v-icon size="23" icon="mdi-refresh" />
-                <v-tooltip activator="parent" location="top">
-                  Refresh Data
-                </v-tooltip>
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-card-title>
+      <template v-slot:item.tanggal="{ item }">{{
+        rubahtanggallengkap(item.tanggal)
+      }}</template>
 
-        <v-divider />
+      <template v-slot:item.grandtotal="{ item }"
+        >Rp {{ rupiah(item.grandtotal) }}</template
+      >
 
-        <v-data-table
-          :headers="data.headInvoice"
-          :items="filteredInvoice"
-          :search="data.searchInvoice"
-          density="compact"
-          :sort-by="[{ key: 'createdAt', order: 'desc' }]"
-          :hover="true"
-        >
-          <template v-slot:item.no="{ index }"> {{ index + 1 }}</template>
+      <template v-slot:item.status="{ item }">
+        <v-chip size="small" :color="statusColor(item.status)" variant="flat">{{
+          item.status
+        }}</v-chip>
+      </template>
 
-          <template v-slot:item.no_inv="{ item }">#{{ item.no_inv }}</template>
-
-          <template v-slot:item.tanggal="{ item }">{{
-            rubahtanggallengkap(item.tanggal)
-          }}</template>
-
-          <template v-slot:item.grandtotal="{ item }"
-            >Rp {{ rupiah(item.grandtotal) }}</template
+      <template v-slot:item.aksi="{ item }">
+        <div class="d-flex justify-center">
+          <v-btn
+            size="27"
+            variant="tonal"
+            color="info"
+            class="rounded-lg mr-1"
+            @click="router.push(`/admin/invoice/${item.id}`)"
           >
-
-          <template v-slot:item.status="{ item }">
-            <v-chip
-              size="small"
-              :color="statusColor(item.status)"
-              variant="flat"
-              >{{ item.status }}</v-chip
+            <v-icon icon="mdi-eye" />
+            <v-tooltip activator="parent" location="top"
+              >Detail Invoice</v-tooltip
             >
-          </template>
+          </v-btn>
+          <v-btn
+            size="27"
+            variant="tonal"
+            color="warning"
+            class="rounded-lg mr-1"
+            v-if="item.status == 'Draft'"
+            @click="openDialogEditInvoice(item)"
+          >
+            <v-icon icon="mdi-pencil-outline" />
+            <v-tooltip activator="parent" location="top"
+              >Edit Invoice</v-tooltip
+            >
+          </v-btn>
+          <v-btn
+            size="27"
+            variant="tonal"
+            color="grey"
+            class="rounded-lg"
+            v-if="item.status == 'Draft'"
+            @click="hapusInvoice(item.id!)"
+          >
+            <v-icon icon="mdi-trash-can-outline" />
+            <v-tooltip activator="parent" location="top">Hapus</v-tooltip>
+          </v-btn>
+        </div>
+      </template>
 
-          <template v-slot:item.aksi="{ item }">
-            <div class="d-flex justify-center">
-              <v-btn
-                size="27"
-                variant="tonal"
-                color="info"
-                class="rounded-lg mr-1"
-                @click="router.push(`/admin/invoice/${item.id}`)"
-              >
-                <v-icon icon="mdi-eye" />
-                <v-tooltip activator="parent" location="top"
-                  >Detail Invoice</v-tooltip
-                >
-              </v-btn>
-              <v-btn
-                size="27"
-                variant="tonal"
-                color="warning"
-                class="rounded-lg mr-1"
-                v-if="item.status == 'Draft'"
-                @click="openDialogEditInvoice(item)"
-              >
-                <v-icon icon="mdi-pencil-outline" />
-                <v-tooltip activator="parent" location="top"
-                  >Edit Invoice</v-tooltip
-                >
-              </v-btn>
-              <v-btn
-                size="27"
-                variant="tonal"
-                color="grey"
-                class="rounded-lg"
-                v-if="item.status == 'Draft'"
-                @click="hapusInvoice(item.id!)"
-              >
-                <v-icon icon="mdi-trash-can-outline" />
-                <v-tooltip activator="parent" location="top">Hapus</v-tooltip>
-              </v-btn>
-            </div>
-          </template>
-
-          <template v-slot:no-data>
-            <div class="py-8 text-center text-grey-darken-1">
-              <v-icon
-                size="48"
-                color="grey-lighten-1"
-                class="mb-2"
-                icon="mdi-receipt-text-outline"
-              />
-              <div class="text-body-1">Belum ada data Invoice</div>
-            </div>
-          </template>
-        </v-data-table>
-      </v-window-item>
-
-      <v-window-item value="customer">
-        <v-card-title class="pa-3">
-          <v-row align="center">
-            <v-col cols="12" sm="8">
-              <a-text-field-new
-                v-model="data.searchCustomer"
-                placeholder="Cari nama customer"
-                style="max-width: 280px"
-              />
-            </v-col>
-            <v-col cols="12" sm="4" class="text-right">
-              <v-btn
-                color="primary"
-                @click="openDialogAddCustomer"
-                variant="flat"
-                size="small"
-                class="text-capitalize px-3"
-                prepend-icon="mdi-plus"
-              >
-                Tambah Customer
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-card-title>
-
-        <v-divider />
-
-        <v-data-table
-          :headers="data.headCustomer"
-          :items="customerStore.getDataCustomer"
-          :search="data.searchCustomer"
-          density="compact"
-          :sort-by="[{ key: 'createdAt', order: 'desc' }]"
-          :hover="true"
-        >
-          <template v-slot:item.aksi="{ item }">
-            <div class="d-flex justify-center">
-              <v-btn
-                size="27"
-                variant="tonal"
-                color="info"
-                class="rounded-lg mr-1"
-                @click="openDialogEditCustomer(item)"
-              >
-                <v-icon icon="mdi-pencil-outline" />
-                <v-tooltip activator="parent" location="top">Edit</v-tooltip>
-              </v-btn>
-              <v-btn
-                size="27"
-                variant="tonal"
-                color="error"
-                class="rounded-lg"
-                @click="hapusCustomer(item.id!)"
-              >
-                <v-icon icon="mdi-trash-can-outline" />
-                <v-tooltip activator="parent" location="top">Hapus</v-tooltip>
-              </v-btn>
-            </div>
-          </template> 
-
-          <template v-slot:no-data>
-            <div class="py-8 text-center text-grey-darken-1">
-              <v-icon
-                size="48"
-                color="grey-lighten-1"
-                class="mb-2"
-                icon="mdi-account-outline"
-              />
-              <div class="text-body-1">Belum ada data Customer</div>
-            </div>
-          </template>
-        </v-data-table>
-      </v-window-item>
-    </v-window>
+      <template v-slot:no-data>
+        <div class="py-8 text-center text-grey-darken-1">
+          <v-icon
+            size="48"
+            color="grey-lighten-1"
+            class="mb-2"
+            icon="mdi-receipt-text-outline"
+          />
+          <div class="text-body-1">Belum ada data Invoice</div>
+        </div>
+      </template>
+    </v-data-table>
   </v-card>
 </template>
 
@@ -583,8 +462,10 @@ function emptyInvoice(): invoiceM {
     pic: "",
     alamat_customer: "",
     tanggal: moment().format("YYYY-MM-DD"),
-    item_pekerjaan: [{ nama: "", qty: 0, uom: "", amount: 0, subtotal_item: 0 }],
-    pakai_ppn: true,
+    item_pekerjaan: [
+      { nama: "", qty: 1, uom: "Unit", amount: 0, subtotal_item: 0 },
+    ],
+    pakai_ppn: false,
     subtotal_invoice: 0,
     ppn: 0,
     grandtotal_invoice: 0,

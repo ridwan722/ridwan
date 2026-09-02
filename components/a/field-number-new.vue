@@ -40,12 +40,8 @@
         @keydown="onKeyDown"
         :style="{
           fontSize: fontsize,
-          paddingLeft: iconPath
-            ? iconSize + 16 + 'px'
-            : '8px',
-          paddingRight: !disabled
-            ? '28px'
-            : '8px',
+          paddingLeft: iconPath ? iconSize + 16 + 'px' : '8px',
+          paddingRight: !disabled ? '28px' : '8px',
           width: width
             ? typeof width === 'number'
               ? width + 'px'
@@ -55,10 +51,7 @@
       />
 
       <!-- Spinner -->
-      <div
-        v-if="!disabled"
-        class="spinner"
-      >
+      <div v-if="!disabled" class="spinner">
         <button
           type="button"
           class="spinner-button spinner-up"
@@ -84,29 +77,19 @@
     </div>
 
     <!-- Hint -->
-    <div
-      v-if="persistentHint || (!hasError && hint)"
-      class="hint-message"
-    >
+    <div v-if="persistentHint || (!hasError && hint)" class="hint-message">
       {{ hint }}
     </div>
 
     <!-- Error -->
-    <div
-      v-if="!hideDetails && hasError && showError"
-      class="error-message"
-    >
+    <div v-if="!hideDetails && hasError && showError" class="error-message">
       {{ firstErrorMessage }}
     </div>
   </div>
 </template>
 
 <script setup>
-import {
-  ref,
-  computed,
-  watch,
-} from "vue";
+import { ref, computed, watch } from "vue";
 
 /* =========================
    PROPS
@@ -193,9 +176,7 @@ const props = defineProps({
    EMIT
 ========================= */
 
-const emit = defineEmits([
-  "update:modelValue",
-]);
+const emit = defineEmits(["update:modelValue"]);
 
 /* =========================
    STATE
@@ -206,27 +187,18 @@ const inputRef = ref(null);
 const errorMessages = ref([]);
 const showError = ref(false);
 
-const rawValue = ref(
-  props.modelValue
-);
+const rawValue = ref(props.modelValue);
 
 /* =========================
    FORMAT NUMBER
 ========================= */
 
 function formatNumber(value) {
-  if (
-    value === null ||
-    value === undefined ||
-    value === "" ||
-    isNaN(value)
-  ) {
+  if (value === null || value === undefined || value === "" || isNaN(value)) {
     return "";
   }
 
-  return Number(value).toLocaleString(
-    "id-ID"
-  );
+  return Number(value).toLocaleString("id-ID");
 }
 
 /* =========================
@@ -234,11 +206,7 @@ function formatNumber(value) {
 ========================= */
 
 function parseFormattedNumber(value) {
-  if (
-    value === null ||
-    value === undefined ||
-    value === ""
-  ) {
+  if (value === null || value === undefined || value === "") {
     return 0;
   }
 
@@ -248,9 +216,7 @@ function parseFormattedNumber(value) {
    * 1.500 -> 1500
    * 10.000 -> 10000
    */
-  return Number(
-    String(value).replace(/\D/g, "")
-  );
+  return Number(String(value).replace(/\D/g, ""));
 }
 
 /* =========================
@@ -258,9 +224,7 @@ function parseFormattedNumber(value) {
 ========================= */
 
 const formattedValue = computed(() => {
-  return formatNumber(
-    rawValue.value
-  );
+  return formatNumber(rawValue.value);
 });
 
 /* =========================
@@ -270,10 +234,7 @@ const formattedValue = computed(() => {
 function onInput(event) {
   if (props.disabled) return;
 
-  const numericValue =
-    parseFormattedNumber(
-      event.target.value
-    );
+  const numericValue = parseFormattedNumber(event.target.value);
 
   let value = numericValue;
 
@@ -293,10 +254,7 @@ function onInput(event) {
 
   rawValue.value = value;
 
-  emit(
-    "update:modelValue",
-    value
-  );
+  emit("update:modelValue", value);
 
   /*
    * Reset error ketika user mengetik
@@ -317,19 +275,9 @@ function onKeyDown(event) {
    * Arrow
    * Tab
    */
-  const allowedKeys = [
-    "Backspace",
-    "Delete",
-    "ArrowLeft",
-    "ArrowRight",
-    "Tab",
-  ];
+  const allowedKeys = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"];
 
-  if (
-    allowedKeys.includes(
-      event.key
-    )
-  ) {
+  if (allowedKeys.includes(event.key)) {
     return;
   }
 
@@ -356,9 +304,7 @@ function onBlur() {
 function increment() {
   if (props.disabled) return;
 
-  let value =
-    Number(rawValue.value || 0) +
-    props.step;
+  let value = Number(rawValue.value || 0) + props.step;
 
   if (value > props.max) {
     value = props.max;
@@ -366,10 +312,7 @@ function increment() {
 
   rawValue.value = value;
 
-  emit(
-    "update:modelValue",
-    value
-  );
+  emit("update:modelValue", value);
 
   errorMessages.value = [];
   showError.value = false;
@@ -384,9 +327,7 @@ function increment() {
 function decrement() {
   if (props.disabled) return;
 
-  let value =
-    Number(rawValue.value || 0) -
-    props.step;
+  let value = Number(rawValue.value || 0) - props.step;
 
   if (value < props.min) {
     value = props.min;
@@ -394,10 +335,7 @@ function decrement() {
 
   rawValue.value = value;
 
-  emit(
-    "update:modelValue",
-    value
-  );
+  emit("update:modelValue", value);
 
   errorMessages.value = [];
   showError.value = false;
@@ -413,22 +351,16 @@ function validate() {
   errorMessages.value = [];
 
   props.rules.forEach((rule) => {
-    const result =
-      rule(rawValue.value);
+    const result = rule(rawValue.value);
 
     if (result !== true) {
-      errorMessages.value.push(
-        result ||
-          "Input tidak valid"
-      );
+      errorMessages.value.push(result || "Input tidak valid");
     }
   });
 
   showError.value = true;
 
-  return (
-    errorMessages.value.length === 0
-  );
+  return errorMessages.value.length === 0;
 }
 
 /* =========================
@@ -436,17 +368,12 @@ function validate() {
 ========================= */
 
 const hasError = computed(() => {
-  return (
-    errorMessages.value.length > 0
-  );
+  return errorMessages.value.length > 0;
 });
 
-const firstErrorMessage =
-  computed(() => {
-    return hasError.value
-      ? errorMessages.value[0]
-      : "";
-  });
+const firstErrorMessage = computed(() => {
+  return hasError.value ? errorMessages.value[0] : "";
+});
 
 /* =========================
    SYNC MODEL
@@ -456,7 +383,7 @@ watch(
   () => props.modelValue,
   (value) => {
     rawValue.value = value;
-  }
+  },
 );
 
 /* =========================
@@ -466,8 +393,7 @@ watch(
 defineExpose({
   validate,
 
-  focus: () =>
-    inputRef.value?.focus(),
+  focus: () => inputRef.value?.focus(),
 
   increment,
 
@@ -548,9 +474,7 @@ defineExpose({
 .input-field:focus {
   border-color: #1976d2;
 
-  box-shadow:
-    0 0 0 2px
-    rgba(25, 118, 210, 0.08);
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.08);
 }
 
 /* =========================
@@ -599,9 +523,7 @@ defineExpose({
 .input-field.input-error:focus {
   border-color: #dc3545;
 
-  box-shadow:
-    0 0 0 2px
-    rgba(220, 53, 69, 0.08);
+  box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.08);
 }
 
 /* =========================

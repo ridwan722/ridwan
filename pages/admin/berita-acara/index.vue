@@ -1,28 +1,22 @@
 <template>
   <ConfirmationDialog ref="confirmationDialog" />
   <v-dialog v-model="data.dialog_tambah_berita_acara">
-    <v-card class="d-flex flex-column h-100">
-      <v-card-text class="flex-grow-1 overflow-y-auto pa-0">
+
         <dialog-tambah-berita-acara
           @close="data.dialog_tambah_berita_acara = false"
           @saved="handleSaved"
           mode="create"
         />
-      </v-card-text>
-    </v-card>
   </v-dialog>
 
   <v-dialog v-model="data.dialog_edit_berita_acara">
-    <v-card class="d-flex flex-column h-100">
-      <v-card-text class="flex-grow-1 overflow-y-auto pa-0">
+
         <dialog-tambah-berita-acara
           mode="edit"
           :data-edit="data.selectedBeritaAcara"
           @close="data.dialog_edit_berita_acara = false"
           @saved="handleSaved"
         />
-      </v-card-text>
-    </v-card>
   </v-dialog>
 
   <v-row align="center">
@@ -105,7 +99,7 @@
             variant="tonal"
             color="primary"
             class="rounded-lg mr-1"
-            :to="'/admin/berita_acara/' + item.id"
+            :to="'/admin/berita-acara/' + item.id"
           >
             <v-icon icon="mdi-eye" />
             <v-tooltip activator="parent" location="top">Detail</v-tooltip>
@@ -277,16 +271,10 @@ const data = reactive({
 
   headUser: [
     { title: "No", align: "center" as const, value: "no", width: "50px" },
-    { title: "Tanggal", value: "tanggal_berita_acara", sortable: true },
-    { title: "ID", value: "id_berita_acara", sortable: true },
-    { title: "Client", value: "nama_perusahaan", sortable: true },
-    { title: "Subject", value: "judul_berita_acara", sortable: true },
-    {
-      title: "Total Alat",
-      value: "total_alat",
-      align: "center" as const,
-      sortable: false,
-    },
+    { title: "Tanggal", value: "tanggal_berita_acara", sortable: true, width: "150px" },
+    { title: "ID", value: "id_berita_acara", sortable: true, width: "160px" },
+     { title: "Subject", value: "judul_berita_acara", sortable: true, width: "120px" },
+    { title: "Client", value: "nama_customer", sortable: true },
     {
       title: "Aksi",
       value: "aksi",

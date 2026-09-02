@@ -54,7 +54,7 @@
           Tanjung Riau, <br>Kec. Sekupang, Kota Batam 29425</p>
           <p class="phone-line">
 
-            Telp. +62 xxx
+            Hp. +62821 9998 8670
           </p>
         </div>
       </div>
@@ -177,9 +177,9 @@
                   <span>{{ index + 1 }}.</span>
                  </div>
                 </td>
-                <td class="text-left font-weight-medium text-slate-800">{{ item.nama }}</td>
-                <td class="text-center font-weight-semibold">{{ item.qty }}</td>
-                <td class="text-center text-slate-500 uppercase">{{ item.uom }}</td>
+                <td class="text-left font-weight-bold text-slate-800">{{ item.nama }}</td>
+                <td class="text-center">{{ item.qty }}</td>
+                <td class="text-center text-slate-500">{{ item.uom }}</td>
                 <td class="text-right text-slate-600">Rp {{ rupiah(item.amount) }}</td>
                 <td class="text-right  text-navy">Rp {{ rupiah(item.subtotal_item) }}</td>
               </tr>
@@ -234,7 +234,7 @@
 
           <div class="sig-block">
             <p class="sig-header">Disetujui Oleh,</p>
-            <p class="sig-sub">{{ props.detailpenawaran.nama_perusahaan || 'KLIEN' }}</p>
+            <p class="sig-sub">{{ props.detailpenawaran.nama_perusahaan || '' }}</p>
             <div class="sig-placeholder"></div>
             <p class="sig-person-name">( .................................... )</p>
             <p class="sig-person-role">Stamp & Signature</p>
@@ -244,7 +244,7 @@
 
       <!-- Footer Wave Graphic -->
       <div class="footer-wave">
-        <svg viewBox="0 0 500 120" preserveAspectRatio="none">
+        <!-- <svg viewBox="0 0 500 120" preserveAspectRatio="none">
           <defs>
             <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" style="stop-color: #0f2b48; stop-opacity: 1" />
@@ -254,7 +254,7 @@
           <path d="M0,0 C150,80 350,80 500,0 L500,120 L0,120 Z" fill="#2563eb" opacity="0.12"></path>
           <path d="M0,25 C150,90 350,90 500,25 L500,120 L0,120 Z" fill="#1d4ed8" opacity="0.25"></path>
           <path d="M0,50 C150,110 350,110 500,50 L500,120 L0,120 Z" fill="url(#grad1)"></path>
-        </svg>
+        </svg> -->
       </div>
     </div>
 
@@ -269,7 +269,7 @@
         class="text-capitalize font-weight-bold rounded-lg text-subtitle-2"
         @click="handlePrint"
       >
-        Cetak Surat Penawaran
+        Print Quotation
       </v-btn>
     </div>
   </div>

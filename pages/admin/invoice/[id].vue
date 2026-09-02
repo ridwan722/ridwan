@@ -126,16 +126,16 @@ function printInvoice() {
 <template>
   <div>
     <ConfirmationDialog ref="confirmationDialog" />
-<v-btn
-    variant="text"
-    color="grey-darken-3"
-    prepend-icon="mdi-arrow-left"
-    @click="$router.go(-1)"
-    class="text-capitalize font-weight-bold mb-2"
-  >
-    Kembali
-  </v-btn>
-  
+    <v-btn
+      variant="text"
+      color="grey-darken-3"
+      prepend-icon="mdi-arrow-left"
+      @click="$router.go(-1)"
+      class="text-capitalize font-weight-bold mb-2"
+    >
+      Kembali
+    </v-btn>
+
     <v-dialog v-model="dialogDikirim" max-width="500" persistent>
       <v-card class="rounded-lg">
         <v-card-title class="bg-primary text-white pa-4">
@@ -187,7 +187,7 @@ function printInvoice() {
                 INVOICE
               </div>
               <div class="text-h6 font-weight-bold primary--text">
-                #QT/ICI/2026/SNS/{{ invoiceDetail.id }}
+                #INV/ICI/2026/SNS/{{ invoiceDetail.id }}
               </div>
             </div>
           </v-col>
@@ -203,17 +203,16 @@ function printInvoice() {
 
             <v-chip
               v-if="invoiceDetail.status == 'Draft'"
-              prepend-icon="mdi-send"
+              prepend-icon="mdi-check-circle-outline"
               color="primary"
               size="small"
               class="font-weight-bold text-uppercase mb-2 ml-3"
               label
-              @click="bukaDialogDikirim"
+              @click="ubahStatusSelesai"
             >
-              Kirim
+              Selesai
             </v-chip>
 
-            <!-- Creator & Timestamp -->
             <div
               class="text-caption text-grey-darken-1 d-flex align-center justify-sm-end mt-2"
             >
@@ -229,26 +228,6 @@ function printInvoice() {
             </div>
           </v-col>
         </v-row>
-
-        <div v-if="invoiceDetail.status != 'Draft'">
-          <v-divider class="my-2" />
-          <v-row>
-            <v-col>
-              <v-btn
-                size="small"
-                color="primary"
-                class="font-weight-bold text-uppercase"
-                label
-                append-icon="mdi-open-in-new"
-                :href="invoiceDetail.dokumen_dikirim"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                INVOICE
-              </v-btn>
-            </v-col>
-          </v-row>
-        </div>
       </v-card>
     </div>
 
@@ -264,6 +243,8 @@ function printInvoice() {
                 Ruko Dream Land Blok A No.05, Dreamland Square, Marina City,
                 <br />
                 Tanjung Riau, Kec. Sekupang, Kota Batam 29425.
+                <br />
+                Hp. +62821 9998 8670
               </div>
             </div>
             <div class="invoice-title">INVOICE</div>
@@ -284,17 +265,17 @@ function printInvoice() {
                     </td>
                   </tr>
                   <tr>
-                    <td width="80">Attn</td>
-                    <td width="10">:</td>
-                    <td>
-                      <span> Bpk. {{ invoiceDetail.pic }} </span>
-                    </td>
-                  </tr>
-                  <tr>
                     <td style="vertical-align: top">Location</td>
                     <td style="vertical-align: top">:</td>
                     <td style="vertical-align: top">
                       {{ invoiceDetail.alamat_customer }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td width="80">Attn</td>
+                    <td width="10">:</td>
+                    <td>
+                      <span> {{ invoiceDetail.pic }} </span>
                     </td>
                   </tr>
                 </tbody>
@@ -304,9 +285,9 @@ function printInvoice() {
               <table class="w-100">
                 <tbody>
                   <tr>
-                    <td width="130">Quotation Ref No</td>
+                    <td width="130">Invoice No</td>
                     <td width="10">:</td>
-                    <td>QT/ICI/2026/SNS/{{ invoiceDetail.id }}</td>
+                    <td>INV/ICI/2026/SNS/{{ invoiceDetail.no_inv }}</td>
                   </tr>
                   <tr>
                     <td>Inv Date</td>
@@ -348,7 +329,7 @@ function printInvoice() {
                 <td class="desc-cell">
                   <div class="font-weight-bold">
                     <span style="white-space: pre-line">
-                      {{ item.deskripsi_pekerjaan }}
+                      {{ item.nama }}
                     </span>
                   </div>
                 </td>
@@ -486,7 +467,12 @@ function printInvoice() {
             <div class="text-center signature-area">
               <span class="font-italic">Your sincerely,</span><br /><strong
                 >CV. SOLUSI NUSA SEGARA</strong
-              ><br /><br /><br /><br /><br />
+              >
+              <v-img
+                src="/public/ttd_ridwan.png"
+                width="120"
+                class="ml-11"
+              ></v-img>
               <strong>( Muhammad Ridwan )</strong>
             </div>
           </div>
@@ -496,17 +482,6 @@ function printInvoice() {
 
     <div class="text-center mt-4">
       <v-btn
-        v-if="invoiceDetail.status === 'Dikirim'"
-        prepend-icon="mdi-check-circle-outline"
-        color="success"
-        variant="elevated"
-        class="mr-2"
-        @click="ubahStatusSelesai"
-      >
-        Ubah Status Selesai
-      </v-btn>
-      <v-btn
-        v-if="invoiceDetail.status != 'Selesai'"
         prepend-icon="mdi-printer"
         color="indigo"
         variant="elevated"

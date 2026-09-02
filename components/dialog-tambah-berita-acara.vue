@@ -1,104 +1,142 @@
 <template>
   <div class="page-shell">
     <form class="form-container" @submit.prevent="submitBeritaAcara">
-      <header class="top-bar">
-        <h1 class="page-title">
-          {{
-            mode === "create" ? "Buat Berita Acara Baru" : "Update Berita Acara"
-          }}
-        </h1>
-        <div class="top-bar-actions">
-          <button type="button" class="btn btn-danger" @click="emit('close')">
-            Batal
+      <!-- Card Section -->
+      <section class="panel-card">
+        <div class="panel-header">
+          <div class="panel-header-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+          </div>
+          <div>
+            <h2>Buat Berita Acara</h2>
+            <p class="panel-subtitle">Lengkapi detail dokumen dan data customer terkait</p>
+          </div>
+        </div>
+
+        <div class="panel-body">
+          <div class="form-grid">
+            <!-- Judul Berita Acara -->
+            <div class="form-field full-width">
+              <label for="judul_berita_acara">
+                Judul Berita Acara <span class="required-asterisk">*</span>
+              </label>
+              <input
+                id="judul_berita_acara"
+                v-model.trim="form.judul_berita_acara"
+                class="input-control"
+                type="text"
+                placeholder="Contoh: Berita Acara Pemeriksaan Software"
+                required
+              />
+            </div>
+
+            <!-- Customer Autocomplete -->
+            <div class="form-field full-width">
+              <label>Pilih Customer <span class="required-asterisk">*</span></label>
+              <v-autocomplete
+                v-model="form.id_customer"
+                :items="customerStore.getDataCustomer"
+                item-title="nama"
+                item-value="id"
+                placeholder="Cari.."
+                variant="outlined"
+                density="comfortable"
+                hide-details="auto"
+                clearable
+                class="custom-v-select"
+              />
+            </div>
+
+            <!-- Tanggal -->
+            <div class="form-field">
+              <label>Tanggal Berita Acara <span class="required-asterisk">*</span></label>
+              <a-date-picker-new
+                v-model="form.tanggal_berita_acara"
+                class="custom-datepicker"
+              ></a-date-picker-new>
+            </div>
+
+            <!-- Nama Customer -->
+            <div class="form-field">
+              <label for="nama_customer">
+                Nama Customer <span class="required-asterisk">*</span>
+              </label>
+              <input
+                id="nama_customer"
+                v-model.trim="form.nama_customer"
+                class="input-control"
+                type="text"
+                placeholder="Nama entitas / perusahaan"
+                required
+              />
+            </div>
+
+            <!-- PIC -->
+            <div class="form-field">
+              <label for="pic">
+                Person in Charge (PIC) <span class="required-asterisk">*</span>
+              </label>
+              <input
+                id="pic"
+                v-model.trim="form.pic"
+                class="input-control"
+                type="text"
+                placeholder="Nama penanggung jawab"
+                required
+              />
+            </div>
+
+            <!-- Nomor Telepon -->
+            <div class="form-field">
+              <label for="no_telp">
+                Nomor Telepon <span class="required-asterisk">*</span>
+              </label>
+              <input
+                id="no_telp"
+                v-model.trim="form.no_telp"
+                class="input-control"
+                type="tel"
+                placeholder="0812xxxxxxx"
+                required
+              />
+            </div>
+
+            <!-- Alamat -->
+            <div class="form-field full-width">
+              <label for="alamat">
+                Alamat Lengkap <span class="required-asterisk">*</span>
+              </label>
+              <textarea
+                id="alamat"
+                v-model.trim="form.alamat"
+                class="input-control textarea-control"
+                rows="3"
+                placeholder="Masukkan alamat detail lokasi..."
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="bar-actions">
+          <button type="button" class="btn btn-secondary" @click="emit('close')">
+            <span class="btn-icon">✕</span> Batal
           </button>
           <button
             type="submit"
             class="btn btn-primary"
             :disabled="loadingSubmit"
           >
-            {{ loadingSubmit ? "Memproses..." : "Simpan Berita Acara" }}
+            <span v-if="loadingSubmit" class="spinner"></span>
+            <span v-else class="btn-icon">✓</span>
+            {{ loadingSubmit ? "Memproses..." : "Simpan" }}
           </button>
-        </div>
-      </header>
-
-      <section class="panel-card">
-        <div class="panel-header"><h2>Informasi Berita Acara</h2></div>
-        <div class="panel-body">
-          <div class="form-grid">
-            <div class="form-field full-width">
-              <label for="judul_berita_acara">Judul Berita Acara</label>
-              <input
-                id="judul_berita_acara"
-                v-model.trim="form.judul_berita_acara"
-                class="input-control"
-                type="text"
-                placeholder="Masukkan judul berita acara"
-                required
-              />
-            </div>
-
-            <div class="form-field full-width">
-              <label>Customer</label>
-              <v-autocomplete
-                v-model="form.id_customer"
-                :items="customerStore.getDataCustomer"
-                item-title="nama"
-                item-value="id"
-                placeholder="Pilih customer"
-                variant="outlined"
-                density="comfortable"
-                hide-details="auto"
-                clearable
-              />
-            </div>
-
-            <div class="form-field">
-              <a-date-picker-new
-                v-model="form.tanggal_berita_acara"
-              ></a-date-picker-new>
-            </div>
-
-            <div class="form-field">
-              <label for="nama_customer">Nama Customer</label>
-              <input
-                id="nama_customer"
-                v-model.trim="form.nama_customer"
-                class="input-control"
-                type="text"
-                required
-              />
-            </div>
-            <div class="form-field">
-              <label for="pic">PIC</label>
-              <input
-                id="pic"
-                v-model.trim="form.pic"
-                class="input-control"
-                type="text"
-                required
-              />
-            </div>
-            <div class="form-field">
-              <label for="no_telp">Nomor Telepon</label>
-              <input
-                id="no_telp"
-                v-model.trim="form.no_telp"
-                class="input-control"
-                type="tel"
-                required
-              />
-            </div>
-            <div class="form-field full-width">
-              <label for="alamat">Alamat</label>
-              <textarea
-                id="alamat"
-                v-model.trim="form.alamat"
-                class="input-control textarea-control"
-                rows="4"
-                required
-              />
-            </div>
-          </div>
         </div>
       </section>
     </form>
@@ -150,6 +188,7 @@ const applyEditData = (data?: CompanyInspectionReport | null) => {
     pic: data.pic,
     no_telp: data.no_telp,
     alamat: data.alamat,
+    tanggal_berita_acara: data.tanggal_berita_acara,
   });
 };
 
@@ -211,120 +250,252 @@ const submitBeritaAcara = async () => {
 </script>
 
 <style scoped>
+/* Page Layout Fix */
 .page-shell {
-  min-height: 100%;
-  padding: 24px;
-  background: #f8fafc;
-  color: #0f172a;
+  height: 100%;
+  max-height: 100vh;
+  overflow-y: auto;
+  background-color: transparent !important; 
+  color: #1e293b;
 }
+
 .form-container {
-  max-width: 960px;
+  width: 450px;
   margin: 0 auto;
+  padding-bottom: 40px;
 }
+
+/* Header & Top Bar */
 .top-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
+
+.header-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 .page-title {
   margin: 0;
-  font-size: 24px;
+  font-size: 26px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.02em;
 }
-.top-bar-actions {
+
+.bar-actions {
   display: flex;
-  gap: 10px;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  padding: 0 28px 28px 28px;
 }
+
+/* Card Panel */
 .panel-card {
-  overflow: hidden;
   border: 1px solid #e2e8f0;
-  border-radius: 14px;
-  background: white;
-  box-shadow: 0 4px 16px rgb(15 23 42 / 6%);
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
 }
+
 .panel-header {
-  padding: 18px 22px;
-  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 28px;
+  border-bottom: 1px solid #f1f5f9;
+  background-color: #fafafa;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
 }
+
+.panel-header-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background-color: #eff6ff;
+  color: #2563eb;
+}
+
 .panel-header h2 {
   margin: 0;
-  font-size: 17px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #0f172a;
 }
+
+.panel-subtitle {
+  margin: 2px 0 0 0;
+  font-size: 13px;
+  color: #64748b;
+}
+
 .panel-body {
-  padding: 22px;
+  padding: 28px;
 }
+
+/* Form Grid & Fields */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
+  gap: 20px;
 }
+
 .form-field {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 8px;
 }
+
 .form-field label {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
+  color: #334155;
 }
+
+.required-asterisk {
+  color: #ef4444;
+}
+
 .full-width {
   grid-column: 1 / -1;
 }
+
+/* Input Controls */
 .input-control {
   width: 100%;
-  min-height: 42px;
-  padding: 10px 12px;
+  box-sizing: border-box;
+  min-height: 44px;
+  padding: 10px 14px;
   border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  background: white;
-  color: inherit;
-  font: inherit;
-}
-.input-control:focus {
-  border-color: #2563eb;
-  outline: 2px solid rgb(37 99 235 / 12%);
-}
-.textarea-control {
-  resize: vertical;
-}
-.btn {
-  min-height: 40px;
-  padding: 0 16px;
-  border: 0;
-  border-radius: 8px;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-}
-.btn:disabled {
-  cursor: wait;
-  opacity: 0.65;
-}
-.btn-primary {
-  background: #2563eb;
-}
-.btn-danger {
-  background: #dc2626;
+  border-radius: 10px;
+  background-color: #ffffff;
+  color: #0f172a;
+  font-size: 14px;
+  transition: all 0.15s ease-in-out;
 }
 
+.input-control::placeholder {
+  color: #94a3b8;
+}
+
+.input-control:hover {
+  border-color: #94a3b8;
+}
+
+.input-control:focus {
+  border-color: #2563eb;
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.textarea-control {
+  line-height: 1.5;
+  resize: vertical;
+}
+
+/* Custom Component Integration */
+.custom-v-select :deep(.v-field) {
+  border-radius: 10px !important;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 20px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #1d4ed8;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+}
+
+.btn-secondary {
+  background-color: #ffffff;
+  border-color: #cbd5e1;
+  color: #475569;
+}
+
+.btn-secondary:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-icon {
+  font-size: 14px;
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #ffffff;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive */
 @media (max-width: 640px) {
   .page-shell {
     padding: 16px;
   }
+
   .top-bar {
-    align-items: stretch;
     flex-direction: column;
+    align-items: flex-start;
   }
-  .top-bar-actions,
-  .top-bar-actions .btn {
+
+  .bar-actions {
+    width: 100%;
+    padding: 0 20px 20px 20px;
+  }
+
+  .bar-actions .btn {
     flex: 1;
   }
+
+  .panel-body {
+    padding: 20px 16px;
+  }
+
   .form-grid {
     grid-template-columns: 1fr;
-  }
-  .full-width {
-    grid-column: auto;
   }
 }
 </style>

@@ -39,7 +39,7 @@ definePageMeta({
 
           <div class="card-body">
             <!-- Sub Group: Quotation -->
-            <div class="group-section">
+            <div >
               <div class="group-header">
                 <span class="group-title">QUOTATION (PENAWARAN)</span>
               </div>
@@ -60,7 +60,7 @@ definePageMeta({
 
 
             <!-- Sub Group: SPK -->
-            <div class="group-section">
+            <div >
 
               <div class="action-grid-1">
                 <NuxtLink to="/admin/spk" class="compact-action-card">
@@ -79,7 +79,7 @@ definePageMeta({
 
 
             <!-- Sub Group: Berita Acara -->
-            <div class="group-section">
+            <div >
 
               <div class="action-grid-1">
                 <NuxtLink to="/admin/berita-acara" class="compact-action-card">
@@ -98,11 +98,11 @@ definePageMeta({
             <div class="divider"></div>
 
             <!-- Sub Group: Invoice -->
-            <div class="group-section">
+            <div >
               <div class="group-header">
-                <span class="group-title">INVOICE (FAKTUR TAGIHAN)</span>
+                <span class="group-title">INVOICE</span>
               </div>
-              <div class="action-grid-3">
+              <div class="action-grid-2">
                 <NuxtLink to="/admin/invoice" class="compact-action-card">
                   <div class="action-icon">
                     <v-icon icon="mdi-receipt-text-outline" size="18" />
@@ -110,16 +110,6 @@ definePageMeta({
                   <div class="action-text">
                     <span class="title">Semua Invoice</span>
                     <span class="sub">Database utama</span>
-                  </div>
-                </NuxtLink>
-
-                <NuxtLink to="/admin/invoice/dikirim" class="compact-action-card">
-                  <div class="action-icon">
-                    <v-icon icon="mdi-send-outline" size="18" />
-                  </div>
-                  <div class="action-text">
-                    <span class="title">Send Invoice</span>
-                    <span class="sub">Status terkirim</span>
                   </div>
                 </NuxtLink>
 
@@ -147,7 +137,7 @@ definePageMeta({
           </div>
 
           <div class="card-body">
-            <div class="group-section">
+            <div >
               <div class="group-header">
                 <span class="group-title">KAS</span>
               </div>
