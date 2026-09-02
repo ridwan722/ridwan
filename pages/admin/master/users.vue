@@ -15,20 +15,20 @@
       </v-card-title>
 
       <v-card-text>
-        <a-text-field
+        <a-text-field-new
           v-model="newUsers.displayName"
           label="Nama"
           class="mb-3"
         />
 
-        <a-text-field
+        <a-text-field-new
           v-model="newUsers.email"
           placeholder="@gmail.com"
           label="Email"
           class="mb-3"
         />
 
-        <a-select v-model="newUsers.role" :items="data.itemRole" label="Role" />
+        <a-select-new v-model="newUsers.role" :items="data.itemRole" label="Role" />
       </v-card-text>
 
       <v-divider />
@@ -71,13 +71,13 @@
       </v-card-title>
 
       <v-card-text>
-        <a-text-field
+        <a-text-field-new
           v-model="editUsers.displayName"
           label="Nama"
           class="mb-3"
         />
 
-        <a-text-field
+        <a-text-field-new
           v-model="editUsers.email"
           label="Email"
           placeholder="@gmail.com"
@@ -85,7 +85,7 @@
           class="mb-3"
         />
 
-        <a-select
+        <a-select-new
           v-model="editUsers.role"
           :items="data.itemRole"
           label="Role"
@@ -158,7 +158,7 @@
     <v-card-title class="pa-3">
       <v-row align="center">
         <v-col cols="12" sm="10">
-          <a-text-field
+          <a-text-field-new
             v-model="data.search"
             placeholder="Search"
             style="max-width: 280px"

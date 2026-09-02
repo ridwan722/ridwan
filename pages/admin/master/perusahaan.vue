@@ -13,26 +13,26 @@
       </v-card-title>
 
       <v-card-text>
-        <a-text-field
+        <a-text-field-new
           v-model="newPerusahaan.nama_group_pt"
           label="Nama Group"
           placeholder="Group Perusahaan"
         />
 
-        <a-text-field
+        <a-text-field-new
           v-model="newPerusahaan.nama_perusahaan"
           label="Nama Perusahaan"
           placeholder="Nama Perusahaan"
           :disabled="data.addedit == 'edit'"
         />
 
-        <a-text-field
+        <a-text-field-new
           v-model="newPerusahaan.telepon_perusahaan"
           label="No. Telepon"
           placeholder="No. Telp"
         />
 
-        <a-textarea
+        <a-textarea-new
           v-model="newPerusahaan.alamat_perusahaan"
           label="Alamat"
           placeholder="Alamat Perusahaan"
@@ -102,7 +102,7 @@
     <v-card-title class="pa-3">
       <v-row align="center">
         <v-col cols="12" sm="10">
-          <a-text-field
+          <a-text-field-new
             v-model="data.search"
             placeholder="Search"
             style="max-width: 280px"

@@ -5,10 +5,7 @@ import { usePenawaranStore } from "~/stores/penawaranStore";
 import type { ConfirmationDialog } from "#components";
 
 import "@vueup/vue-quill/dist/vue-quill.snow.css";
-import CreateInvoiceDialog from "~/components/Admin/Penawaran/CreateInvoiceDialog.vue";
-
-
-
+import dialogBuatInvoice from "~/components/Admin/Penawaran/dialog-buat-invoice.vue";
 
 definePageMeta({ layout: "admin" });
 
@@ -224,7 +221,7 @@ const handlePrint = () => {
   <div v-if="detailpenawaran" class="page-container">
 
     <!-- // DIALOG BUAT INVOICE \\ -->
-    <CreateInvoiceDialog
+    <dialog-buat-invoice
       v-model="data.dialogAdd"
       :penawaran="detailpenawaran"
       @saved="navigateTo('/admin/invoice')"
@@ -250,15 +247,6 @@ const handlePrint = () => {
                 {{ detailpenawaran.no_penawaran }}
               </div>
             </div>
-
-            <v-chip
-              size="small"
-              color="primary"
-              variant="tonal"
-              class="font-weight-bold text-uppercase"
-            >
-              {{ detailpenawaran.nama_kategori_object }}
-            </v-chip>
           </div>
         </div>
 

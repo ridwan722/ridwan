@@ -49,7 +49,7 @@
               Informasi Perusahaan
             </div>
 
-            <a-select
+            <a-select-new
               v-model="form.id_perusahaan"
               label="Nama Perusahaan *"
               :items="perusahaanStore.getDataPerusahaan"
@@ -59,7 +59,7 @@
               class="mb-2"
             />
 
-            <a-select
+            <a-select-new
               v-model="form.id_cabang"
               label="Cabang Perusahaan *"
               :items="perusahaanStore.getDataCabang"
@@ -282,7 +282,7 @@ onMounted(async () => {
       form.id_perusahaan = detailLaporan.id_perusahaan;
       form.nama_perusahaan = detailLaporan.nama_perusahaan;
 
-      // Ambil data cabang dari perusahaan terkait agar a-select cabang memiliki items data
+      // Ambil data cabang dari perusahaan terkait agar a-select-new cabang memiliki items data
       await perusahaanStore.tarikDataCabangPerusahaan(
         detailLaporan.id_perusahaan,
       );

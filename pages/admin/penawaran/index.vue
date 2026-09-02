@@ -12,7 +12,7 @@
   </v-btn>
 
   <!-- /// DIALOG TAMBAH / EDIT Penawaran \\\ -->
-  <v-dialog v-model="data.dialogTambahPenawaran" max-width="1300" scrollable>
+  <v-dialog v-model="data.dialogTambahPenawaran" max-width="800" scrollable>
     <v-card class="rounded-xl overflow-hidden elevation-3 border-0">
       <v-card-item class="bg-grey-lighten-4 pa-3 text-center">
         <h4 class="font-weight-bold text-grey-darken-3">
@@ -29,7 +29,7 @@
         </div>
         <v-row density="comfortable">
           <v-col cols="12" md="4">
-            <a-select
+            <a-select-new
               v-model="newPenawaran.id_perusahaan"
               label="Client"
               placeholder="Select"
@@ -39,13 +39,13 @@
             />
           </v-col>
           <v-col cols="12" sm="6" md="4">
-            <a-date-picker
+            <a-date-picker-new
               v-model="newPenawaran.tanggal_penawaran"
               label="Quotation Date"
             />
           </v-col>
           <v-col cols="12" sm="6" md="4">
-            <a-text-field
+            <a-text-field-new
               v-model="newPenawaran.no_penawaran"
               label="Quotation Ref No"
               disabled
@@ -53,7 +53,7 @@
           </v-col>
         </v-row>
 
-        <a-textarea
+        <a-textarea-new
           v-model="newPenawaran.alamat_perusahaan"
           class="mt-2"
           label="Address"
@@ -61,7 +61,7 @@
           placeholder="*Auto"
         />
 
-        <a-text-field
+        <a-text-field-new
           v-model="newPenawaran.pic"
           class="mt-2"
           label="PIC"
@@ -69,7 +69,7 @@
           placeholder="PIC"
         />
 
-        <a-text-field
+        <a-text-field-new
           v-model="newPenawaran.no_telp"
           class="mt-2"
           label="Phone Number"
@@ -79,7 +79,7 @@
 
         <v-divider class="my-6 border-opacity-50" />
 
-        <a-textarea
+        <a-textarea-new
           v-model="newPenawaran.perihal"
           label="Subject"
           placeholder="Quotation Subject"
@@ -110,17 +110,17 @@
         >
           <v-row align="center" density="compact">
             <v-col cols="12" sm="3">
-              <a-textarea
+              <a-textarea-new
                 v-model="item.nama"
                 label="Description"
                 placeholder="description"
               />
             </v-col>
             <v-col cols="10" sm="2">
-              <a-field-number v-model="item.qty" label="Qty" placeholder="0" />
+              <a-field-number-new v-model="item.qty" label="Qty" placeholder="0" />
             </v-col>
             <v-col cols="10" sm="2">
-              <a-select
+              <a-select-new
                 :items="['Unit', 'Pcs', 'Kg']"
                 v-model="item.uom"
                 label="UOM"
@@ -128,7 +128,7 @@
               />
             </v-col>
             <v-col cols="10" sm="2">
-              <a-field-number
+              <a-field-number-new
                 v-model="item.amount"
                 label="Amount/Pcs"
                 placeholder="0"
@@ -136,7 +136,7 @@
             </v-col>
 
             <v-col cols="10" sm="2">
-              <a-text-field
+              <a-text-field-new
                 v-model="item.subtotal_item"
                 label="Subtotal"
                 placeholder="0"
@@ -233,14 +233,14 @@
     <v-card-title class="pa-3">
       <v-row align="center">
         <v-col cols="12" sm="4">
-          <a-text-field
+          <a-text-field-new
             v-model="data.searchPenawaran"
             placeholder="Cari no. penawaran / customer"
             style="max-width: 280px"
           />
         </v-col>
         <v-col cols="12" sm="3">
-          <a-select
+          <a-select-new
             v-model="data.filterStatus"
             placeholder="Semua Status"
             :items="filterStatusOptions"
@@ -328,19 +328,6 @@
             <v-icon icon="mdi-pencil-outline" />
             <v-tooltip activator="parent" location="top"
               >Edit Penawaran</v-tooltip
-            >
-          </v-btn>
-
-          <v-btn
-            size="27"
-            variant="tonal"
-            color="success"
-            class="rounded-lg mr-1"
-            @click="convertToInvoice(item)"
-          >
-            <v-icon icon="mdi-file-document-outline" />
-            <v-tooltip activator="parent" location="top"
-              >Buat Invoice dari Penawaran</v-tooltip
             >
           </v-btn>
 

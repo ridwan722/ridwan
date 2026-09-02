@@ -53,7 +53,7 @@ definePageMeta({
               <div class="sub-grid mt-3">
                 <NuxtLink to="/admin/master/client" class="app-card">
                   <div class="card-icon icon-blue">
-                    <v-icon icon="mdi-corporate" size="22" />
+                    <v-icon icon="mdi-account-group" size="22" />
                   </div>
                   <span class="card-label"> Client </span>
                 </NuxtLink>
@@ -82,7 +82,7 @@ definePageMeta({
                     <span class="card-label"> Penawaran </span>
                   </NuxtLink>
 
-                  <NuxtLink to="/admin/penawaran/dikirim" class="app-card">
+                  <!-- <NuxtLink to="/admin/penawaran/dikirim" class="app-card">
                     <div class="card-icon icon-purple">
                       <v-icon icon="mdi-truck-delivery-outline" size="20" />
                     </div>
@@ -94,7 +94,7 @@ definePageMeta({
                       <v-icon icon="mdi-check-circle-outline" size="20" />
                     </div>
                     <span class="card-label"> Penawaran Selesai </span>
-                  </NuxtLink>
+                  </NuxtLink> -->
                 </div>
               </v-expand-transition>
 

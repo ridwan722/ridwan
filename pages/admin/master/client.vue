@@ -1,6 +1,14 @@
 <template>
   <ConfirmationDialog ref="confirmationDialog" />
-
+<v-btn
+    variant="text"
+    color="grey-darken-3"
+    prepend-icon="mdi-arrow-left"
+    @click="$router.go(-1)"
+    class="text-capitalize font-weight-bold mb-2"
+  >
+    Kembali
+  </v-btn>
   <!-- /// DIALOG TAMBAH CUTOMER \\\ -->
   <v-dialog
     v-model="data.dialogCustomer"
@@ -16,22 +24,22 @@
       </v-card-title>
 
       <v-card-text>
-        <a-text-field
+        <a-text-field-new
           v-model="newCustomer.nama"
           label="Nama Perusahaan"
           placeholder="Nama Customer"
         />
-        <a-textarea
+        <a-textarea-new
           v-model="newCustomer.alamat"
           label="Alamat"
           placeholder="Alamat Customer"
         />
-        <a-text-field
+        <a-text-field-new
           v-model="newCustomer.pic"
           label="PIC"
           placeholder="Nama Customer"
         />
-        <a-text-field
+        <a-text-field-new
           v-model="newCustomer.no_telp"
           label="Phone Number"
           placeholder="+00 0000"
@@ -92,6 +100,10 @@
       :sort-by="[{ key: 'createdAt', order: 'desc' }]"
       :hover="true"
     >
+      <template v-slot:item.no="{ index }">
+        <div class="text-center">{{ index + 1 }}.</div>
+      </template>
+
       <template v-slot:item.aksi="{ item }">
         <div class="d-flex justify-center">
           <v-btn
@@ -156,9 +168,15 @@ const data = reactive({
   editOriginalCustomerId: "",
   customerAddEdit: "add" as "add" | "edit",
   headCustomer: [
-    { title: "Client", value: "nama", sortable: true },
-    { title: "PIC", value: "pic", sortable: true },
-    { title: "Address", value: "alamat", sortable: true },
+    { title: "No.", value: "no", sortable: false, width: "40px" },
+    { title: "Client", value: "nama", sortable: true, width: "230px" },
+    { title: "PIC", value: "pic", sortable: true, width: "150px" },
+    {
+    title: "Address",
+    value: "alamat",
+    sortable: true,
+    width: "650px",
+  },
     { title: "Phone Number", value: "no_telp", sortable: true },
     { title: "Aksi", align: "center" as const, value: "aksi", width: "100px" },
   ],
@@ -178,11 +196,9 @@ function emptyCustomer(): customerM {
 
 const newCustomer = ref<customerM>(emptyCustomer());
 
-
 onMounted(async () => {
   await customerStore.tarikDataCustomerAct();
 });
-
 
 function openDialogAddCustomer() {
   data.customerAddEdit = "add";

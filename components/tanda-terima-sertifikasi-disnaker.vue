@@ -22,7 +22,7 @@
         <v-row no-gutters>
           <v-col cols="12" md="5" style="padding: 0 10px 0 10px">
             <div class="text-subtitle-2 mb-3 font-weight-bold">KODE BAYAR</div>
-            <a-text-field
+            <a-text-field-new
               v-model="data.new_kodebayar.kode_bayar"
               label="Kode Bayar"
               placeholder="kode bayar"
@@ -82,7 +82,7 @@
 
             <v-row dense>
               <v-col cols="12">
-                <a-select
+                <a-select-new
                   label="Pilih Item Kategori"
                   v-model="data.new_pemberkasan.id_kategori_item"
                   :items="props.datainv.items"
@@ -93,7 +93,7 @@
                 />
               </v-col>
               <v-col cols="6">
-                <a-text-field
+                <a-text-field-new
                   label="Periode Awal"
                   v-model="data.new_pemberkasan.periode_mulai"
                   disabled
@@ -103,7 +103,7 @@
                 />
               </v-col>
               <v-col cols="6">
-                <a-text-field
+                <a-text-field-new
                   label="Periode Akhir"
                   v-model="data.new_pemberkasan.periode_selesai"
                   disabled
@@ -113,7 +113,7 @@
                 />
               </v-col>
               <v-col cols="6">
-                <a-select
+                <a-select-new
                   label="Jenis dokumen"
                   v-model="data.new_pemberkasan.id_dokumen"
                   :items="masterdokumenstore.getDataDokumen"
@@ -124,7 +124,7 @@
                 />
               </v-col>
               <v-col cols="6">
-                <a-text-field
+                <a-text-field-new
                   label="No Dokumen"
                   placeholder="Cth. 0123"
                   v-model="data.new_pemberkasan.no_dokumen"
@@ -139,7 +139,7 @@
                 <upload-image label="Upload" />
               </v-col>
               <v-col>
-                <a-select
+                <a-select-new
                   label="Status Dokumen"
                   class="mb-2"
                   v-model="data.new_pemberkasan.status_dokumen"

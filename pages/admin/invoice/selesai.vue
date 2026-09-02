@@ -1,11 +1,19 @@
 <template>
   <ConfirmationDialog ref="confirmationDialog" />
-
+<v-btn
+    variant="text"
+    color="grey-darken-3"
+    prepend-icon="mdi-arrow-left"
+    @click="$router.go(-1)"
+    class="text-capitalize font-weight-bold mb-2"
+  >
+    Kembali
+  </v-btn>
   <v-row align="center">
     <v-col cols="12">
       <v-breadcrumbs>
         <v-breadcrumbs-item>
-          <span class="font-weight-medium text-h5">Invoice Solusi Nusa Segara</span>
+          <span class="font-weight-medium text-h5">Invoice Selesai</span>
         </v-breadcrumbs-item>
       </v-breadcrumbs>
     </v-col>
@@ -17,7 +25,7 @@
     <v-card-title class="pa-3">
       <v-row align="center">
         <v-col>
-          <a-text-field
+          <a-text-field-new
             v-model="data.searchInvoice"
             placeholder="Cari no. invoice / customer"
             style="max-width: 280px"

@@ -63,7 +63,7 @@
     <v-card-title class="pa-3">
       <v-row align="center">
         <v-col cols="12" sm="10">
-          <a-text-field
+          <a-text-field-new
             v-model="data.search"
             placeholder="Search"
             style="max-width: 280px"

@@ -28,7 +28,7 @@
         </div>
         <v-row density="comfortable">
           <v-col cols="12" md="8">
-            <a-select
+            <a-select-new
               v-model="newInvoice.id_customer"
               label="Customer"
               placeholder="Pilih Customer"
@@ -38,13 +38,13 @@
             />
           </v-col>
           <v-col cols="12" sm="6" md="4">
-            <a-date-picker
+            <a-date-picker-new
               v-model="newInvoice.tanggal"
               label="Tanggal Invoice"
             />
           </v-col>
         </v-row>
-        <a-textarea
+        <a-textarea-new
           v-model="newInvoice.alamat_customer"
           class="mt-2"
           label="Alamat Customer"
@@ -52,7 +52,7 @@
           placeholder="Alamat customer terisi otomatis, bisa diedit"
         />
 
-        <a-text-field
+        <a-text-field-new
           v-model="newInvoice.pic"
           class="mt-2"
           label="PIC"
@@ -84,24 +84,24 @@
         >
           <v-row align="center" density="compact" class="mb-2">
             <v-col cols="12" sm="5">
-              <a-textarea
+              <a-textarea-new
                 v-model="item.deskripsi_pekerjaan"
                 label="Deskripsi"
                 placeholder="Deskripsi"
               />
             </v-col>
             <v-col cols="10" sm="2">
-              <a-field-number v-model="item.qty" label="Qty" placeholder="0" />
+              <a-field-number-new v-model="item.qty" label="Qty" placeholder="0" />
             </v-col>
             <v-col cols="10" sm="2">
-              <a-text-field
+              <a-text-field-new
                 v-model="item.uom"
                 label="Satuan"
                 placeholder="Pcs"
               />
             </v-col>
             <v-col cols="10" sm="2">
-              <a-field-number
+              <a-field-number-new
                 v-model="item.amount"
                 label="Jumlah (Amount)"
                 placeholder="0"
@@ -220,17 +220,17 @@
       </v-card-title>
 
       <v-card-text>
-        <a-text-field
+        <a-text-field-new
           v-model="newCustomer.nama"
           label="Nama Perusahaan"
           placeholder="Nama Customer"
         />
-        <a-textarea
+        <a-textarea-new
           v-model="newCustomer.alamat"
           label="Alamat"
           placeholder="Alamat Customer"
         />
-        <a-text-field
+        <a-text-field-new
           v-model="newCustomer.pic"
           label="PIC"
           placeholder="Nama Customer"
@@ -283,14 +283,14 @@
         <v-card-title class="pa-3">
           <v-row align="center">
             <v-col>
-              <a-text-field
+              <a-text-field-new
                 v-model="data.searchInvoice"
                 placeholder="Cari no. invoice / customer"
                 style="max-width: 280px"
               />
             </v-col>
             <v-col>
-              <a-select
+              <a-select-new
                 v-model="data.filterStatus"
                 label=""
                 placeholder="Semua Status"
@@ -425,7 +425,7 @@
         <v-card-title class="pa-3">
           <v-row align="center">
             <v-col cols="12" sm="8">
-              <a-text-field
+              <a-text-field-new
                 v-model="data.searchCustomer"
                 placeholder="Cari nama customer"
                 style="max-width: 280px"

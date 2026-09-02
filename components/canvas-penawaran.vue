@@ -51,7 +51,7 @@
         <div class="header-contact">
           <p class="address-line">
             Ruko Dream Land Blok A No.05,<br> Dreamland Square,  Marina City 
-          Tanjung Riau, Kec. Sekupang, Kota Batam 29425</p>
+          Tanjung Riau, <br>Kec. Sekupang, Kota Batam 29425</p>
           <p class="phone-line">
 
             Telp. +62 xxx
@@ -82,9 +82,9 @@
         <div class="info-grid-card">
           <div class="grid-col">
             <div class="meta-row">
-              <span class="lbl">Ref. No</span>
+              <span class="lbl">Quotation Ref No</span>
               <span class="sep">:</span>
-              <span class="val highlight">{{ props.detailpenawaran.no_penawaran || "-" }}</span>
+              <span class="val bold">{{ props.detailpenawaran.no_penawaran || "-" }}</span>
             </div>
             <div class="meta-row">
               <span class="lbl">To</span>
@@ -95,6 +95,12 @@
               <span class="lbl">Attn</span>
               <span class="sep">:</span>
               <span class="val">{{ props.detailpenawaran.pic || "-" }}</span>
+            </div>
+
+            <div class="meta-row">
+              <span class="lbl">Telp</span>
+              <span class="sep">:</span>
+              <span class="val">{{ props.detailpenawaran.no_telp || "-" }}</span>
             </div>
           </div>
           <div class="grid-col">
@@ -166,14 +172,16 @@
               >
                 <!-- Drag Handle & Numbering Cell -->
                 <td class="text-center row-num drag-handle" width="36">
-                  <v-icon size="12" class="drag-icon no-print mr-1">mdi-drag-vertical</v-icon>
+                 <div style="display: flex; align-items: center;">
+                   <v-icon size="12" class="drag-icon no-print mr-1">mdi-drag-vertical</v-icon>
                   <span>{{ index + 1 }}.</span>
+                 </div>
                 </td>
                 <td class="text-left font-weight-medium text-slate-800">{{ item.nama }}</td>
                 <td class="text-center font-weight-semibold">{{ item.qty }}</td>
                 <td class="text-center text-slate-500 uppercase">{{ item.uom }}</td>
                 <td class="text-right text-slate-600">Rp {{ rupiah(item.amount) }}</td>
-                <td class="text-right font-weight-bold text-navy">Rp {{ rupiah(item.subtotal_item) }}</td>
+                <td class="text-right  text-navy">Rp {{ rupiah(item.subtotal_item) }}</td>
               </tr>
             </tbody>
 
@@ -181,16 +189,16 @@
             <tfoot>
               <!-- Subtotal Row -->
               <tr class="summary-row subtotal-row">
-                <td colspan="5" class="text-right font-weight-bold text-slate-600">SUBTOTAL</td>
-                <td class="text-right font-weight-bold text-slate-800">
+                <td colspan="5" class="text-right text-slate-600">SUBTOTAL</td>
+                <td class="text-right text-slate-800">
                   Rp {{ rupiah(props.detailpenawaran.subtotal_penawaran || props.detailpenawaran.grand_total_penawaran) }}
                 </td>
               </tr>
 
               <!-- Grand Total Row -->
               <tr class="summary-row grand-total-row">
-                <td colspan="5" class="text-right font-weight-extrabold text-navy">GRAND TOTAL</td>
-                <td class="text-right font-weight-extrabold text-navy gt-text">
+                <td colspan="5" class="text-right font-weight-bold text-navy">GRAND TOTAL</td>
+                <td class="text-right font-weight-bold text-navy gt-text">
                   Rp {{ rupiah(props.detailpenawaran.grand_total_penawaran) }}
                 </td>
               </tr>
@@ -219,10 +227,9 @@
             <p class="sig-header">Hormat Kami,</p>
             <p class="sig-sub">CV. SOLUSI NUSA SEGARA</p>
             <div class="sig-img-container">
-              <img src="/public/TTD.png" alt="Signature" class="sig-image" />
+              <img src="/public/ttd_ridwan.png" alt="Signature" class="sig-image" />
             </div>
             <p class="sig-person-name">Muhammad Ridwan</p>
-            <p class="sig-person-role">Authorized Representative</p>
           </div>
 
           <div class="sig-block">
@@ -447,10 +454,10 @@ const handlePrint = () => {
 /* Background Watermark */
 .watermark {
   position: absolute;
-  top: 52%;
+  top: 67%;
   left: 50%;
   transform: translate(-50%, -50%);
-  opacity: 0.035;
+  opacity: 0.105;
   width: 440px;
   z-index: 0;
   pointer-events: none;
