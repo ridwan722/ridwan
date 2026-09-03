@@ -190,6 +190,7 @@
       <v-card-actions class="pa-4 bg-grey-lighten-5">
         <v-spacer />
         <v-btn
+        size="small"
           variant="outlined"
           color="grey-darken-1"
           class="px-5 text-none rounded-lg"
@@ -198,6 +199,7 @@
           Batal
         </v-btn>
         <v-btn
+        size="small"
           color="primary"
           variant="flat"
           class="px-6 text-none rounded-lg font-weight-bold"
@@ -205,8 +207,8 @@
         >
           {{
             data.penawaranAddEdit === "add"
-              ? "Simpan Penawaran"
-              : "Simpan Perubahan"
+              ? "Save"
+              : "Edit"
           }}
         </v-btn>
       </v-card-actions>
@@ -523,15 +525,14 @@ function hapusBarisPenawaran(index: number) {
 
 async function simpanPenawaranDialog() {
   if (!newPenawaran.value.id_perusahaan) {
-    return notificationStore.showError("Customer belum dipilih");
+    return notificationStore.showError("Client belum dipilih");
   }
   if (
     !newPenawaran.value.tanggal_penawaran ||
-    !newPenawaran.value.perihal.trim() ||
-    !newPenawaran.value.no_telp.trim()
+    !newPenawaran.value.perihal.trim()
   ) {
     return notificationStore.showError(
-      "Tanggal, perihal, dan telepon perusahaan wajib diisi",
+      "Tanggal dan perihal wajib diisi",
     );
   }
   if (
@@ -541,7 +542,7 @@ async function simpanPenawaranDialog() {
     )
   ) {
     return notificationStore.showError(
-      "Setiap item harus memiliki nama, qty, dan harga satuan",
+      "Setiap item harus dilengkapi",
     );
   }
 
@@ -558,7 +559,7 @@ async function simpanPenawaranDialog() {
       newPenawaran.value.no_penawaran.replaceAll("/", "-");
     newPenawaran.value.created_at = moment().unix();
     newPenawaran.value.created_by = userStore.getEmail;
-
+    useloadingStore().setLoading(true)
     // Memanggil action addPenawaranAct di Store
     const result = await setPenawaran(newPenawaran.value);
     if (result !== "ok") {
@@ -568,7 +569,10 @@ async function simpanPenawaranDialog() {
 
     data.dialogTambahPenawaran = false;
     newPenawaran.value = emptyPenawaran();
+    useloadingStore().setLoading(false)
+    await penawaranStore.tarikDataPenawaranAct();
     return;
+
   }
 
   // Mode Edit

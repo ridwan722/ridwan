@@ -68,7 +68,7 @@ const logout = async () => {
         <div class="company-info">
           <!-- Desktop -->
           <span class="company-name desktop-company">
-            CV. SOLUSI NUSA SEGARA
+            ADMIN
           </span>
 
           <!-- Mobile -->

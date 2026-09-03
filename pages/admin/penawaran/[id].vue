@@ -200,7 +200,7 @@ const handlePrint = () => {
   <!-- DIALOG BUAT INVOICE -->
   <dialog-buat-invoice
     v-model="data.dialogAdd"
-    :penawaran="detailpenawaran"
+    :penawaran="detailpenawaran" 
     @saved="navigateTo('/admin/invoice')"
   />
 
@@ -252,7 +252,9 @@ const handlePrint = () => {
 
               <div>
                 <div class="info-card-title">Informasi Quotation</div>
-                <div class="info-card-description">Detail dokumen penawaran</div>
+                <div class="info-card-description">
+                  Detail dokumen penawaran
+                </div>
               </div>
             </div>
 
@@ -263,16 +265,16 @@ const handlePrint = () => {
                 {{ detailpenawaran.no_penawaran }}
               </div>
               <div class="mt-2 d-flex align-center ga-2">
-  <span class="text-caption text-medium-emphasis">Status:</span>
-  <v-chip
-    size="x-small"
-    variant="outlined"
-    color="grey"
-    class="font-weight-medium text-capitalize"
-  >
-    {{ detailpenawaran.status }}
-  </v-chip>
-</div>
+                <span class="text-caption text-medium-emphasis">Status:</span>
+                <v-chip
+                  size="x-small"
+                  variant="outlined"
+                  color="grey"
+                  class="font-weight-medium text-capitalize"
+                >
+                  {{ detailpenawaran.status }}
+                </v-chip>
+              </div>
             </div>
 
             <!-- DETAIL -->
@@ -317,23 +319,28 @@ const handlePrint = () => {
             </div>
 
             <!-- ACTION -->
-           <div class="info-card-footer text-center">
-  <v-btn
-    :disabled="detailpenawaran.status == 'INVOICE'"
-    block
-    color="primary"
-    variant="flat"
-    prepend-icon="mdi-file-document-plus-outline"
-    class="invoice-button"
-    @click="opendialogaddinv"
-  >
-    Buat Invoice
-  </v-btn>
-  <div v-if="detailpenawaran.status == 'INVOICE'" class="d-flex align-center justify-center mt-2">
-    <v-icon size="15" color="red">mdi-information-outline</v-icon>
-    <span class="text-red text-caption ml-1">Invoice telah dibuat</span>
-  </div>
-</div>
+            <div class="info-card-footer text-center">
+              <v-btn
+                :disabled="detailpenawaran.status == 'INVOICE'"
+                block
+                color="primary"
+                variant="flat"
+                prepend-icon="mdi-file-document-plus-outline"
+                class="invoice-button"
+                @click="opendialogaddinv"
+              >
+                Buat Invoice
+              </v-btn>
+              <div
+                v-if="detailpenawaran.status == 'INVOICE'"
+                class="d-flex align-center justify-center mt-2"
+              >
+                <v-icon size="15" color="red">mdi-information-outline</v-icon>
+                <span class="text-red text-caption ml-1"
+                  >Invoice telah dibuat</span
+                >
+              </div>
+            </div>
           </section>
         </aside>
 
@@ -468,13 +475,13 @@ const handlePrint = () => {
   min-width: 0;
   position: sticky;
   /* Menggunakan calc agar tinggi mengunci otomatis persis di bawah header sticky */
-  top: calc(105px + 24px); 
+  top: calc(105px + 24px);
   max-height: calc(100vh - (105px + 48px));
   overflow-y: auto;
   /* Menghilangkan scrollbar agar tetap estetik */
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE/Edge */
-  
+
   /* GPU Acceleration untuk rendering scroll yang mulus */
   will-change: transform;
   transform: translateZ(0);

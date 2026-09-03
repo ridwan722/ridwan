@@ -13,6 +13,8 @@ export interface invoiceM {
   id_customer: string;
   nama_customer: string;
   alamat_customer: string;
+  id_penawaran?: string,
+  no_penawaran?: string,
   no_telp: string;
   pic: string,
   tanggal: string;
