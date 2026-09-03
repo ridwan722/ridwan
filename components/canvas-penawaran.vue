@@ -367,18 +367,33 @@
       </div>
     </div>
 
-    <!-- Floating Print Button -->
-    <div class="d-flex justify-center align-center mt-6 mb-12 no-print">
+    <!-- Document Actions -->
+    <div
+      class="document-actions d-flex flex-wrap justify-center align-center mt-6 mb-12 no-print"
+    >
       <v-btn
         width="300"
         height="46"
         color="indigo-darken-3"
         elevation="3"
         prepend-icon="mdi-printer"
-        class="text-capitalize font-weight-bold rounded-lg text-subtitle-2"
+        class="quotation-action-btn text-capitalize font-weight-bold rounded-lg text-subtitle-2"
         @click="handlePrint"
       >
         Print Quotation
+      </v-btn>
+      <v-btn
+        width="300"
+        height="46"
+        color="red-darken-2"
+        elevation="3"
+        prepend-icon="mdi-file-pdf-box"
+        class="quotation-action-btn text-capitalize font-weight-bold rounded-lg text-subtitle-2"
+        :loading="isSavingPdf"
+        :disabled="isSavingPdf"
+        @click="handleSavePdf"
+      >
+        Simpan PDF
       </v-btn>
     </div>
   </div>
@@ -398,6 +413,7 @@ const dialogWarna = ref(false);
 const warnaBackgroundCustom = ref("#F02424");
 const showTable = ref(true);
 const tableBodyRef = ref<HTMLElement | null>(null);
+const isSavingPdf = ref(false);
 
 // Menghitung kontras warna teks (gelap/terang) berdasarkan background
 const warnaTeksHeader = computed(() => {
@@ -540,6 +556,59 @@ const handlePrint = () => {
   } else {
     iframe.onload = printAction;
     printAction();
+  }
+};
+
+const handleSavePdf = async () => {
+  const offerElement = document.getElementById("offer-to-print");
+  if (!offerElement || isSavingPdf.value) return;
+
+  isSavingPdf.value = true;
+
+  try {
+    const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
+      import("html2canvas"),
+      import("jspdf"),
+    ]);
+    const canvas = await html2canvas(offerElement, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: "#ffffff",
+      logging: false,
+      onclone: (clonedDocument) => {
+        clonedDocument.querySelectorAll(".no-print, .no-print-cell, .drag-icon").forEach((element) => {
+          (element as HTMLElement).style.display = "none";
+        });
+        clonedDocument.querySelectorAll(".print-only-cell").forEach((element) => {
+          (element as HTMLElement).style.display = "table-cell";
+        });
+      },
+    });
+    const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const imageHeight = (canvas.height * pageWidth) / canvas.width;
+    const image = canvas.toDataURL("image/png");
+
+    // Dokumen dapat melewati satu halaman bila isi tabel bertambah.
+    let heightLeft = imageHeight;
+    let position = 0;
+    pdf.addImage(image, "PNG", 0, position, pageWidth, imageHeight);
+    heightLeft -= pageHeight;
+
+    // Toleransi mencegah halaman kedua kosong akibat selisih pecahan mm
+    // saat tinggi canvas sebenarnya sama dengan tinggi A4.
+    while (heightLeft > 1) {
+      position = heightLeft - imageHeight;
+      pdf.addPage();
+      pdf.addImage(image, "PNG", 0, position, pageWidth, imageHeight);
+      heightLeft -= pageHeight;
+    }
+
+    const number = props.detailpenawaran?.no_penawaran || "SNS";
+    pdf.save(`${number.replace(/[^a-z0-9-_]/gi, "_")}.pdf`);
+  } finally {
+    isSavingPdf.value = false;
   }
 };
 </script>
@@ -991,6 +1060,20 @@ const handlePrint = () => {
 @media print {
   .no-print {
     display: none !important;
+  }
+}
+
+.document-actions {
+  gap: 16px;
+}
+
+@media (max-width: 600px) {
+  .document-actions {
+    padding: 0 16px;
+  }
+
+  .quotation-action-btn {
+    width: 100% !important;
   }
 }
 </style>
