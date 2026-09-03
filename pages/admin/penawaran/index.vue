@@ -601,14 +601,8 @@ async function refreshData() {
 
 <style scoped>
 .penawaran-link {
-  color: black;
-  text-decoration: none;
+  color: rgb(11, 66, 194);
   transition: color 0.2s ease;
-}
-
-.penawaran-link:hover {
-  color: rgb(0, 76, 255);
-  text-decoration: underline;
 }
 
 .gap-2 {
