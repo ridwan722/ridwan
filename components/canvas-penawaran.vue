@@ -2,12 +2,22 @@
   <!-- Dialog Color Picker -->
   <v-dialog v-model="dialogWarna" max-width="360px">
     <v-card class="rounded-xl elevation-8">
-      <v-card-title class="d-flex align-center justify-space-between pa-4 bg-slate-50">
+      <v-card-title
+        class="d-flex align-center justify-space-between pa-4 bg-slate-50"
+      >
         <div class="d-flex align-center gap-2">
           <v-icon color="primary" size="20">mdi-palette-outline</v-icon>
-          <span class="text-subtitle-1 font-weight-bold color-slate-800">Tema Warna Header</span>
+          <span class="text-subtitle-1 font-weight-bold color-slate-800"
+            >Tema Warna Header</span
+          >
         </div>
-        <v-btn icon="mdi-close" variant="text" size="small" density="comfortable" @click="dialogWarna = false" />
+        <v-btn
+          icon="mdi-close"
+          variant="text"
+          size="small"
+          density="comfortable"
+          @click="dialogWarna = false"
+        />
       </v-card-title>
       <v-divider />
       <v-card-text class="d-flex justify-center pa-4">
@@ -22,7 +32,13 @@
       <v-divider />
       <v-card-actions class="pa-3 bg-slate-50">
         <v-spacer />
-        <v-btn color="primary" variant="flat" size="small" class="px-5 rounded-lg" @click="dialogWarna = false">
+        <v-btn
+          color="primary"
+          variant="flat"
+          size="small"
+          class="px-5 rounded-lg"
+          @click="dialogWarna = false"
+        >
           Terapkan
         </v-btn>
       </v-card-actions>
@@ -50,18 +66,20 @@
 
         <div class="header-contact">
           <p class="address-line">
-            Ruko Dream Land Blok A No.05,<br> Dreamland Square,  Marina City 
-          Tanjung Riau, <br>Kec. Sekupang, Kota Batam 29425</p>
-          <p class="phone-line">
-
-            Hp. +62821 9998 8670
+            Ruko Dream Land Blok A No.05,<br />
+            Dreamland Square, Marina City Tanjung Riau, <br />Kec. Sekupang,
+            Kota Batam 29425
           </p>
+          <p class="phone-line">Hp. +62821 9998 8670</p>
         </div>
       </div>
 
       <!-- Accent Divider Line -->
       <div class="header-divider">
-        <div class="accent-bar" :style="{ backgroundColor: warnaBackgroundCustom }"></div>
+        <div
+          class="accent-bar"
+          :style="{ backgroundColor: warnaBackgroundCustom }"
+        ></div>
         <div class="secondary-bar"></div>
       </div>
 
@@ -69,12 +87,15 @@
       <div class="content-body">
         <!-- Top Info Line (Document Title & Date) -->
         <div class="doc-meta-header">
-          <div class="doc-badge" :style="{ borderColor: warnaBackgroundCustom }">
-
-          </div>
+          <div
+            class="doc-badge"
+            :style="{ borderColor: warnaBackgroundCustom }"
+          ></div>
           <div class="doc-date">
             <span>Batam, </span>
-            <strong>{{ rubahtanggalpenawaran(props.detailpenawaran.tanggal_penawaran) }}</strong>
+            <strong>{{
+              rubahtanggalpenawaran(props.detailpenawaran.tanggal_penawaran)
+            }}</strong>
           </div>
         </div>
 
@@ -84,12 +105,16 @@
             <div class="meta-row">
               <span class="lbl">Quotation Ref No</span>
               <span class="sep">:</span>
-              <span class="val bold">{{ props.detailpenawaran.no_penawaran || "-" }}</span>
+              <span class="val bold">{{
+                props.detailpenawaran.no_penawaran || "-"
+              }}</span>
             </div>
             <div class="meta-row">
               <span class="lbl">To</span>
               <span class="sep">:</span>
-              <span class="val bold">{{ props.detailpenawaran.nama_perusahaan || "-" }}</span>
+              <span class="val bold">{{
+                props.detailpenawaran.nama_perusahaan || "-"
+              }}</span>
             </div>
             <div class="meta-row">
               <span class="lbl">Attn</span>
@@ -100,14 +125,18 @@
             <div class="meta-row">
               <span class="lbl">Telp</span>
               <span class="sep">:</span>
-              <span class="val">{{ props.detailpenawaran.no_telp || "-" }}</span>
+              <span class="val">{{
+                props.detailpenawaran.no_telp || "-"
+              }}</span>
             </div>
           </div>
           <div class="grid-col">
             <div class="meta-row">
               <span class="lbl">Subject</span>
               <span class="sep">:</span>
-              <span class="val bold-navy">{{ props.detailpenawaran.perihal || "-" }}</span>
+              <span class="val bold-navy">{{
+                props.detailpenawaran.perihal || "-"
+              }}</span>
             </div>
             <div class="meta-row">
               <span class="lbl">Vessel</span>
@@ -121,8 +150,11 @@
         <div class="text-salutation">
           <p class="salutation-title">Dengan Hormat,</p>
           <p class="salutation-body">
-            Sehubungan dengan kebutuhan operasional perusahaan Bapak/Ibu, bersama surat ini kami mengajukan penawaran harga untuk 
-            <strong>{{ props.detailpenawaran.perihal }}</strong> kepada <strong>{{ props.detailpenawaran.nama_perusahaan }}</strong> dengan rincian sebagai berikut:
+            Sehubungan dengan kebutuhan operasional perusahaan Bapak/Ibu,
+            bersama surat ini kami mengajukan penawaran harga untuk
+            <strong>{{ props.detailpenawaran.perihal }}</strong> kepada
+            <strong>{{ props.detailpenawaran.nama_perusahaan }}</strong> dengan
+            rincian sebagai berikut:
           </p>
         </div>
 
@@ -130,8 +162,17 @@
         <div class="table-container">
           <table class="modern-table">
             <thead>
-              <tr :style="{ backgroundColor: warnaBackgroundCustom, color: warnaTeksHeader }">
-                <th width="36" class="text-center no-print-cell" :style="{ color: warnaTeksHeader }">
+              <tr
+                :style="{
+                  backgroundColor: warnaBackgroundCustom,
+                  color: warnaTeksHeader,
+                }"
+              >
+                <th
+                  width="36"
+                  class="text-center no-print-cell"
+                  :style="{ color: warnaTeksHeader }"
+                >
                   <v-tooltip location="top">
                     <template #activator="{ props }">
                       <v-btn
@@ -147,12 +188,46 @@
                     <span>Ubah Warna Aksentuasi</span>
                   </v-tooltip>
                 </th>
-                <th width="32" class="text-center print-only-cell" :style="{ color: warnaTeksHeader }">NO</th>
-                <th class="text-left" :style="{ color: warnaTeksHeader }">DESCRIPTION / KETERANGAN</th>
-                <th width="60" class="text-center" :style="{ color: warnaTeksHeader }">QTY</th>
-                <th width="65" class="text-center" :style="{ color: warnaTeksHeader }">UOM</th>
-                <th width="125" class="text-right" :style="{ color: warnaTeksHeader }">UNIT PRICE</th>
-                <th width="135" class="text-right" :style="{ color: warnaTeksHeader }">
+                <th
+                  width="32"
+                  class="text-center print-only-cell"
+                  :style="{ color: warnaTeksHeader }"
+                >
+                  NO
+                </th>
+                <th
+                  width="500"
+                  class="text-left"
+                  :style="{ color: warnaTeksHeader }"
+                >
+                  DESCRIPTION / KETERANGAN
+                </th>
+                <th
+                  width="60"
+                  class="text-center"
+                  :style="{ color: warnaTeksHeader }"
+                >
+                  QTY
+                </th>
+                <th
+                  width="65"
+                  class="text-center"
+                  :style="{ color: warnaTeksHeader }"
+                >
+                  UOM
+                </th>
+                <th
+                  width="125"
+                  class="text-right"
+                  :style="{ color: warnaTeksHeader }"
+                >
+                  UNIT PRICE
+                </th>
+                <th
+                  width="135"
+                  class="text-right"
+                  :style="{ color: warnaTeksHeader }"
+                >
                   <v-text-field
                     v-model="labelSubTotal"
                     variant="plain"
@@ -165,23 +240,34 @@
               </tr>
             </thead>
             <tbody ref="tableBodyRef">
-              <tr 
-                v-for="(item, index) in props.detailpenawaran.penawaran_item" 
+              <tr
+                v-for="(item, index) in props.detailpenawaran.penawaran_item"
                 :key="index"
                 :class="{ 'zebra-row': index % 2 === 1 }"
               >
                 <!-- Drag Handle & Numbering Cell -->
                 <td class="text-center row-num drag-handle" width="36">
-                 <div style="display: flex; align-items: center;">
-                   <v-icon size="12" class="drag-icon no-print mr-1">mdi-drag-vertical</v-icon>
-                  <span>{{ index + 1 }}.</span>
-                 </div>
+                  <div style="display: flex; align-items: center">
+                    <v-icon size="12" class="drag-icon no-print mr-1"
+                      >mdi-drag-vertical</v-icon
+                    >
+                    <span>{{ index + 1 }}.</span>
+                  </div>
                 </td>
-                <td class="text-left font-weight-bold text-slate-800">{{ item.nama }}</td>
+                <td
+                  class="text-left font-weight-bold text-slate-800"
+                  style="white-space: pre-line"
+                >
+                  {{ item.nama }}
+                </td>
                 <td class="text-center">{{ item.qty }}</td>
                 <td class="text-center text-slate-500">{{ item.uom }}</td>
-                <td class="text-right text-slate-600">Rp {{ rupiah(item.amount) }}</td>
-                <td class="text-right  text-navy">Rp {{ rupiah(item.subtotal_item) }}</td>
+                <td class="text-right text-slate-600">
+                  Rp {{ rupiah(item.amount) }}
+                </td>
+                <td class="text-right text-navy">
+                  Rp {{ rupiah(item.subtotal_item) }}
+                </td>
               </tr>
             </tbody>
 
@@ -191,13 +277,21 @@
               <tr class="summary-row subtotal-row">
                 <td colspan="5" class="text-right text-slate-600">SUBTOTAL</td>
                 <td class="text-right text-slate-800">
-                  Rp {{ rupiah(props.detailpenawaran.subtotal_penawaran || props.detailpenawaran.grand_total_penawaran) }}
+                  Rp
+                  {{
+                    rupiah(
+                      props.detailpenawaran.subtotal_penawaran ||
+                        props.detailpenawaran.grand_total_penawaran,
+                    )
+                  }}
                 </td>
               </tr>
 
               <!-- Grand Total Row -->
               <tr class="summary-row grand-total-row">
-                <td colspan="5" class="text-right font-weight-bold text-navy">GRAND TOTAL</td>
+                <td colspan="5" class="text-right font-weight-bold text-navy">
+                  GRAND TOTAL
+                </td>
                 <td class="text-right font-weight-bold text-navy gt-text">
                   Rp {{ rupiah(props.detailpenawaran.grand_total_penawaran) }}
                 </td>
@@ -208,7 +302,13 @@
                 <td colspan="6">
                   <div class="terbilang-inner">
                     <span class="terbilang-lbl">TERBILANG:</span>
-                    <span class="terbilang-val"># {{ jadirupiah(props.detailpenawaran.grand_total_penawaran) }} Rupiah #</span>
+                    <span class="terbilang-val"
+                      >#
+                      {{
+                        jadirupiah(props.detailpenawaran.grand_total_penawaran)
+                      }}
+                      Rupiah
+                    </span>
                   </div>
                 </td>
               </tr>
@@ -218,7 +318,8 @@
 
         <!-- Closing Paragraph -->
         <p class="closing-paragraph" v-if="showTable">
-          Demikian penawaran harga ini kami sampaikan. Atas perhatian dan kerjasamanya, kami ucapkan terima kasih.
+          Demikian penawaran harga ini kami sampaikan. Atas perhatian dan
+          kerjasamanya, kami ucapkan terima kasih.
         </p>
 
         <!-- Signature Section -->
@@ -227,16 +328,24 @@
             <p class="sig-header">Hormat Kami,</p>
             <p class="sig-sub">CV. SOLUSI NUSA SEGARA</p>
             <div class="sig-img-container">
-              <img src="/public/ttd_ridwan.png" alt="Signature" class="sig-image" />
+              <img
+                src="/public/ttd_ridwan.png"
+                alt="Signature"
+                class="sig-image"
+              />
             </div>
             <p class="sig-person-name">Muhammad Ridwan</p>
           </div>
 
           <div class="sig-block">
             <p class="sig-header">Disetujui Oleh,</p>
-            <p class="sig-sub">{{ props.detailpenawaran.nama_perusahaan || '' }}</p>
+            <p class="sig-sub">
+              {{ props.detailpenawaran.nama_perusahaan || "" }}
+            </p>
             <div class="sig-placeholder"></div>
-            <p class="sig-person-name">( .................................... )</p>
+            <p class="sig-person-name">
+              ( .................................... )
+            </p>
             <p class="sig-person-role">Stamp & Signature</p>
           </div>
         </div>
@@ -294,11 +403,11 @@ const tableBodyRef = ref<HTMLElement | null>(null);
 const warnaTeksHeader = computed(() => {
   const hex = warnaBackgroundCustom.value.replace("#", "");
   if (hex.length !== 6) return "#0f2b48";
-  
+
   const r = parseInt(hex.substring(0, 2), 16);
   const g = parseInt(hex.substring(2, 4), 16);
   const b = parseInt(hex.substring(4, 6), 16);
-  
+
   const yiq = (r * 299 + g * 587 + b * 114) / 1000;
   return yiq >= 128 ? "#0f2b48" : "#ffffff";
 });
@@ -343,7 +452,7 @@ const handlePrint = () => {
   doc.write(`
     <html>
       <head>
-        <title>Penawaran_${props.detailpenawaran?.no_penawaran || 'SNS'}</title>
+        <title>Penawaran_${props.detailpenawaran?.no_penawaran || "SNS"}</title>
         <style>
           ${styles} 
 
@@ -446,7 +555,12 @@ const handlePrint = () => {
   position: relative;
   overflow: hidden;
   box-shadow: 0 12px 35px rgba(15, 23, 42, 0.1);
-  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  font-family:
+    "Segoe UI",
+    -apple-system,
+    BlinkMacSystemFont,
+    Roboto,
+    sans-serif;
   color: #1e293b;
   box-sizing: border-box;
 }
@@ -502,7 +616,8 @@ const handlePrint = () => {
   line-height: 1.4;
 }
 
-.address-line, .phone-line {
+.address-line,
+.phone-line {
   font-size: 9.5px;
   color: #475569;
   margin: 0;
@@ -643,7 +758,7 @@ const handlePrint = () => {
   overflow: hidden;
   border: 1px solid #cbd5e1;
   margin-bottom: 14px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
 .modern-table {
@@ -832,12 +947,24 @@ const handlePrint = () => {
 }
 
 /* Helpers & Utilities */
-.text-navy { color: #0f2b48; }
-.text-slate-800 { color: #1e293b; }
-.text-slate-600 { color: #475569; }
-.text-slate-500 { color: #64748b; }
-.text-slate-400 { color: #94a3b8; }
-.uppercase { text-transform: uppercase; }
+.text-navy {
+  color: #0f2b48;
+}
+.text-slate-800 {
+  color: #1e293b;
+}
+.text-slate-600 {
+  color: #475569;
+}
+.text-slate-500 {
+  color: #64748b;
+}
+.text-slate-400 {
+  color: #94a3b8;
+}
+.uppercase {
+  text-transform: uppercase;
+}
 
 .theme-btn {
   background: transparent !important;

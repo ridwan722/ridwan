@@ -11,7 +11,6 @@
     Kembali
   </v-btn>
 
-  <!-- /// DIALOG TAMBAH / EDIT Penawaran \\\ -->
   <v-dialog v-model="data.dialogTambahPenawaran" max-width="800" scrollable>
     <v-card class="rounded-xl overflow-hidden elevation-3 border-0">
       <v-card-item class="bg-grey-lighten-4 pa-3 text-center">
@@ -54,26 +53,26 @@
           placeholder="*Auto"
         />
 
-       <v-row>
-        <v-col>
-           <a-text-field-new
-          v-model="newPenawaran.pic"
-          class="mt-2"
-          label="PIC"
-          disabled
-          placeholder="*Auto"
-        />
-        </v-col>
-        <v-col>
-          <a-text-field-new
-          v-model="newPenawaran.no_telp"
-          class="mt-2"
-          label="Phone Number"
-          disabled
-          placeholder="*Auto"
-        />
-        </v-col>
-       </v-row>
+        <v-row>
+          <v-col>
+            <a-text-field-new
+              v-model="newPenawaran.pic"
+              class="mt-2"
+              label="PIC"
+              disabled
+              placeholder="*Auto"
+            />
+          </v-col>
+          <v-col>
+            <a-text-field-new
+              v-model="newPenawaran.no_telp"
+              class="mt-2"
+              label="Phone Number"
+              disabled
+              placeholder="*Auto"
+            />
+          </v-col>
+        </v-row>
 
         <v-divider class="my-2 border-opacity-50" />
 
@@ -106,12 +105,12 @@
           :key="index"
           class="bg-grey-lighten-5 rounded-lg pa-4 mb-4 border border-dashed"
         >
-        <a-text-field-new
-                v-model="item.nama"
-                label="Description"
-                placeholder="description"
-              />
-          <v-row  density="compact">
+          <a-textarea-new
+            v-model="item.nama"
+            label="Description"
+            placeholder="description"
+          />
+          <v-row density="compact">
             <v-col cols="6" sm="2">
               <a-field-number-new
                 v-model="item.qty"
@@ -190,7 +189,7 @@
       <v-card-actions class="pa-4 bg-grey-lighten-5">
         <v-spacer />
         <v-btn
-        size="small"
+          size="small"
           variant="outlined"
           color="grey-darken-1"
           class="px-5 text-none rounded-lg"
@@ -199,23 +198,18 @@
           Batal
         </v-btn>
         <v-btn
-        size="small"
+          size="small"
           color="primary"
           variant="flat"
           class="px-6 text-none rounded-lg font-weight-bold"
           @click="simpanPenawaranDialog"
         >
-          {{
-            data.penawaranAddEdit === "add"
-              ? "Save"
-              : "Edit"
-          }}
+          {{ data.penawaranAddEdit === "add" ? "Save" : "Edit" }}
         </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 
-  <!-- /// HEADER & TOOLBAR \\\ -->
   <v-row align="center">
     <v-col cols="10">
       <v-breadcrumbs>
@@ -277,9 +271,11 @@
     >
       <template v-slot:item.no="{ index }"> {{ index + 1 }}</template>
 
-      <template v-slot:item.no_penawaran="{ item }">{{
-        item.no_penawaran
-      }}</template>
+      <template v-slot:item.no_penawaran="{ item }">
+        <NuxtLink :to="'/admin/penawaran/' + item.id" class="penawaran-link">
+          {{ item.no_penawaran }}
+        </NuxtLink>
+      </template>
 
       <template v-slot:item.tanggal_penawaran="{ item }">{{
         rubahtanggallengkap(item.tanggal_penawaran)
@@ -311,6 +307,7 @@
           </v-btn>
 
           <v-btn
+          :disabled="item.status !== 'Draft'"
             size="27"
             variant="tonal"
             color="warning"
@@ -531,9 +528,7 @@ async function simpanPenawaranDialog() {
     !newPenawaran.value.tanggal_penawaran ||
     !newPenawaran.value.perihal.trim()
   ) {
-    return notificationStore.showError(
-      "Tanggal dan perihal wajib diisi",
-    );
+    return notificationStore.showError("Tanggal dan perihal wajib diisi");
   }
   if (
     !newPenawaran.value.penawaran_item.length ||
@@ -541,9 +536,7 @@ async function simpanPenawaranDialog() {
       (item) => !item.nama || item.qty <= 0 || item.amount <= 0,
     )
   ) {
-    return notificationStore.showError(
-      "Setiap item harus dilengkapi",
-    );
+    return notificationStore.showError("Setiap item harus dilengkapi");
   }
 
   newPenawaran.value.penawaran_item.forEach((item) => {
@@ -559,8 +552,7 @@ async function simpanPenawaranDialog() {
       newPenawaran.value.no_penawaran.replaceAll("/", "-");
     newPenawaran.value.created_at = moment().unix();
     newPenawaran.value.created_by = userStore.getEmail;
-    useloadingStore().setLoading(true)
-    // Memanggil action addPenawaranAct di Store
+    useloadingStore().setLoading(true);
     const result = await setPenawaran(newPenawaran.value);
     if (result !== "ok") {
       notificationStore.showError(result || "Gagal menyimpan penawaran");
@@ -569,14 +561,11 @@ async function simpanPenawaranDialog() {
 
     data.dialogTambahPenawaran = false;
     newPenawaran.value = emptyPenawaran();
-    useloadingStore().setLoading(false)
+    useloadingStore().setLoading(false);
     await penawaranStore.tarikDataPenawaranAct();
     return;
-
   }
 
-  // Mode Edit
-  // Memanggil action updatePenawaranAct di Store (1 parameter)
   await penawaranStore.updatePenawaranAct(newPenawaran.value);
 
   data.dialogTambahPenawaran = false;
@@ -590,8 +579,6 @@ async function hapusPenawaran(item: penawaranM) {
     { variant: "danger" },
   );
   if (!confirmed) return notificationStore.showError("Penghapusan dibatalkan");
-
-  // Memanggil action deletePenawaranAct di Store (Passing seluruh objek item penawaran)
   await penawaranStore.deletePenawaranAct(item);
 }
 
@@ -603,3 +590,16 @@ async function refreshData() {
   notificationStore.showSuccess("Data Penawaran berhasil diperbarui");
 }
 </script>
+
+<style scoped>
+.penawaran-link {
+  color: black;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.penawaran-link:hover {
+  color: rgb(0, 76, 255);
+  text-decoration: underline;
+}
+</style>
