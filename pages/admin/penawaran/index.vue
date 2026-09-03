@@ -1,6 +1,7 @@
 <template>
   <ConfirmationDialog ref="confirmationDialog" />
 
+  <!-- Tombol Kembali -->
   <v-btn
     variant="text"
     color="grey-darken-3"
@@ -11,10 +12,16 @@
     Kembali
   </v-btn>
 
-  <v-dialog v-model="data.dialogTambahPenawaran" max-width="800" scrollable>
-    <v-card class="rounded-xl overflow-hidden elevation-3 border-0">
-      <v-card-item class="bg-grey-lighten-4 pa-3 text-center">
-        <h4 class="font-weight-bold text-grey-darken-3">
+  <!-- Dialog Tambah / Edit Quotation -->
+  <v-dialog
+    v-model="data.dialogTambahPenawaran"
+    max-width="800"
+    scrollable
+    fullscreen-sm-and-down
+  >
+    <v-card class="rounded-xl-md overflow-hidden elevation-3 border-0">
+      <v-card-item class="bg-grey-lighten-4 pa-4 text-center">
+        <h4 class="font-weight-bold text-grey-darken-3 text-h6 text-sm-h5">
           {{ data.penawaranAddEdit === "add" ? "Create" : "Edit" }} Quotation
         </h4>
         <p class="text-caption text-grey-darken-1 m-0">
@@ -22,12 +29,13 @@
         </p>
       </v-card-item>
 
-      <v-card-text class="pa-6">
+      <v-card-text class="pa-4 pa-sm-6">
+        <!-- Section: Informasi Utama -->
         <div class="text-subtitle-2 font-weight-bold text-primary mb-3">
           Informasi Utama
         </div>
         <v-row density="comfortable">
-          <v-col cols="12" md="6">
+          <v-col cols="12" sm="6">
             <a-select-new
               v-model="newPenawaran.id_perusahaan"
               label="Client"
@@ -43,30 +51,25 @@
               label="Quotation Date"
             />
           </v-col>
-        </v-row>
-
-        <a-text-field-new
-          v-model="newPenawaran.alamat_perusahaan"
-          class="mt-2"
-          label="Address"
-          disabled
-          placeholder="*Auto"
-        />
-
-        <v-row>
-          <v-col>
+          <v-col cols="12">
+            <a-text-field-new
+              v-model="newPenawaran.alamat_perusahaan"
+              label="Address"
+              disabled
+              placeholder="*Auto"
+            />
+          </v-col>
+          <v-col cols="12" sm="6">
             <a-text-field-new
               v-model="newPenawaran.pic"
-              class="mt-2"
               label="PIC"
               disabled
               placeholder="*Auto"
             />
           </v-col>
-          <v-col>
+          <v-col cols="12" sm="6">
             <a-text-field-new
               v-model="newPenawaran.no_telp"
-              class="mt-2"
               label="Phone Number"
               disabled
               placeholder="*Auto"
@@ -74,16 +77,18 @@
           </v-col>
         </v-row>
 
-        <v-divider class="my-2 border-opacity-50" />
+        <v-divider class="my-4 border-opacity-50" />
 
         <a-textarea-new
           v-model="newPenawaran.perihal"
           label="Subject"
           placeholder="Quotation Subject"
+          rows="2"
         />
 
-        <v-divider class="my-2 border-opacity-50" />
+        <v-divider class="my-4 border-opacity-50" />
 
+        <!-- Section: Rincian Item -->
         <div class="d-flex align-center justify-space-between mb-3">
           <span class="text-subtitle-2 font-weight-bold text-primary">
             Rincian Item & Penawaran
@@ -100,18 +105,35 @@
           </v-btn>
         </div>
 
+        <!-- Loop Item Penawaran -->
         <div
           v-for="(item, index) in newPenawaran.penawaran_item"
           :key="index"
-          class="bg-grey-lighten-5 rounded-lg pa-4 mb-4 border border-dashed"
+          class="bg-grey-lighten-5 rounded-lg pa-3 pa-sm-4 mb-4 border border-dashed position-relative"
         >
+          <div class="d-flex justify-space-between align-center mb-2">
+            <span class="text-caption font-weight-bold text-grey-darken-2"
+              >Item #{{ index + 1 }}</span
+            >
+            <v-btn
+              icon="mdi-trash-can-outline"
+              size="x-small"
+              variant="text"
+              color="error"
+              @click="hapusBarisPenawaran(index)"
+            />
+          </div>
+
           <a-textarea-new
             v-model="item.nama"
             label="Description"
-            placeholder="description"
+            placeholder="Description"
+            rows="2"
+            class="mb-2"
           />
+
           <v-row density="compact">
-            <v-col cols="6" sm="2">
+            <v-col cols="6" sm="3">
               <a-field-number-new
                 v-model="item.qty"
                 label="Qty"
@@ -126,15 +148,14 @@
                 placeholder="Select"
               />
             </v-col>
-            <v-col cols="6" sm="3">
+            <v-col cols="12" sm="3">
               <a-field-number-new
                 v-model="item.amount"
-                label="Amount/Pcs *Rp"
+                label="Amount/Pcs (Rp)"
                 placeholder="0"
               />
             </v-col>
-
-            <v-col cols="6" sm="3">
+            <v-col cols="12" sm="3">
               <a-text-field-new
                 :model-value="
                   (
@@ -146,62 +167,45 @@
                 disabled
               />
             </v-col>
-            <v-col cols="1" sm="1" class="text-center">
-              <v-btn
-                icon="mdi-trash-can-outline"
-                size="small"
-                variant="text"
-                color="error"
-                class="mt-5"
-                @click="hapusBarisPenawaran(index)"
-              />
-            </v-col>
           </v-row>
         </div>
 
-        <v-divider class="my-6 border-opacity-50" />
+        <v-divider class="my-4 border-opacity-50" />
 
+        <!-- Section: Ringkasan Biaya -->
         <div class="text-subtitle-2 font-weight-bold text-primary mb-3">
           Ringkasan Biaya
         </div>
 
-        <v-row>
-          <v-col cols="12">
-            <v-card
-              variant="flat"
-              class="bg-blue-grey-lighten-5 rounded-xl pa-4"
+        <v-card variant="flat" class="bg-blue-grey-lighten-5 rounded-xl pa-4">
+          <div class="d-flex justify-space-between align-center">
+            <span class="text-subtitle-1 font-weight-bold text-grey-darken-4"
+              >Total</span
             >
-              <div class="d-flex justify-space-between align-center">
-                <span
-                  class="text-subtitle-1 font-weight-bold text-grey-darken-4"
-                  >Total</span
-                >
-                <span class="text-h6 font-weight-black text-primary"
-                  >Rp {{ rupiah(subtotalPenawaran) }}</span
-                >
-              </div>
-            </v-card>
-          </v-col>
-        </v-row>
+            <span class="text-h6 text-sm-h5 font-weight-black text-primary">
+              Rp {{ rupiah(subtotalPenawaran) }}
+            </span>
+          </div>
+        </v-card>
       </v-card-text>
 
       <v-divider />
       <v-card-actions class="pa-4 bg-grey-lighten-5">
-        <v-spacer />
+        <v-spacer class="hidden-xs-only" />
         <v-btn
-          size="small"
+          size="medium"
           variant="outlined"
           color="grey-darken-1"
-          class="px-5 text-none rounded-lg"
+          class="px-5 text-none rounded-lg flex-grow-1 flex-sm-grow-0"
           @click="data.dialogTambahPenawaran = false"
         >
           Batal
         </v-btn>
         <v-btn
-          size="small"
+          size="medium"
           color="primary"
           variant="flat"
-          class="px-6 text-none rounded-lg font-weight-bold"
+          class="px-6 text-none rounded-lg font-weight-bold flex-grow-1 flex-sm-grow-0"
           @click="simpanPenawaranDialog"
         >
           {{ data.penawaranAddEdit === "add" ? "Save" : "Edit" }}
@@ -210,57 +214,52 @@
     </v-card>
   </v-dialog>
 
-  <v-row align="center">
-    <v-col cols="10">
-      <v-breadcrumbs>
-        <v-breadcrumbs-item>
-          <span class="font-weight-medium text-h5">Penawaran</span>
-        </v-breadcrumbs-item>
-      </v-breadcrumbs>
-    </v-col>
+  <!-- Header & Top Action -->
+  <div
+    class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center mb-4 gap-2"
+  >
+    <h1 class="text-h5 font-weight-bold my-0">Penawaran</h1>
+    <v-btn
+      color="primary"
+      variant="flat"
+      size="small"
+      class="text-capitalize w-100 w-sm-auto"
+      prepend-icon="mdi-plus"
+      @click="openDialogTambahPenawaran"
+    >
+      Create New Quotation
+    </v-btn>
+  </div>
 
-    <v-col>
-      <v-btn
-        color="primary"
-        variant="flat"
-        size="small"
-        class="text-capitalize px-3 ml-2"
-        prepend-icon="mdi-plus"
-        @click="openDialogTambahPenawaran"
-      >
-        Create New Quotation
-      </v-btn>
-    </v-col>
-  </v-row>
-
+  <!-- Main Table Card -->
   <v-card class="border rounded-lg" flat>
-    <v-card-title class="pa-3">
-      <v-row align="center">
-        <v-col cols="12" sm="10">
+    <v-card-title class="pa-3 pa-sm-4">
+      <div class="d-flex align-center gap-2">
+        <div class="flex-grow-1">
           <a-text-field-new
             v-model="data.searchPenawaran"
             placeholder="Cari no. penawaran / customer"
-            style="max-width: 280px"
+            hide-details
+            density="compact"
           />
-        </v-col>
-        <v-col cols="12" sm="2" class="text-right">
-          <v-btn
-            size="35"
-            variant="outlined"
-            class="border ml-3"
-            @click="refreshData"
-          >
-            <v-icon size="23" icon="mdi-refresh" />
-            <v-tooltip activator="parent" location="top">
-              Refresh Data
-            </v-tooltip>
-          </v-btn>
-        </v-col>
-      </v-row>
+        </div>
+        <v-btn
+          size="38"
+          variant="outlined"
+          class="border flex-shrink-0"
+          @click="refreshData"
+        >
+          <v-icon size="20" icon="mdi-refresh" />
+          <v-tooltip activator="parent" location="top">
+            Refresh Data
+          </v-tooltip>
+        </v-btn>
+      </div>
     </v-card-title>
 
     <v-divider />
 
+    <!-- Responsive Table -->
     <v-data-table
       :headers="data.headPenawaran"
       :items="penawaranStore.getDataPenawaran"
@@ -268,66 +267,75 @@
       density="compact"
       :sort-by="[{ key: 'created_at', order: 'desc' }]"
       :hover="true"
+      class="text-no-wrap"
     >
       <template v-slot:item.no="{ index }"> {{ index + 1 }}</template>
 
       <template v-slot:item.no_penawaran="{ item }">
-        <NuxtLink :to="'/admin/penawaran/' + item.id" class="penawaran-link">
+        <NuxtLink
+          :to="'/admin/penawaran/' + item.id"
+          class="penawaran-link font-weight-medium"
+        >
           {{ item.no_penawaran }}
         </NuxtLink>
       </template>
 
-      <template v-slot:item.tanggal_penawaran="{ item }">{{
-        rubahtanggallengkap(item.tanggal_penawaran)
-      }}</template>
+      <template v-slot:item.tanggal_penawaran="{ item }">
+        {{ rubahtanggallengkap(item.tanggal_penawaran) }}
+      </template>
 
-      <template v-slot:item.grand_total="{ item }"
-        >Rp {{ rupiah(item.grand_total_penawaran) }}</template
-      >
+      <template v-slot:item.grand_total="{ item }">
+        Rp {{ rupiah(item.grand_total_penawaran) }}
+      </template>
 
       <template v-slot:item.status="{ item }">
-        <v-chip size="small" :color="statusColor(item.status)" variant="flat">{{
-          item.status
-        }}</v-chip>
+        <v-chip
+          size="x-small"
+          :color="statusColor(item.status)"
+          variant="flat"
+          class="font-weight-bold"
+        >
+          {{ item.status }}
+        </v-chip>
       </template>
 
       <template v-slot:item.aksi="{ item }">
-        <div class="d-flex justify-center">
+        <div class="d-flex justify-center align-center">
           <v-btn
-            size="27"
+            size="28"
             variant="tonal"
             color="info"
             class="rounded-lg mr-1"
             :to="'/admin/penawaran/' + item.id"
           >
-            <v-icon icon="mdi-eye" />
+            <v-icon size="16" icon="mdi-eye" />
             <v-tooltip activator="parent" location="top"
               >Detail Penawaran</v-tooltip
             >
           </v-btn>
 
           <v-btn
-          :disabled="item.status !== 'Draft'"
-            size="27"
+            :disabled="item.status !== 'Draft'"
+            size="28"
             variant="tonal"
             color="warning"
             class="rounded-lg mr-1"
             @click="openDialogEditPenawaran(item)"
           >
-            <v-icon icon="mdi-pencil-outline" />
+            <v-icon size="16" icon="mdi-pencil-outline" />
             <v-tooltip activator="parent" location="top"
               >Edit Penawaran</v-tooltip
             >
           </v-btn>
 
           <v-btn
-            size="27"
+            size="28"
             variant="tonal"
             color="grey"
             class="rounded-lg"
             @click="hapusPenawaran(item)"
           >
-            <v-icon icon="mdi-trash-can-outline" />
+            <v-icon size="16" icon="mdi-trash-can-outline" />
             <v-tooltip activator="parent" location="top">Hapus</v-tooltip>
           </v-btn>
         </div>
@@ -601,5 +609,9 @@ async function refreshData() {
 .penawaran-link:hover {
   color: rgb(0, 76, 255);
   text-decoration: underline;
+}
+
+.gap-2 {
+  gap: 8px;
 }
 </style>
