@@ -599,7 +599,7 @@ async function simpanInvoiceDialog() {
   }
   if (
     newInvoice.value.item_pekerjaan.some(
-      (item) => !item.deskripsi_pekerjaan || !item.amount,
+      (item) => !item.nama || !item.amount,
     )
   ) {
     return notificationStore.showError(
@@ -627,8 +627,7 @@ async function simpanInvoiceDialog() {
     return notificationStore.showError("ID invoice tidak ditemukan");
   }
 
-  newInvoice.value.updatedAt = moment().unix();
-  newInvoice.value.updatedBy = userStore.getEmail;
+
   const updated = await invoiceStore.updateInvoiceAct(
     newInvoice.value.id,
     newInvoice.value,

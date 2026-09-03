@@ -183,12 +183,14 @@ async function save() {
     subtotal_invoice: subtotal.value,
     ppn: ppn.value,
     grandtotal_invoice: grandTotal.value,
+    id_penawaran: props.penawaran.id,
+    no_penawaran: props.penawaran.no_penawaran,
     createdAt: moment().unix(),
     createdBy: userStore.getEmail,
   };
 
   saving.value = true;
-  const result = await invoiceStore.createInvoiceAct(payload);
+  const result = await createInvoicePenawaran(payload);
   if (!result) {
     saving.value = false;
     return;
