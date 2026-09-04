@@ -288,7 +288,7 @@ function printInvoice() {
               <table class="w-100">
                 <tbody>
                   <tr>
-                    <td width="130">Invoice No</td>
+                    <td width="110">Invoice No</td>
                     <td width="10">:</td>
                     <td>INV/ICI/2026/SNS/{{ invoiceDetail.no_inv }}</td>
                   </tr>
@@ -517,12 +517,18 @@ function printInvoice() {
   display: flex;
   border: 1px solid #000;
 }
-.info-box-left,
+.info-box-left {
+  padding: 10px;
+  font-size: 14px;
+  width: 55%;
+}
+
 .info-box-right {
   padding: 10px;
   font-size: 14px;
-  width: 50%;
+  width: 45%;
 }
+
 .info-box-right {
   border-left: 1px solid #000;
 }

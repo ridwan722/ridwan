@@ -19,7 +19,7 @@
         class="px-4 text-subtitle-1 font-weight-bold bg-primary pa-3"
       >
         {{
-          data.customerAddEdit === "add" ? "TAMBAH CUSTOMER" : "EDIT CUSTOMER"
+          data.customerAddEdit === "add" ? "TAMBAH CLIENT" : "EDIT CLIENT"
         }}
       </v-card-title>
 
@@ -43,6 +43,12 @@
           v-model="newCustomer.no_telp"
           label="Phone Number"
           placeholder="+00 0000"
+        />
+
+        <a-text-field-new
+          v-model="newCustomer.vessel"
+          label="Vessel"
+          placeholder="vessel"
         />
       </v-card-text>
 
@@ -103,6 +109,7 @@
       <template v-slot:item.no="{ index }">
         <div class="text-center">{{ index + 1 }}.</div>
       </template>
+
 
       <template v-slot:item.aksi="{ item }">
         <div class="d-flex justify-center">
@@ -169,13 +176,14 @@ const data = reactive({
   customerAddEdit: "add" as "add" | "edit",
   headCustomer: [
     { title: "No.", value: "no", sortable: false, width: "40px" },
-    { title: "Client", value: "nama", sortable: true, width: "230px" },
+    { title: "Client", value: "nama", sortable: true, width: "240px" },
     { title: "PIC", value: "pic", sortable: true, width: "150px" },
+    { title: "Vessel", value: "vessel", sortable: true, width: "150px" },
     {
     title: "Address",
     value: "alamat",
     sortable: true,
-    width: "650px",
+    width: "450px",
   },
     { title: "Phone Number", value: "no_telp", sortable: true },
     { title: "Aksi", align: "center" as const, value: "aksi", width: "100px" },
@@ -189,6 +197,7 @@ function emptyCustomer(): customerM {
     pic: "",
     alamat: "",
     no_telp: "",
+    vessel: "",
     createdAt: 0,
     createdBy: "",
   };
@@ -226,6 +235,10 @@ async function simpanCustomer() {
 
   if (!newCustomer.value.no_telp) {
     return notificationStore.showError("Phone Number tidak boleh kosong");
+  }
+
+  if (!newCustomer.value.vessel) {
+    return notificationStore.showError("Vessel tidak boleh kosong");
   }
 
   if (data.customerAddEdit === "add") {

@@ -68,6 +68,15 @@
               placeholder="*Auto"
             />
           </v-col>
+          <v-col>
+            <a-text-field-new
+              v-model="newInvoice.vessel"
+              class="mt-2"
+              label="Vessel"
+              disabled
+              placeholder="*Auto"
+            />
+          </v-col>
         </v-row>
         <v-divider class="my-2 border-opacity-50" />
 
@@ -308,11 +317,18 @@
     >
       <template v-slot:item.no="{ index }"> {{ index + 1 }}</template>
 
-      <template v-slot:item.no_inv="{ item }">#{{ item.no_inv }}</template>
-
       <template v-slot:item.tanggal="{ item }">{{
         rubahtanggallengkap(item.tanggal)
       }}</template>
+
+      <template v-slot:item.no_inv="{ item }">
+        <NuxtLink
+          :to="'/admin/invoice/' + item.no_inv"
+          class="penawaran-link font-weight-medium"
+        >
+          #INV/ICI/2026/SNS/{{ item.no_inv }}
+        </NuxtLink>
+      </template>
 
       <template v-slot:item.grandtotal_invoice="{ item }"
         >Rp {{ rupiah(item.grandtotal_invoice) }}</template
@@ -443,6 +459,8 @@ function emptyCustomer(): customerM {
     nama: "",
     pic: "",
     alamat: "",
+    no_telp: "",
+    vessel: "",
     createdAt: 0,
     createdBy: "",
   };
@@ -455,9 +473,12 @@ function emptyInvoice(): invoiceM {
     no_inv: "",
     id_customer: "",
     nama_customer: "",
-    pic: "",
     alamat_customer: "",
-    tanggal: moment().format("YYYY-MM-DD"),
+    vessel: "",
+    no_telp: "",
+    pic: "",
+    tanggal: "",
+    perihal: "",
     item_pekerjaan: [
       { nama: "", qty: 1, uom: "Unit", amount: 0, subtotal_item: 0 },
     ],
@@ -465,7 +486,7 @@ function emptyInvoice(): invoiceM {
     subtotal_invoice: 0,
     ppn: 0,
     grandtotal_invoice: 0,
-    status: "Draft",
+    status: "",
     createdAt: 0,
     createdBy: "",
   };
@@ -503,6 +524,7 @@ watch(
     newInvoice.value.nama_customer = customer.nama;
     newInvoice.value.alamat_customer = customer.alamat;
     newInvoice.value.pic = customer.pic;
+    newInvoice.value.vessel = customer.vessel;
   },
 );
 
@@ -558,7 +580,8 @@ function openDialogEditInvoice(item: invoiceM) {
       dataCustomer.id === item.id_customer ||
       dataCustomer.nama === item.id_customer ||
       dataCustomer.nama === item.nama_customer ||
-      dataCustomer.pic === item.pic,
+      dataCustomer.pic === item.pic ||
+      dataCustomer.vessel === item.vessel,
   );
 
   const invoice = JSON.parse(JSON.stringify(item)) as invoiceM;
@@ -575,10 +598,11 @@ function openDialogEditInvoice(item: invoiceM) {
 
 function tambahBarisInvoice() {
   newInvoice.value.item_pekerjaan.push({
-    deskripsi_pekerjaan: "",
+    nama: "",
     amount: 0,
     uom: "",
     qty: 0,
+    subtotal_item: 0,
   });
 }
 
@@ -594,9 +618,7 @@ async function simpanInvoiceDialog() {
     return notificationStore.showError("Customer belum dipilih");
   }
   if (
-    newInvoice.value.item_pekerjaan.some(
-      (item) => !item.nama || !item.amount,
-    )
+    newInvoice.value.item_pekerjaan.some((item) => !item.nama || !item.amount)
   ) {
     return notificationStore.showError(
       "Setiap baris item harus punya description dan amount",
@@ -622,7 +644,6 @@ async function simpanInvoiceDialog() {
   if (!newInvoice.value.id) {
     return notificationStore.showError("ID invoice tidak ditemukan");
   }
-
 
   const updated = await invoiceStore.updateInvoiceAct(
     newInvoice.value.id,
@@ -695,3 +716,10 @@ async function refreshData() {
   notificationStore.showSuccess("Data berhasil diperbarui");
 }
 </script>
+
+<style scoped>
+.penawaran-link {
+  color: rgb(11, 66, 194);
+  transition: color 0.2s ease;
+}
+</style>

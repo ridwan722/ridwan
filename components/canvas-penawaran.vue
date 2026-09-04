@@ -141,7 +141,7 @@
             <div class="meta-row">
               <span class="lbl">Vessel</span>
               <span class="sep">:</span>
-              <span class="val">xxx</span>
+              <span class="val">{{ props.detailpenawaran.vessel }}</span>
             </div>
           </div>
         </div>

@@ -34,8 +34,8 @@
         <div class="text-subtitle-2 font-weight-bold text-primary mb-3">
           Informasi Utama
         </div>
-        <v-row density="comfortable">
-          <v-col cols="12" sm="6">
+        <v-row>
+          <v-col >
             <a-select-new
               v-model="newPenawaran.id_perusahaan"
               label="Client"
@@ -45,21 +45,22 @@
               :items="customerStore.getDataCustomer"
             />
           </v-col>
-          <v-col cols="12" sm="6">
+          <v-col >
             <a-date-picker-new
               v-model="newPenawaran.tanggal_penawaran"
               label="Quotation Date"
             />
           </v-col>
-          <v-col cols="12">
-            <a-text-field-new
+            </v-row>
+             <a-text-field-new
+             class="mt-2"
               v-model="newPenawaran.alamat_perusahaan"
               label="Address"
               disabled
               placeholder="*Auto"
             />
-          </v-col>
-          <v-col cols="12" sm="6">
+            <v-row>
+          <v-col >
             <a-text-field-new
               v-model="newPenawaran.pic"
               label="PIC"
@@ -67,10 +68,18 @@
               placeholder="*Auto"
             />
           </v-col>
-          <v-col cols="12" sm="6">
+          <v-col >
             <a-text-field-new
               v-model="newPenawaran.no_telp"
               label="Phone Number"
+              disabled
+              placeholder="*Auto"
+            />
+          </v-col>
+          <v-col >
+            <a-text-field-new
+              v-model="newPenawaran.vessel"
+              label="Vessel"
               disabled
               placeholder="*Auto"
             />
@@ -409,6 +418,7 @@ function emptyPenawaran(): penawaranM {
     no_penawaran: generatedNo,
     id_perusahaan: "",
     pic: "",
+    vessel: "",
     nama_perusahaan: "",
     alamat_perusahaan: "",
     no_telp: "",
@@ -468,6 +478,7 @@ watch(
     newPenawaran.value.alamat_perusahaan = customer.alamat;
     newPenawaran.value.pic = customer.pic;
     newPenawaran.value.no_telp = customer.no_telp;
+    newPenawaran.value.vessel = customer.vessel;
   },
 );
 
@@ -496,7 +507,8 @@ function openDialogEditPenawaran(item: penawaranM) {
       dataCustomer.id === item.id_perusahaan ||
       dataCustomer.nama === item.id_perusahaan ||
       dataCustomer.nama === item.nama_perusahaan ||
-      dataCustomer.pic === item.pic,
+      dataCustomer.pic === item.pic ||
+      dataCustomer.vessel === item.vessel
   );
 
   const penawaran = JSON.parse(JSON.stringify(item)) as penawaranM;

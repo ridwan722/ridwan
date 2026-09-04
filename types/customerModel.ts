@@ -4,6 +4,7 @@ export interface customerM {
   pic: string;
   alamat: string;
   no_telp: string;
+  vessel: string;
   createdAt: number;
   createdBy: string;
   updatedAt?: number;
