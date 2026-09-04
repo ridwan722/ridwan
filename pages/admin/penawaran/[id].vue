@@ -340,6 +340,7 @@ const handlePrint = () => {
                   >Invoice telah dibuat</span
                 >
               </div>
+              <nuxtLink class="text-blue text-caption ml-1" style="text-decoration: underline;">lihat invoice</nuxtLink>
             </div>
           </section>
         </aside>

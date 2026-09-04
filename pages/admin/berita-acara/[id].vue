@@ -44,7 +44,7 @@
               <v-table density="compact" class="font-size-body-1" style="width: auto;">
                 <tbody>
                   <tr>
-                    <td class="font-weight-medium px-1" style="width: 140px;">Nama / PIC</td>
+                    <td class="font-weight-medium px-1" style="width: 140px;">Nama</td>
                     <td class="px-1">:</td>
                     <td class="px-1">{{ detailData?.pic || '-' }}</td>
                   </tr>
@@ -54,7 +54,7 @@
                     <td class="px-1">Master</td>
                   </tr>
                   <tr>
-                    <td class="font-weight-medium px-1">Kapal / Perusahaan</td>
+                    <td class="font-weight-medium px-1">Client</td>
                     <td class="px-1">:</td>
                     <td class="px-1">{{ detailData?.nama_customer || '-' }}</td>
                   </tr>

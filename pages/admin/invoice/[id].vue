@@ -189,6 +189,9 @@ function printInvoice() {
               <div class="text-h6 font-weight-bold primary--text">
                 #INV/ICI/2026/SNS/{{ invoiceDetail.id }}
               </div>
+              <div class="text-caption font-italic">
+                No. Quotation : {{ invoiceDetail.no_penawaran }}
+              </div>
             </div>
           </v-col>
 
@@ -419,8 +422,7 @@ function printInvoice() {
                       </li>
                       <li>
                         <strong>
-                          Payment Terms Down Payment (DP) 50%, Balance Prior
-                          Delivery
+                          Payment Cash
                         </strong>
                       </li>
                       <li>
@@ -441,23 +443,23 @@ function printInvoice() {
             <div class="d-flex justify-space-between">
               <div class="bank-details">
                 <div>
-                  <strong class="d-block mb-1">BCA BANK ( RUPIAH/IDR )</strong>
+                  <!-- <strong class="d-block mb-1">BCA BANK ( RUPIAH/IDR )</strong> -->
                   <table class="bank-table">
                     <tbody>
                       <tr>
-                        <td>Cabang</td>
+                        <td>BANK</td>
                         <td>:</td>
-                        <td>Arkadia</td>
+                        <td>BCA</td>
                       </tr>
                       <tr>
-                        <td>ACC NO</td>
+                        <td>NO. REKENING</td>
                         <td>:</td>
-                        <td>540 5142 888</td>
+                        <td>8691 8096 92</td>
                       </tr>
                       <tr>
-                        <td>AN</td>
+                        <td>NAMA PENERIMA</td>
                         <td>:</td>
-                        <td>CV. SOLUSI NUSA SEGARA</td>
+                        <td>MUHAMMAD RIDWAN</td>
                       </tr>
                     </tbody>
                   </table>
@@ -587,7 +589,7 @@ function printInvoice() {
 
 /* Mengatur lebar kolom label agar titik dua sejajar sempurna */
 .bank-table td:first-child {
-  width: 70px;
+  width: 130px;
   font-weight: bold;
 }
 

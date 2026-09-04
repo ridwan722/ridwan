@@ -21,35 +21,18 @@
 
         <div class="panel-body">
           <div class="form-grid">
-            <!-- Judul Berita Acara -->
-            <div class="form-field full-width">
-              <label for="judul_berita_acara">
-                Judul Berita Acara <span class="required-asterisk">*</span>
+            <!-- ID Customer -->
+            <div class="form-field">
+              <label for="id_customer">
+                ID Customer <span class="required-asterisk">*</span>
               </label>
               <input
-                id="judul_berita_acara"
-                v-model.trim="form.judul_berita_acara"
+                id="id_customer"
+                v-model.trim="form.id_customer"
                 class="input-control"
                 type="text"
-                placeholder="Contoh: Berita Acara Pemeriksaan Software"
+                placeholder="Masukkan ID customer"
                 required
-              />
-            </div>
-
-            <!-- Customer Autocomplete -->
-            <div class="form-field full-width">
-              <label>Pilih Customer <span class="required-asterisk">*</span></label>
-              <v-autocomplete
-                v-model="form.id_customer"
-                :items="customerStore.getDataCustomer"
-                item-title="nama"
-                item-value="id"
-                placeholder="Cari.."
-                variant="outlined"
-                density="comfortable"
-                hide-details="auto"
-                clearable
-                class="custom-v-select"
               />
             </div>
 
@@ -62,62 +45,62 @@
               ></a-date-picker-new>
             </div>
 
-            <!-- Nama Customer -->
+            <!-- Pihak Pertama -->
             <div class="form-field">
-              <label for="nama_customer">
-                Nama Customer <span class="required-asterisk">*</span>
+              <label for="pihak_pertama">
+                Pihak Pertama <span class="required-asterisk">*</span>
               </label>
               <input
-                id="nama_customer"
-                v-model.trim="form.nama_customer"
+                id="pihak_pertama"
+                v-model.trim="form.pihak_pertama"
                 class="input-control"
                 type="text"
-                placeholder="Nama entitas / perusahaan"
+                placeholder="Nama pihak pertama"
                 required
               />
             </div>
 
-            <!-- PIC -->
+            <!-- Jabatan -->
             <div class="form-field">
-              <label for="pic">
-                Person in Charge (PIC) <span class="required-asterisk">*</span>
+              <label for="jabatan">
+                Jabatan <span class="required-asterisk">*</span>
               </label>
               <input
-                id="pic"
-                v-model.trim="form.pic"
+                id="jabatan"
+                v-model.trim="form.jabatan"
                 class="input-control"
                 type="text"
-                placeholder="Nama penanggung jawab"
+                placeholder="Contoh: Master"
                 required
               />
             </div>
 
-            <!-- Nomor Telepon -->
+            <!-- Nama Kapal -->
             <div class="form-field">
-              <label for="no_telp">
-                Nomor Telepon <span class="required-asterisk">*</span>
+              <label for="nama_kapal">
+                Nama Kapal <span class="required-asterisk">*</span>
               </label>
               <input
-                id="no_telp"
-                v-model.trim="form.no_telp"
+                id="nama_kapal"
+                v-model.trim="form.nama_kapal"
                 class="input-control"
-                type="tel"
-                placeholder="0812xxxxxxx"
+                type="text"
+                placeholder="Nama kapal"
                 required
               />
             </div>
 
-            <!-- Alamat -->
+            <!-- Lokasi -->
             <div class="form-field full-width">
-              <label for="alamat">
-                Alamat Lengkap <span class="required-asterisk">*</span>
+              <label for="lokasi">
+                Lokasi <span class="required-asterisk">*</span>
               </label>
               <textarea
-                id="alamat"
-                v-model.trim="form.alamat"
+                id="lokasi"
+                v-model.trim="form.lokasi"
                 class="input-control textarea-control"
                 rows="3"
-                placeholder="Masukkan alamat detail lokasi..."
+                placeholder="Masukkan detail lokasi..."
                 required
               />
             </div>
@@ -144,9 +127,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref, watch } from "vue";
+import { reactive, ref, watch } from "vue";
 import { useBeritaAcaraStore } from "~/stores/beritaAcaraStore";
-import { usecustomerStore } from "~/stores/customerStore";
 import type { CompanyInspectionReport } from "~/types/beritaAcaraModel";
 
 const props = withDefaults(
@@ -159,17 +141,15 @@ const props = withDefaults(
 
 const emit = defineEmits<{ close: []; saved: [] }>();
 const beritaAcaraStore = useBeritaAcaraStore();
-const customerStore = usecustomerStore();
 const notificationStore = useNotificationStore();
 const loadingSubmit = ref(false);
 
 const emptyForm = (): CompanyInspectionReport => ({
   id_customer: "",
-  nama_customer: "",
-  judul_berita_acara: "",
-  pic: "",
-  no_telp: "",
-  alamat: "",
+  pihak_pertama: "",
+  lokasi: "",
+  jabatan: "",
+  nama_kapal: "",
   tanggal_berita_acara: "",
 });
 
@@ -183,41 +163,24 @@ const applyEditData = (data?: CompanyInspectionReport | null) => {
   Object.assign(form, {
     id: data.id,
     id_customer: data.id_customer,
-    nama_customer: data.nama_customer,
-    judul_berita_acara: data.judul_berita_acara,
-    pic: data.pic,
-    no_telp: data.no_telp,
-    alamat: data.alamat,
+    pihak_pertama: data.pihak_pertama,
+    lokasi: data.lokasi,
+    jabatan: data.jabatan,
+    nama_kapal: data.nama_kapal,
     tanggal_berita_acara: data.tanggal_berita_acara,
   });
 };
 
 watch(() => props.dataEdit, applyEditData, { immediate: true });
 
-watch(
-  () => form.id_customer,
-  (idCustomer) => {
-    const customer = customerStore.getDataCustomer.find(
-      (item) => item.id === idCustomer,
-    );
-    if (!customer) return;
-    form.nama_customer = customer.nama;
-    form.pic = customer.pic;
-    form.no_telp = customer.no_telp;
-    form.alamat = customer.alamat;
-  },
-);
-
-onMounted(() => customerStore.tarikDataCustomerAct());
-
 const submitBeritaAcara = async () => {
   if (
     !form.id_customer ||
-    !form.nama_customer.trim() ||
-    !form.judul_berita_acara.trim() ||
-    !form.pic.trim() ||
-    !form.no_telp.trim() ||
-    !form.alamat.trim()
+    !form.pihak_pertama.trim() ||
+    !form.lokasi.trim() ||
+    !form.jabatan.trim() ||
+    !form.nama_kapal.trim() ||
+    !form.tanggal_berita_acara
   ) {
     notificationStore.showError("Semua data berita acara wajib diisi");
     return;
@@ -226,11 +189,10 @@ const submitBeritaAcara = async () => {
   const payload: CompanyInspectionReport = {
     ...(form.id ? { id: form.id } : {}),
     id_customer: form.id_customer,
-    nama_customer: form.nama_customer,
-    judul_berita_acara: form.judul_berita_acara,
-    pic: form.pic,
-    no_telp: form.no_telp,
-    alamat: form.alamat,
+    pihak_pertama: form.pihak_pertama,
+    lokasi: form.lokasi,
+    jabatan: form.jabatan,
+    nama_kapal: form.nama_kapal,
     tanggal_berita_acara: form.tanggal_berita_acara,
   };
 

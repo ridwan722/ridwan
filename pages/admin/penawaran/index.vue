@@ -477,8 +477,8 @@ onMounted(async () => {
 });
 
 function statusColor(status: string) {
-  if (status === "Disetujui") return "success";
-  if (status === "Pending") return "warning";
+  if (status === "INVOICE") return "warning";
+  if (status === "Draft") return "primary";
   if (status === "Ditolak") return "error";
   return "grey";
 }

@@ -1,4 +1,4 @@
-export type PettyCashCategory = "Top Up" | "Uang Jalan" | "Keperluan Kantor" | "Listrik Kantor";
+export type PettyCashCategory = "Debet" | "Kredit";
 export type PettyCashType = "in" | "out";
 
 export interface pettyCashM {

@@ -11,16 +11,12 @@
   </v-btn>
 
   <!-- /// DIALOG BUAT INVOICE \\\ -->
-  <v-dialog v-model="data.dialogTambahInvoice" max-width="900" scrollable>
+  <v-dialog v-model="data.dialogTambahInvoice" max-width="700" scrollable>
     <v-card class="overflow-hidden elevation-3 border-0">
       <v-card-item class="bg-grey-lighten-4 pa-3 text-center">
         <h4 class="font-weight-bold text-grey-darken-3">
-          {{ data.invoiceAddEdit === "add" ? "Buat" : "Edit" }} Invoice
-          <span class="text-primary">Solusi Nusa Segara</span>
+          {{ data.invoiceAddEdit === "add" ? "Create" : "Edit" }} Invoice
         </h4>
-        <p class="text-caption text-grey-darken-1 m-0">
-          Lengkapi rincian tagihan dan item pekerjaan di bawah ini.
-        </p>
       </v-card-item>
 
       <v-card-text class="pa-3">
@@ -79,7 +75,7 @@
           v-model="newInvoice.perihal"
           class="mt-2"
           label="Subject"
-          placeholder="*Auto"
+          placeholder="subject"
         />
 
         <div class="d-flex align-center justify-space-between mb-3">
@@ -103,7 +99,7 @@
           :key="index"
           class="bg-grey-lighten-5 rounded-lg pa-4 mb-4 border border-dashed"
         >
-          <a-text-field-new
+          <a-textarea-new
             v-model="item.nama"
             label="Deskripsi"
             placeholder="Deskripsi"
@@ -318,8 +314,8 @@
         rubahtanggallengkap(item.tanggal)
       }}</template>
 
-      <template v-slot:item.grandtotal="{ item }"
-        >Rp {{ rupiah(item.grandtotal) }}</template
+      <template v-slot:item.grandtotal_invoice="{ item }"
+        >Rp {{ rupiah(item.grandtotal_invoice) }}</template
       >
 
       <template v-slot:item.status="{ item }">
@@ -544,8 +540,8 @@ async function getallinvoice() {
 }
 
 function statusColor(status: string) {
-  if (status === "Selesai") return "success";
-  if (status === "Dikirim") return "info";
+  if (status === "INVOICE") return "warning";
+  if (status === "Draft") return "primary";
   return "grey";
 }
 

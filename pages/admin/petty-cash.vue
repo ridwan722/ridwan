@@ -62,11 +62,10 @@ const isEditMode = ref<boolean>(false);
 const editingId = ref<string | null>(null);
 
 const form = ref({
-  category: "Keperluan Kantor" as PettyCashCategory,
+  category: "Debet" as PettyCashCategory,
   amount: null as number | null,
   description: "",
   image: "",
-  isMealAllowance: false, // State untuk melacak checkbox uang makan
 });
 
 onMounted(async () => {
@@ -159,7 +158,7 @@ const filteredTransactions = computed(() => {
 
 const topupTransactions = computed(() =>
   transactions.value
-    .filter((t) => t.category === "Top Up")
+    .filter((t) => t.type === "in")
     .sort((a, b) => b.createdAt - a.createdAt),
 );
 
@@ -178,11 +177,10 @@ const openModal = (type: "topup" | "expense") => {
   isEditMode.value = false;
   editingId.value = null;
   modalType.value = type;
-  form.value.category = type === "topup" ? "Top Up" : "Keperluan Kantor";
+  form.value.category = type === "topup" ? "Debet" : "Kredit";
   form.value.amount = null;
   form.value.description = "";
   form.value.image = "";
-  form.value.isMealAllowance = false;
   isModalOpen.value = true;
 };
 
@@ -191,11 +189,12 @@ const openEditModal = (tx: Transaction) => {
   isEditMode.value = true;
   editingId.value = tx.id;
   modalType.value = tx.type === "in" ? "topup" : "expense";
-  form.value.category = tx.category;
+  // Data lama tetap ditampilkan apa adanya; saat diedit, kategorinya mengikuti
+  // format baru berdasarkan jenis transaksi.
+  form.value.category = tx.type === "in" ? "Debet" : "Kredit";
   form.value.amount = tx.amount;
   form.value.description = tx.description;
   form.value.image = tx.image; // Gunakan URL dari uploadStore jika ada
-  form.value.isMealAllowance = false; // Reset ketika edit, karena nominal lama diasumsikan sudah final
   isModalOpen.value = true;
 };
 
@@ -222,22 +221,12 @@ const previewImage = (imgUrl: string) => {
 const handleSubmit = async () => {
   if (!form.value.amount || !form.value.description) return;
   const imageUrl = uploadStore().getUrlRef || form.value.image;
-  // Hitung final amount, jika kategori Uang Jalan dan checkbox diisi, tambahkan 15000
-  let finalAmount = form.value.amount;
-  if (
-    modalType.value === "expense" &&
-    form.value.category === "Uang Jalan" &&
-    form.value.isMealAllowance
-  ) {
-    finalAmount += 15000;
-  }
-
   // Field yang sama untuk add & update
   const payload = {
-    amount: finalAmount,
+    amount: form.value.amount,
     keterangan: form.value.description,
     bukti: imageUrl,
-    type: (modalType.value === "topup" ? "in" : "out") as PettyCashType,
+    type: (form.value.category === "Debet" ? "in" : "out") as PettyCashType,
     tanggal: moment().format("YYYY-MM-DD"),
     kategori: form.value.category,
   };
@@ -556,10 +545,8 @@ const isCurrentMonth = (dateString: string): boolean => {
           <div class="filter-wrapper select-wrapper">
             <select v-model="filterCategory" class="form-select">
               <option value="all">Semua Kategori</option>
-              <option value="Top Up">Top Up Saldo</option>
-              <option value="Uang Jalan">Uang Jalan</option>
-              <option value="Keperluan Kantor">Keperluan Kantor</option>
-              <option value="Listrik Kantor">Listrik Kantor</option>
+              <option value="Debet">Debet</option>
+              <option value="Kredit">Kredit</option>
             </select>
 
             <v-icon class="select-icon" size="18"> mdi-chevron-down </v-icon>
@@ -583,10 +570,8 @@ const isCurrentMonth = (dateString: string): boolean => {
             <span
               class="badge"
               :class="{
-                'badge-topup': tx.category === 'Top Up',
-                'badge-jalan': tx.category === 'Uang Jalan',
-                'badge-kantor': tx.category === 'Keperluan Kantor',
-                'badge-listrik': tx.category === 'Listrik Kantor',
+                'badge-topup': tx.category === 'Debet',
+                'badge-kredit': tx.category === 'Kredit',
               }"
             >
               {{ tx.category }}
@@ -646,9 +631,9 @@ const isCurrentMonth = (dateString: string): boolean => {
             <tr>
               <th style="max-width: 20px">No.</th>
               <th>Tanggal</th>
-              <th>Kategori</th>
               <th>Keterangan / Keperluan</th>
               <th>Bukti</th>
+              <th>Kategori</th>
               <th class="text-right">Nominal</th>
               <th class="text-center">Aksi</th>
             </tr>
@@ -676,19 +661,6 @@ const isCurrentMonth = (dateString: string): boolean => {
               <td class="text-muted text-nowrap font-mono">
                 {{ rubahtanggalharilengkappettycash(tx.date) }}
               </td>
-              <td>
-                <span
-                  class="badge"
-                  :class="{
-                    'badge-topup': tx.category === 'Top Up',
-                    'badge-jalan': tx.category === 'Uang Jalan',
-                    'badge-kantor': tx.category === 'Keperluan Kantor',
-                    'badge-listrik': tx.category === 'Listrik Kantor',
-                  }"
-                >
-                  {{ tx.category }}
-                </span>
-              </td>
               <td style="max-width: 250px">{{ tx.description }}</td>
               <td style="max-width: 100px">
                 <div v-if="tx.image">
@@ -708,6 +680,17 @@ const isCurrentMonth = (dateString: string): boolean => {
                 <span v-else class="text-muted italic text-xs"
                   >Tanpa bukti</span
                 >
+              </td>
+               <td>
+                <span
+                  class="badge"
+                  :class="{
+                    'badge-topup': tx.category === 'Debet',
+                    'badge-kredit': tx.category === 'Kredit',
+                  }"
+                >
+                  {{ tx.category }}
+                </span>
               </td>
               <td
                 class="text-right tx-amount"
@@ -761,57 +744,33 @@ const isCurrentMonth = (dateString: string): boolean => {
         </div>
 
         <form @submit.prevent="handleSubmit" class="modal-form">
-          <div v-if="modalType === 'expense'" class="form-group">
-            <label class="form-label">Kategori Penggunaan</label>
+          <!-- <div class="form-group">
+            <label class="form-label">Kategori Transaksi</label>
             <div class="radio-group">
               <label
                 class="radio-box"
-                :class="{ active: form.category === 'Uang Jalan' }"
+                :class="{ active: form.category === 'Debet' }"
               >
                 <input
                   type="radio"
                   v-model="form.category"
-                  value="Uang Jalan"
+                  value="Debet"
                 />
-                Uang Jalan
+                Debet
               </label>
               <label
                 class="radio-box"
-                :class="{ active: form.category === 'Keperluan Kantor' }"
+                :class="{ active: form.category === 'Kredit' }"
               >
                 <input
                   type="radio"
                   v-model="form.category"
-                  value="Keperluan Kantor"
+                  value="Kredit"
                 />
-                Keperluan Kantor
-              </label>
-              <label
-                class="radio-box"
-                :class="{ active: form.category === 'Listrik Kantor' }"
-              >
-                <input
-                  type="radio"
-                  v-model="form.category"
-                  value="Listrik Kantor"
-                />
-                Listrik
+                Kredit
               </label>
             </div>
-          </div>
-
-          <div
-            v-if="modalType === 'expense' && form.category === 'Uang Jalan'"
-            class="meal-allowance-box"
-          >
-            <label class="checkbox-container">
-              <input type="checkbox" v-model="form.isMealAllowance" />
-              <span class="checkmark"></span>
-              <span class="checkbox-label"
-                >Tambah Uang Makan (+ Rp 15.000)</span
-              >
-            </label>
-          </div>
+          </div> -->
 
           <div class="form-group">
             <label class="form-label">Nominal Transaksi (Rp)</label>
@@ -1602,10 +1561,10 @@ const isCurrentMonth = (dateString: string): boolean => {
   border: 1px solid #a7f3d0;
 }
 
-.badge-jalan {
-  background-color: #eff6ff;
-  color: #1d4ed8;
-  border: 1px solid #bfdbfe;
+.badge-kredit {
+  background-color: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
 }
 
 .badge-kantor {

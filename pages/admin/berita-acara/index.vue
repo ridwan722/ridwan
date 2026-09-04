@@ -234,7 +234,7 @@
 <script setup lang="ts">
 import _ from "lodash";
 import type { ConfirmationDialog } from "#components";
-import type { usersM } from "~/types/master/usersModel";
+import type { CompanyInspectionReport } from "~/types/beritaAcaraModel";
 import DialogTambahBeritaAcara from "~/components/dialog-tambah-berita-acara.vue";
 
 definePageMeta({
@@ -251,30 +251,22 @@ onMounted(async () => {
   await masterBeritaAcaraStore.tarikDataBeritaAcaraAct();
 });
 
-const newBeritaAcara = ref<usersM>({
-  email: "",
-  displayName: "",
-  role: "",
-  id_perusahaan: "",
-});
-
 const data = reactive({
   search: "",
   dialogAdd: false,
   dialog_tambah_berita_acara: false,
   dialog_edit_berita_acara: false,
-  selectedBeritaAcara: null,
+  selectedBeritaAcara: null as CompanyInspectionReport | null,
   dialogEdit: false,
   page: 1,
   itemsPerPage: 15,
-  itemRole: ["Administrator", "Akuntan", "Viewer"],
-
   headUser: [
     { title: "No", align: "center" as const, value: "no", width: "50px" },
     { title: "Tanggal", value: "tanggal_berita_acara", sortable: true, width: "150px" },
-    { title: "ID", value: "id_berita_acara", sortable: true, width: "160px" },
-     { title: "Subject", value: "judul_berita_acara", sortable: true, width: "120px" },
-    { title: "Client", value: "nama_customer", sortable: true },
+    { title: "Pihak Pertama", value: "pihak_pertama", sortable: true },
+    { title: "Jabatan", value: "jabatan", sortable: true },
+    { title: "Nama Kapal", value: "nama_kapal", sortable: true },
+    { title: "Lokasi", value: "lokasi", sortable: true },
     {
       title: "Aksi",
       value: "aksi",
@@ -317,7 +309,7 @@ const handleSaved = async () => {
   await masterBeritaAcaraStore.tarikDataBeritaAcaraAct();
 };
 
-const editBeritaAcara = (item: any) => {
+const editBeritaAcara = (item: CompanyInspectionReport) => {
   data.selectedBeritaAcara = _.cloneDeep(item);
 
   data.dialog_edit_berita_acara = true;

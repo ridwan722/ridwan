@@ -49,7 +49,7 @@ definePageMeta({
                     <v-icon icon="mdi-file-edit-outline" size="18" />
                   </div>
                   <div class="action-text">
-                    <span class="title">Main Quotation</span>
+                    <span class="title">Quotation</span>
                     <span class="sub">Kelola draft & estimasi harga</span>
                   </div>
                   <v-icon icon="mdi-chevron-right" size="16" class="arrow" />
@@ -60,9 +60,8 @@ definePageMeta({
 
 
             <!-- Sub Group: SPK -->
-            <div >
 
-              <div class="action-grid-1">
+              <!-- <div class="action-grid-1">
                 <NuxtLink to="/admin/spk" class="compact-action-card">
                   <div class="action-icon">
                     <v-icon icon="mdi-file-cog-outline" size="18" />
@@ -73,8 +72,8 @@ definePageMeta({
                   </div>
                   <v-icon icon="mdi-chevron-right" size="16" class="arrow" />
                 </NuxtLink>
-              </div>
-            </div>
+              </div> -->
+
 
 
 
@@ -98,7 +97,7 @@ definePageMeta({
             <div class="divider"></div>
 
             <!-- Sub Group: Invoice -->
-            <div >
+
               <div class="group-header">
                 <span class="group-title">INVOICE</span>
               </div>
@@ -124,7 +123,7 @@ definePageMeta({
                 </NuxtLink>
               </div>
             </div>
-          </div>
+
         </section>
 
         <!-- CARD 2: KEUANGAN (PETTY CASH) -->
