@@ -1,20 +1,42 @@
 <script setup>
-import moment from "moment";
-
 definePageMeta({
   layout: "blank",
 });
 
-const data = reactive({
-  jamunix: 0,
-  jammoment: 0,
-});
+const pinDialog = ref(false);
+const pin = ref("");
+const pinError = ref("");
+const isSubmitting = ref(false);
 
-const update = async () => {
-  const b = await $fetch("https://time.alipusman.workers.dev/");
-  data.jamunix = b.unix;
-  data.jammoment = moment().unix();
-};
+function openPinDialog() {
+  pin.value = "";
+  pinError.value = "";
+  pinDialog.value = true;
+}
+
+async function verifyPin() {
+  if (!/^\d{6}$/.test(pin.value)) {
+    pinError.value = "PIN harus terdiri dari 6 angka.";
+    return;
+  }
+
+  isSubmitting.value = true;
+  pinError.value = "";
+
+  try {
+    await $fetch("/api/admin-access", {
+      method: "POST",
+      body: { pin: pin.value },
+    });
+    pinDialog.value = false;
+    await navigateTo("/admin");
+  } catch {
+    pin.value = "";
+    pinError.value = "PIN tidak sesuai. Silakan coba lagi.";
+  } finally {
+    isSubmitting.value = false;
+  }
+}
 </script>
 
 <template>
@@ -53,7 +75,7 @@ const update = async () => {
             size="x-large"
             block
             elevation="0"
-            to="/admin"
+            @click="openPinDialog"
           >
             Masuk
             <v-icon end icon="mdi-arrow-right" class="btn-icon" />
@@ -61,6 +83,38 @@ const update = async () => {
         </div>
       </div>
     </main>
+
+    <v-dialog v-model="pinDialog" max-width="390" persistent>
+      <v-card class="pin-dialog pa-2">
+        <v-card-text class="pa-6 text-center">
+          <div class="pin-icon mb-4">
+            <v-icon size="26">mdi-shield-key-outline</v-icon>
+          </div>
+          <div class="text-h6 font-weight-bold text-slate mb-2">Masukkan PIN</div>
+          <p class="pin-description mb-5">Masukkan 6 digit PIN untuk mengakses SNS Admin.</p>
+          <v-text-field
+            v-model="pin"
+            :error-messages="pinError"
+            :disabled="isSubmitting"
+            autofocus
+            hide-details="auto"
+            inputmode="numeric"
+            maxlength="6"
+            placeholder="••••••"
+            type="password"
+            variant="outlined"
+            class="pin-input"
+            @update:model-value="pin = pin.replace(/\D/g, '').slice(0, 6)"
+            @keyup.enter="verifyPin"
+          />
+        </v-card-text>
+        <v-card-actions class="px-6 pb-6 pt-0">
+          <v-btn variant="text" :disabled="isSubmitting" @click="pinDialog = false">Batal</v-btn>
+          <v-spacer />
+          <v-btn color="primary" :loading="isSubmitting" variant="flat" @click="verifyPin">Masuk</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
 
     <footer class="footer-bar">
       <span>SNS &copy; 2026 Enterprise System</span>
@@ -70,12 +124,12 @@ const update = async () => {
 </template>
 
 <style scoped>
-/* Reset & Canvas Base */
+
 .welcome-page {
   position: relative;
   min-height: 100vh;
   min-height: 100dvh;
-  background-color: #0b0f19; /* Dark Luxury Navy Base */
+  background-color: #0b0f19; 
   color: #f8fafc;
   display: flex;
   flex-direction: column;
@@ -85,7 +139,7 @@ const update = async () => {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* Background Ambient Glows & Grid */
+
 .bg-glow {
   position: absolute;
   border-radius: 50%;
@@ -97,7 +151,7 @@ const update = async () => {
 .glow-top {
   width: 280px;
   height: 280px;
-  background: rgba(37, 99, 235, 0.35); /* Royal Blue Glow */
+  background: rgba(37, 99, 235, 0.35); 
   top: -60px;
   right: -40px;
 }
@@ -105,7 +159,7 @@ const update = async () => {
 .glow-bottom {
   width: 300px;
   height: 300px;
-  background: rgba(14, 165, 233, 0.2); /* Cyan Glow */
+  background: rgba(14, 165, 233, 0.2); 
   bottom: 40px;
   left: -80px;
 }
@@ -120,7 +174,7 @@ const update = async () => {
   z-index: 1;
 }
 
-/* Main Layout Setup */
+
 .main-container {
   position: relative;
   z-index: 2;
@@ -132,7 +186,7 @@ const update = async () => {
   justify-content: center;
 }
 
-/* Glassmorphism Card */
+
 .glass-card {
   width: 100%;
   background: rgba(18, 24, 38, 0.65);
@@ -148,7 +202,7 @@ const update = async () => {
   align-items: center;
 }
 
-/* Logo Design */
+
 .logo-wrapper {
   margin-bottom: 24px;
 }
@@ -170,7 +224,7 @@ const update = async () => {
   object-fit: contain;
 }
 
-/* Badge Tag */
+
 .badge-tag {
   display: inline-flex;
   align-items: center;
@@ -195,7 +249,7 @@ const update = async () => {
   box-shadow: 0 0 8px #3b82f6;
 }
 
-/* Text Formatting */
+
 .hero-title {
   font-size: 24px;
   font-weight: 800;
@@ -221,7 +275,7 @@ const update = async () => {
   padding: 0 4px;
 }
 
-/* Action Area & Buttons */
+
 .action-wrapper {
   width: 100%;
 }
@@ -250,7 +304,7 @@ const update = async () => {
   transform: translateX(4px);
 }
 
-/* Footer Styling */
+
 .footer-bar {
   position: relative;
   z-index: 2;
@@ -270,4 +324,10 @@ const update = async () => {
   border-radius: 4px;
   color: #475569;
 }
+
+.pin-dialog { border-radius: 20px !important; }
+.pin-icon { width: 54px; height: 54px; margin: auto; display: grid; place-items: center; border-radius: 16px; color: #2563eb; background: #eff6ff; }
+.text-slate { color: #1e293b; }
+.pin-description { color: #64748b; font-size: 13px; line-height: 1.5; }
+.pin-input :deep(input) { letter-spacing: 10px; font-size: 21px; font-weight: 700; text-align: center; }
 </style>

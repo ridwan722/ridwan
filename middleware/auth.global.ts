@@ -1,9 +1,22 @@
-export default defineNuxtRouteMiddleware(async () => {
+export default defineNuxtRouteMiddleware(async (to) => {
   const user = useUserStore();
 
   // 🔥 Tunggu Firebase Auth rehydrate
   if (!user.__authReady) {
     await untilAuthIsReady(user);
+  }
+
+  // Akses admin hanya diberikan setelah PIN tervalidasi oleh server.
+  if (to.path.startsWith("/admin")) {
+    try {
+      const access = await $fetch<{ authorized: boolean }>(
+        "/api/admin-access/status",
+      );
+
+      if (!access.authorized) return navigateTo("/");
+    } catch {
+      return navigateTo("/");
+    }
   }
 });
 
