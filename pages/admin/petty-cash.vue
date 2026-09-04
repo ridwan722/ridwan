@@ -3,7 +3,7 @@ import { ref, computed, onMounted, onUnmounted } from "vue";
 import moment from "moment";
 import { usepettyCashStore } from "~/stores/pettyCashStore";
 import { useUserStore } from "~/stores/userStore";
-import * as XLSX from "xlsx";
+import * as XLSX from "xlsx-js-style";
 import type {
   pettyCashM,
   PettyCashCategory,
@@ -33,6 +33,7 @@ onMounted(async () => {
   } finally {
     isLoading.value = false;
   }
+  form.value.tanggal = moment().format("YYYY-MM-DD");
 });
 
 interface Transaction {
@@ -62,10 +63,12 @@ const isEditMode = ref<boolean>(false);
 const editingId = ref<string | null>(null);
 
 const form = ref({
-  category: "Debet" as PettyCashCategory,
+  category: "Keperluan Kantor" as PettyCashCategory,
   amount: null as number | null,
   description: "",
   image: "",
+  tanggal: "",
+  isMealAllowance: false, // State untuk melacak checkbox uang makan
 });
 
 onMounted(async () => {
@@ -79,9 +82,7 @@ const transactions = computed<Transaction[]>(() =>
     return {
       id: item.id || `${timestamp}-${item.tanggal}-${item.amount}`,
       createdAt: timestamp,
-      date: timestamp
-        ? moment(timestamp * 1000).format("YYYY-MM-DD")
-        : item.tanggal,
+      date: item.tanggal,
       category: item.kategori,
       description: item.keterangan,
       amount: Number(item.amount || 0),
@@ -148,18 +149,24 @@ const totalOut = computed(() =>
 // Sisa Saldo Kas Berdasarkan Periode
 const actualRealBalance = computed(() => totalIn.value - totalOut.value);
 
+const compareDateDescending = (a: Transaction, b: Transaction) =>
+  b.date.localeCompare(a.date);
+
+const compareDateAscending = (a: Transaction, b: Transaction) =>
+  a.date.localeCompare(b.date);
+
 const filteredTransactions = computed(() => {
   let result = transactionsByMonth.value;
   if (filterCategory.value !== "all") {
     result = result.filter((t) => t.category === filterCategory.value);
   }
-  return [...result].sort((a, b) => b.createdAt - a.createdAt);
+  return [...result].sort(compareDateDescending);
 });
 
 const topupTransactions = computed(() =>
   transactions.value
-    .filter((t) => t.type === "in")
-    .sort((a, b) => b.createdAt - a.createdAt),
+    .filter((t) => t.category === "Top Up")
+    .sort(compareDateDescending),
 );
 
 const handleImageUpload = (event: Event) => {
@@ -177,10 +184,11 @@ const openModal = (type: "topup" | "expense") => {
   isEditMode.value = false;
   editingId.value = null;
   modalType.value = type;
-  form.value.category = type === "topup" ? "Debet" : "Kredit";
+  form.value.category = type === "topup" ? "Top Up" : "Keperluan Kantor";
   form.value.amount = null;
   form.value.description = "";
   form.value.image = "";
+  form.value.isMealAllowance = false;
   isModalOpen.value = true;
 };
 
@@ -189,12 +197,11 @@ const openEditModal = (tx: Transaction) => {
   isEditMode.value = true;
   editingId.value = tx.id;
   modalType.value = tx.type === "in" ? "topup" : "expense";
-  // Data lama tetap ditampilkan apa adanya; saat diedit, kategorinya mengikuti
-  // format baru berdasarkan jenis transaksi.
-  form.value.category = tx.type === "in" ? "Debet" : "Kredit";
+  form.value.category = tx.category;
   form.value.amount = tx.amount;
   form.value.description = tx.description;
   form.value.image = tx.image; // Gunakan URL dari uploadStore jika ada
+  form.value.isMealAllowance = false; // Reset ketika edit, karena nominal lama diasumsikan sudah final
   isModalOpen.value = true;
 };
 
@@ -221,13 +228,23 @@ const previewImage = (imgUrl: string) => {
 const handleSubmit = async () => {
   if (!form.value.amount || !form.value.description) return;
   const imageUrl = uploadStore().getUrlRef || form.value.image;
+  // Hitung final amount, jika kategori Uang Jalan dan checkbox diisi, tambahkan 15000
+  let finalAmount = form.value.amount;
+  if (
+    modalType.value === "expense" &&
+    form.value.category === "Uang Jalan" &&
+    form.value.isMealAllowance
+  ) {
+    finalAmount += 15000;
+  }
+
   // Field yang sama untuk add & update
   const payload = {
-    amount: form.value.amount,
+    amount: finalAmount,
     keterangan: form.value.description,
     bukti: imageUrl,
-    type: (form.value.category === "Debet" ? "in" : "out") as PettyCashType,
-    tanggal: moment().format("YYYY-MM-DD"),
+    type: (modalType.value === "topup" ? "in" : "out") as PettyCashType,
+    tanggal: form.value.tanggal,
     kategori: form.value.category,
   };
 
@@ -268,96 +285,273 @@ const copyRekening = async () => {
 };
 
 const downloadExcel = () => {
-  // 1. Format Data Pemasukan
-  const pemasukan = filteredTransactions.value
-    .filter((tx) => tx.type === "in")
-    .map((tx, index) => ({
-      No: index + 1,
-      Tanggal: tx.date,
-      Kategori: tx.category,
-      Keterangan: tx.description,
-      Bukti: tx.image ? "Ada" : "Tidak Ada",
-      Nominal: tx.amount,
-    }));
-
-  // 2. Format Data Pengeluaran
-  const pengeluaran = filteredTransactions.value
-    .filter((tx) => tx.type === "out")
-    .map((tx, index) => ({
-      No: index + 1,
-      Tanggal: tx.date,
-      Kategori: tx.category,
-      Keterangan: tx.description,
-      Bukti: tx.image ? "Ada" : "Tidak Ada",
-      Nominal: tx.amount,
-    }));
-
-  // Hitung total manual jika ingin menampilkan angka langsung tanpa formula Excel:
-  // const totalIn = pemasukan.reduce((sum, item) => sum + (item.Nominal || 0), 0);
-  // const totalOut = pengeluaran.reduce((sum, item) => sum + (item.Nominal || 0), 0);
-
-  // Buat worksheet dari array json
-  const wsPemasukan = XLSX.utils.json_to_sheet(pemasukan);
-  const wsPengeluaran = XLSX.utils.json_to_sheet(pengeluaran);
-
-  // 3. Tambahkan Baris TOTAL di Pemasukan
-  if (pemasukan.length > 0) {
-    const lastRowIn = pemasukan.length + 1; // Row terakhir data (karena header di row 1)
-    XLSX.utils.sheet_add_aoa(
-      wsPemasukan,
-      [
-        [
-          "",
-          "",
-          "",
-          "TOTAL",
-          "",
-          { f: `SUM(F2:F${lastRowIn})` }, // Rumus SUM Excel untuk kolom F (Nominal)
-        ],
-      ],
-      { origin: -1 }, // Ditambahkan di baris paling bawah
-    );
-  }
-
-  // 4. Tambahkan Baris TOTAL di Pengeluaran
-  if (pengeluaran.length > 0) {
-    const lastRowOut = pengeluaran.length + 1;
-    XLSX.utils.sheet_add_aoa(
-      wsPengeluaran,
-      [
-        [
-          "",
-          "",
-          "",
-          "TOTAL",
-          "",
-          { f: `SUM(F2:F${lastRowOut})` }, // Rumus SUM Excel untuk kolom F (Nominal)
-        ],
-      ],
-      { origin: -1 },
-    );
-  }
-
-  // Lebar Kolom
-  const colWidth = [
-    { wch: 6 }, // No
-    { wch: 15 }, // Tanggal
-    { wch: 22 }, // Kategori
-    { wch: 40 }, // Keterangan
-    { wch: 15 }, // Bukti
-    { wch: 18 }, // Nominal
+  const monthNames = [
+    "Januari",
+    "Februari",
+    "Maret",
+    "April",
+    "Mei",
+    "Juni",
+    "Juli",
+    "Agustus",
+    "September",
+    "Oktober",
+    "November",
+    "Desember",
   ];
+  const period =
+    selectedMonth.value !== "all" && selectedYear.value !== "all"
+      ? `${monthNames[Number(selectedMonth.value) - 1]} ${selectedYear.value}`
+      : selectedYear.value !== "all"
+        ? `Tahun ${selectedYear.value}`
+        : "Semua Periode";
+  const reportTransactions = transactionsByMonth.value
+    .filter(
+      (tx) =>
+        filterCategory.value === "all" || tx.category === filterCategory.value,
+    )
+    .sort(compareDateAscending);
 
-  wsPemasukan["!cols"] = colWidth;
-  wsPengeluaran["!cols"] = colWidth;
+  const currencyFormat = '"Rp "#,##0;[Red]\\("-Rp "#,##0\\);"-"';
+  const thinBorder = {
+    top: { style: "thin", color: { rgb: "CBD5E1" } },
+    bottom: { style: "thin", color: { rgb: "CBD5E1" } },
+    left: { style: "thin", color: { rgb: "CBD5E1" } },
+    right: { style: "thin", color: { rgb: "CBD5E1" } },
+  };
+  const totalBorder = {
+    ...thinBorder,
+    top: { style: "thin", color: { rgb: "1E3A8A" } },
+    bottom: { style: "double", color: { rgb: "1E3A8A" } },
+  };
+  const baseFont = { name: "Calibri", sz: 11 };
+  const styles = {
+    title: {
+      font: { ...baseFont, bold: true, sz: 16, color: { rgb: "1E3A8A" } },
+    },
+    subtitle: { font: { ...baseFont, italic: true, color: { rgb: "475569" } } },
+    summaryLabel: {
+      font: { ...baseFont, bold: true, sz: 9, color: { rgb: "64748B" } },
+      fill: { fgColor: { rgb: "F8FAFC" } },
+      alignment: { horizontal: "center", vertical: "center" },
+    },
+    summaryValue: {
+      font: { ...baseFont, bold: true, sz: 14, color: { rgb: "1E3A8A" } },
+      fill: { fgColor: { rgb: "F8FAFC" } },
+      alignment: { horizontal: "center", vertical: "center" },
+      numFmt: currencyFormat,
+    },
+    header: {
+      font: { ...baseFont, bold: true, color: { rgb: "FFFFFF" } },
+      fill: { fgColor: { rgb: "1E3A8A" } },
+      border: thinBorder,
+      alignment: { horizontal: "center", vertical: "center" },
+    },
+    cellCenter: {
+      font: baseFont,
+      border: thinBorder,
+      alignment: { horizontal: "center", vertical: "center" },
+    },
+    cellLeft: {
+      font: baseFont,
+      border: thinBorder,
+      alignment: { horizontal: "left", vertical: "center" },
+    },
+    currency: {
+      font: baseFont,
+      border: thinBorder,
+      alignment: { horizontal: "right", vertical: "center" },
+      numFmt: currencyFormat,
+    },
+    totalLabel: {
+      font: { ...baseFont, bold: true },
+      fill: { fgColor: { rgb: "E2E8F0" } },
+      border: totalBorder,
+      alignment: { horizontal: "right", vertical: "center" },
+    },
+    totalCurrency: {
+      font: { ...baseFont, bold: true },
+      fill: { fgColor: { rgb: "E2E8F0" } },
+      border: totalBorder,
+      alignment: { horizontal: "right", vertical: "center" },
+      numFmt: currencyFormat,
+    },
+  };
 
-  // Buat Workbook dan append Sheet
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, wsPemasukan, "Pemasukan");
-  XLSX.utils.book_append_sheet(wb, wsPengeluaran, "Pengeluaran");
+  const worksheet = XLSX.utils.aoa_to_sheet([
+    ["REKAPAN PETTY CASH ARESA"],
+    [`Periode: ${period} (Urutan Terlama ke Terbaru)`],
+    [],
+    [
+      "TOTAL DEBET (MASUK)",
+      "",
+      "TOTAL KREDIT (KELUAR)",
+      "",
+      "SISA SALDO AKHIR",
+    ],
+    ["", "", "", "", ""],
+    [],
+    ["No", "Tanggal", "Kategori", "Keterangan", "DEBET", "KREDIT", "SALDO"],
+  ]);
+  const firstDataRow = 8;
+  let runningBalance = 0;
+  let totalDebit = 0;
+  let totalCredit = 0;
 
-  const tanggal = new Date().toISOString().slice(0, 10);
-  XLSX.writeFile(wb, `Laporan_Petty_Cash_${tanggal}.xlsx`);
+  reportTransactions.forEach((transaction, index) => {
+    const row = firstDataRow + index;
+    const debit = transaction.type === "in" ? transaction.amount : 0;
+    const credit = transaction.type === "out" ? transaction.amount : 0;
+    runningBalance += debit - credit;
+    totalDebit += debit;
+    totalCredit += credit;
+    XLSX.utils.sheet_add_aoa(
+      worksheet,
+      [
+        [
+          index + 1,
+          transaction.date,
+          transaction.category,
+          transaction.description,
+          debit,
+          credit,
+          {
+            t: "n",
+            f: index === 0 ? `E${row}-F${row}` : `G${row - 1}+E${row}-F${row}`,
+            v: runningBalance,
+          },
+        ],
+      ],
+      { origin: `A${row}` },
+    );
+  });
+
+  const totalRow = firstDataRow + reportTransactions.length;
+  const lastDataRow = totalRow - 1;
+  const hasTransactions = reportTransactions.length > 0;
+  XLSX.utils.sheet_add_aoa(
+    worksheet,
+    [
+      [
+        "",
+        "",
+        "",
+        "TOTAL",
+        hasTransactions
+          ? {
+              t: "n",
+              f: `SUM(E${firstDataRow}:E${lastDataRow})`,
+              v: totalDebit,
+            }
+          : 0,
+        hasTransactions
+          ? {
+              t: "n",
+              f: `SUM(F${firstDataRow}:F${lastDataRow})`,
+              v: totalCredit,
+            }
+          : 0,
+        hasTransactions
+          ? { t: "n", f: `G${lastDataRow}`, v: runningBalance }
+          : 0,
+      ],
+    ],
+    { origin: `A${totalRow}` },
+  );
+  XLSX.utils.sheet_add_aoa(
+    worksheet,
+    [
+      [
+        { t: "n", f: `E${totalRow}`, v: totalDebit },
+        "",
+        { t: "n", f: `F${totalRow}`, v: totalCredit },
+        "",
+        { t: "n", f: `G${totalRow}`, v: runningBalance },
+      ],
+    ],
+    { origin: "A5" },
+  );
+
+  worksheet["!merges"] = [
+    XLSX.utils.decode_range("A4:B4"),
+    XLSX.utils.decode_range("C4:D4"),
+    XLSX.utils.decode_range("E4:G4"),
+    XLSX.utils.decode_range("A5:B5"),
+    XLSX.utils.decode_range("C5:D5"),
+    XLSX.utils.decode_range("E5:G5"),
+  ];
+  worksheet["!cols"] = [
+    { wch: 6 },
+    { wch: 14 },
+    { wch: 23 },
+    { wch: 55 },
+    { wch: 18 },
+    { wch: 18 },
+    { wch: 18 },
+  ];
+  worksheet["!rows"] = [{ hpt: 21 }, null, null, null, { hpt: 19 }];
+  worksheet["!freeze"] = {
+    xSplit: 0,
+    ySplit: 7,
+    topLeftCell: "A8",
+    activePane: "bottomLeft",
+    state: "frozen",
+  };
+
+  const applyRowStyle = (row: number, isAlternate: boolean) => {
+    const fill = isAlternate ? { fgColor: { rgb: "F1F5F9" } } : undefined;
+    ["A", "B"].forEach((column) => {
+      worksheet[`${column}${row}`].s = {
+        ...styles.cellCenter,
+        ...(fill && { fill }),
+      };
+    });
+    ["C", "D"].forEach((column) => {
+      worksheet[`${column}${row}`].s = {
+        ...styles.cellLeft,
+        ...(fill && { fill }),
+      };
+    });
+    ["E", "F", "G"].forEach((column) => {
+      worksheet[`${column}${row}`].s = {
+        ...styles.currency,
+        ...(fill && { fill }),
+      };
+    });
+  };
+
+  worksheet.A1.s = styles.title;
+  worksheet.A2.s = styles.subtitle;
+  ["A", "C", "E"].forEach((column) => {
+    worksheet[`${column}4`].s = styles.summaryLabel;
+    worksheet[`${column}5`].s = styles.summaryValue;
+  });
+  ["B", "D", "F", "G"].forEach((column) => {
+    worksheet[`${column}4`] = {
+      t: "z",
+      s: { fill: { fgColor: { rgb: "F8FAFC" } } },
+    };
+    worksheet[`${column}5`] = {
+      t: "z",
+      s: { fill: { fgColor: { rgb: "F8FAFC" } } },
+    };
+  });
+  ["A", "B", "C", "D", "E", "F", "G"].forEach((column) => {
+    worksheet[`${column}7`].s = styles.header;
+    worksheet[`${column}${totalRow}`].s =
+      column === "D" ? styles.totalLabel : styles.totalCurrency;
+  });
+  reportTransactions.forEach((_, index) =>
+    applyRowStyle(firstDataRow + index, index % 2 === 1),
+  );
+
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(
+    workbook,
+    worksheet,
+    `Petty Cash ${period}`.slice(0, 31),
+  );
+  XLSX.writeFile(workbook, `Laporan Petty Cash - ${period}.xlsx`);
 };
 
 // Mengecek apakah tanggal transaksi berada pada bulan & tahun yang sama dengan hari ini
@@ -373,7 +567,7 @@ const isCurrentMonth = (dateString: string): boolean => {
 </script>
 
 <template>
-   <v-btn
+  <v-btn
     variant="text"
     color="grey-darken-3"
     prepend-icon="mdi-arrow-left"
@@ -545,8 +739,10 @@ const isCurrentMonth = (dateString: string): boolean => {
           <div class="filter-wrapper select-wrapper">
             <select v-model="filterCategory" class="form-select">
               <option value="all">Semua Kategori</option>
-              <option value="Debet">Debet</option>
-              <option value="Kredit">Kredit</option>
+              <option value="Top Up">Top Up Saldo</option>
+              <option value="Uang Jalan">Uang Jalan</option>
+              <option value="Keperluan Kantor">Keperluan Kantor</option>
+              <option value="Listrik Kantor">Listrik Kantor</option>
             </select>
 
             <v-icon class="select-icon" size="18"> mdi-chevron-down </v-icon>
@@ -570,8 +766,10 @@ const isCurrentMonth = (dateString: string): boolean => {
             <span
               class="badge"
               :class="{
-                'badge-topup': tx.category === 'Debet',
-                'badge-kredit': tx.category === 'Kredit',
+                'badge-topup': tx.category === 'Top Up',
+                'badge-jalan': tx.category === 'Uang Jalan',
+                'badge-kantor': tx.category === 'Keperluan Kantor',
+                'badge-listrik': tx.category === 'Listrik Kantor',
               }"
             >
               {{ tx.category }}
@@ -631,9 +829,9 @@ const isCurrentMonth = (dateString: string): boolean => {
             <tr>
               <th style="max-width: 20px">No.</th>
               <th>Tanggal</th>
+              <th>Kategori</th>
               <th>Keterangan / Keperluan</th>
               <th>Bukti</th>
-              <th>Kategori</th>
               <th class="text-right">Nominal</th>
               <th class="text-center">Aksi</th>
             </tr>
@@ -661,6 +859,19 @@ const isCurrentMonth = (dateString: string): boolean => {
               <td class="text-muted text-nowrap font-mono">
                 {{ rubahtanggalharilengkappettycash(tx.date) }}
               </td>
+              <td>
+                <span
+                  class="badge"
+                  :class="{
+                    'badge-topup': tx.category === 'Top Up',
+                    'badge-jalan': tx.category === 'Uang Jalan',
+                    'badge-kantor': tx.category === 'Keperluan Kantor',
+                    'badge-listrik': tx.category === 'Listrik Kantor',
+                  }"
+                >
+                  {{ tx.category }}
+                </span>
+              </td>
               <td style="max-width: 250px">{{ tx.description }}</td>
               <td style="max-width: 100px">
                 <div v-if="tx.image">
@@ -680,17 +891,6 @@ const isCurrentMonth = (dateString: string): boolean => {
                 <span v-else class="text-muted italic text-xs"
                   >Tanpa bukti</span
                 >
-              </td>
-               <td>
-                <span
-                  class="badge"
-                  :class="{
-                    'badge-topup': tx.category === 'Debet',
-                    'badge-kredit': tx.category === 'Kredit',
-                  }"
-                >
-                  {{ tx.category }}
-                </span>
               </td>
               <td
                 class="text-right tx-amount"
@@ -744,33 +944,64 @@ const isCurrentMonth = (dateString: string): boolean => {
         </div>
 
         <form @submit.prevent="handleSubmit" class="modal-form">
-          <!-- <div class="form-group">
-            <label class="form-label">Kategori Transaksi</label>
+          <div v-if="modalType === 'expense'" class="form-group">
+            <label class="form-label">Kategori Penggunaan</label>
             <div class="radio-group">
               <label
                 class="radio-box"
-                :class="{ active: form.category === 'Debet' }"
+                :class="{ active: form.category === 'Uang Jalan' }"
               >
                 <input
                   type="radio"
                   v-model="form.category"
-                  value="Debet"
+                  value="Uang Jalan"
                 />
-                Debet
+                Uang Jalan
               </label>
               <label
                 class="radio-box"
-                :class="{ active: form.category === 'Kredit' }"
+                :class="{ active: form.category === 'Keperluan Kantor' }"
               >
                 <input
                   type="radio"
                   v-model="form.category"
-                  value="Kredit"
+                  value="Keperluan Kantor"
                 />
-                Kredit
+                Keperluan Kantor
+              </label>
+              <label
+                class="radio-box"
+                :class="{ active: form.category === 'Listrik Kantor' }"
+              >
+                <input
+                  type="radio"
+                  v-model="form.category"
+                  value="Listrik Kantor"
+                />
+                Listrik
               </label>
             </div>
-          </div> -->
+          </div>
+
+          <div
+            v-if="modalType === 'expense' && form.category === 'Uang Jalan'"
+            class="meal-allowance-box"
+          >
+            <label class="checkbox-container">
+              <input type="checkbox" v-model="form.isMealAllowance" />
+              <span class="checkmark"></span>
+              <span class="checkbox-label"
+                >Tambah Uang Makan (+ Rp 15.000)</span
+              >
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Tanggal</label>
+            <div class="input-with-prefix">
+              <a-date-picker v-model="form.tanggal"></a-date-picker>
+            </div>
+          </div>
 
           <div class="form-group">
             <label class="form-label">Nominal Transaksi (Rp)</label>
@@ -1561,10 +1792,10 @@ const isCurrentMonth = (dateString: string): boolean => {
   border: 1px solid #a7f3d0;
 }
 
-.badge-kredit {
-  background-color: #fef2f2;
-  color: #b91c1c;
-  border: 1px solid #fca5a5;
+.badge-jalan {
+  background-color: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
 }
 
 .badge-kantor {

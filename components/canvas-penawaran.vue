@@ -255,7 +255,7 @@
                   </div>
                 </td>
                 <td
-                  class="text-left font-weight-bold text-slate-800"
+                  class="text-left text-slate-800"
                   style="white-space: pre-line"
                 >
                   {{ item.nama }}

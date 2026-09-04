@@ -225,7 +225,6 @@ const handlePrint = () => {
         <!-- PAGE HEADER -->
         <div class="page-heading">
           <div>
-            <div class="page-eyebrow">PENAWARAN</div>
             <h1 class="page-title">Detail Quotation</h1>
             <p class="page-subtitle">
               Detail informasi dan preview dokumen penawaran
@@ -340,7 +339,7 @@ const handlePrint = () => {
                   >Invoice telah dibuat</span
                 >
               </div>
-              <nuxtLink class="text-blue text-caption ml-1" style="text-decoration: underline;">lihat invoice</nuxtLink>
+              <nuxtLink class="text-blue text-caption ml-1" style="text-decoration: underline;"  v-if="detailpenawaran.status == 'INVOICE'">lihat invoice</nuxtLink>
             </div>
           </section>
         </aside>
@@ -391,7 +390,7 @@ const handlePrint = () => {
 
 .top-sticky-container {
   position: sticky;
-  top: 0;
+  top: 60px;
   z-index: 100;
   background: #f5f7fa;
   width: 100%;
@@ -399,6 +398,7 @@ const handlePrint = () => {
   border-bottom: 1px solid rgba(226, 232, 240, 0.9);
   box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
   box-sizing: border-box;
+
 }
 
 .sticky-inner-content {
@@ -424,14 +424,6 @@ const handlePrint = () => {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-}
-
-.page-eyebrow {
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 1.2px;
-  color: #64748b;
-  margin-bottom: 2px;
 }
 
 .page-title {
@@ -476,7 +468,7 @@ const handlePrint = () => {
   min-width: 0;
   position: sticky;
   /* Menggunakan calc agar tinggi mengunci otomatis persis di bawah header sticky */
-  top: calc(105px + 24px);
+  top: calc(185px + 24px);
   max-height: calc(100vh - (105px + 48px));
   overflow-y: auto;
   /* Menghilangkan scrollbar agar tetap estetik */
@@ -793,10 +785,6 @@ const handlePrint = () => {
 
   .back-button {
     font-size: 13px;
-  }
-
-  .page-eyebrow {
-    font-size: 9px;
   }
 
   .page-title {

@@ -17,9 +17,9 @@ definePageMeta({
         </div>
         <div class="header-metrics">
           <div class="metric-pill">
-            <span class="metric-label">Status Server</span>
+            <span class="metric-label">Server</span>
             <span class="metric-value status-online">
-              <span class="dot"></span> Normal
+              <span class="dot"></span> 
             </span>
           </div>
         </div>
@@ -31,7 +31,11 @@ definePageMeta({
         <section class="bento-card col-span-2">
           <div class="card-header">
             <div class="header-title-group">
-              <v-icon icon="mdi-file-document-multiple-outline" size="18" class="header-icon" />
+              <v-icon
+                icon="mdi-file-document-multiple-outline"
+                size="18"
+                class="header-icon"
+              />
               <h2>Penjualan & Modul Transaksi</h2>
             </div>
             <span class="badge-count">6 Direct Links</span>
@@ -39,7 +43,7 @@ definePageMeta({
 
           <div class="card-body">
             <!-- Sub Group: Quotation -->
-            <div >
+            <div>
               <div class="group-header">
                 <span class="group-title">QUOTATION (PENAWARAN)</span>
               </div>
@@ -57,11 +61,9 @@ definePageMeta({
               </div>
             </div>
 
-
-
             <!-- Sub Group: SPK -->
 
-              <!-- <div class="action-grid-1">
+            <!-- <div class="action-grid-1">
                 <NuxtLink to="/admin/spk" class="compact-action-card">
                   <div class="action-icon">
                     <v-icon icon="mdi-file-cog-outline" size="18" />
@@ -74,30 +76,32 @@ definePageMeta({
                 </NuxtLink>
               </div> -->
 
-
-
-
             <!-- Sub Group: Berita Acara -->
-            <div >
 
-              <div class="action-grid-1">
-                <NuxtLink to="/admin/berita-acara" class="compact-action-card">
-                  <div class="action-icon">
-                    <v-icon icon="mdi-file-certificate-outline" size="18" />
-                  </div>
-                  <div class="action-text">
-                    <span class="title">Berita Acara</span>
-                    <span class="sub">Kelola BAST & serah terima pekerjaan</span>
-                  </div>
-                  <v-icon icon="mdi-chevron-right" size="16" class="arrow" />
-                </NuxtLink>
-              </div>
+            <div class="action-grid-2">
+              <NuxtLink to="/admin/delivery-order" class="compact-action-card">
+                <div class="action-icon">
+                  <v-icon icon="mdi-file-certificate-outline" size="18" />
+                </div>
+                <div class="action-text">
+                  <span class="title">Delivery Order</span>
+                  <span class="sub">Kelola BAST & serah terima pekerjaan</span>
+                </div>
+                <v-icon icon="mdi-chevron-right" size="16" class="arrow" />
+              </NuxtLink>
+              <NuxtLink to="/admin/berita-acara" class="compact-action-card">
+                <div class="action-icon">
+                  <v-icon icon="mdi-file-certificate-outline" size="18" />
+                </div>
+                <div class="action-text">
+                  <span class="title">Berita Acara</span>
+                  <span class="sub">Kelola BAST & serah terima pekerjaan</span>
+                </div>
+                <v-icon icon="mdi-chevron-right" size="16" class="arrow" />
+              </NuxtLink>
             </div>
 
-            <div class="divider"></div>
-
-            <!-- Sub Group: Invoice -->
-
+            <div>
               <div class="group-header">
                 <span class="group-title">INVOICE</span>
               </div>
@@ -112,7 +116,10 @@ definePageMeta({
                   </div>
                 </NuxtLink>
 
-                <NuxtLink to="/admin/invoice/selesai" class="compact-action-card">
+                <NuxtLink
+                  to="/admin/invoice/selesai"
+                  class="compact-action-card"
+                >
                   <div class="action-icon">
                     <v-icon icon="mdi-check-decagram-outline" size="18" />
                   </div>
@@ -123,7 +130,7 @@ definePageMeta({
                 </NuxtLink>
               </div>
             </div>
-
+          </div>
         </section>
 
         <!-- CARD 2: KEUANGAN (PETTY CASH) -->
@@ -136,19 +143,88 @@ definePageMeta({
           </div>
 
           <div class="card-body">
-            <div >
+            <div>
               <div class="group-header">
-                <span class="group-title">KAS</span>
+                <span class="group-title">MASTER DATA & OPERATIONAL</span>
               </div>
-              <NuxtLink to="/admin/petty-cash" class="compact-action-card highlight">
+
+              <div class="action-grid-1">
+                <NuxtLink
+                  to="/admin/master/users"
+                  class="compact-action-card"
+                >
+                 <div class="action-icon">
+                  <v-icon icon="mdi-account-group-outline" size="18" />
+                </div>
+                  <div class="action-text">
+                    <span class="title">User</span>
+                    <span class="sub"
+                      >Kelola akun, role, dan hak akses pengguna</span
+                    >
+                  </div>
+                  <v-icon icon="mdi-arrow-top-right" size="16" class="arrow" />
+                </NuxtLink>
+              </div>
+
+              <div class="action-grid-1 mt-2">
+                <NuxtLink to="/admin/master/client" class="compact-action-card">
+                <div class="action-icon">
+                  <v-icon icon="mdi-domain" size="18" />
+                </div>
+                <div class="action-text">
+                  <span class="title">Master Client</span>
+                  <span class="sub"
+                    >Direktori klien dan data kontak perusahaan</span
+                  >
+                </div>
+                <v-icon icon="mdi-arrow-top-right" size="16" class="arrow" />
+              </NuxtLink>
+              </div>
+
+              <div class="action-grid-1 mt-2">
+                <NuxtLink
+                to="/admin/petty-cash"
+                class="compact-action-card highlight"
+              >
                 <div class="action-icon primary">
                   <v-icon icon="mdi-cash-register" size="20" />
                 </div>
                 <div class="action-text">
                   <span class="title">Petty Cash</span>
-                  <span class="sub">Pencatatan kas kecil & pengeluaran Harian</span>
+                  <span class="sub"
+                    >Pencatatan kas kecil & pengeluaran Harian</span
+                  >
                 </div>
                 <v-icon icon="mdi-arrow-top-right" size="16" class="arrow" />
+              </NuxtLink>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="bento-card col-span-3">
+          <div class="card-header">
+            <div class="header-title-group">
+              <v-icon
+                icon="mdi-database-outline"
+                size="18"
+                class="header-icon"
+              />
+              <h2>Report Order</h2>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="action-grid-1">
+              <NuxtLink to="/admin/report-order" class="compact-action-card highlight2">
+                <div class="action-icon">
+                  <v-icon icon="mdi-account-group-outline" size="18" />
+                </div>
+                <div class="action-text">
+                  <span class="title">Report Order</span>
+                  <span class="sub">Rekapan order SNS</span>
+                </div>
+                <v-icon icon="mdi-chevron-right" size="16" class="arrow" />
               </NuxtLink>
             </div>
           </div>
@@ -158,31 +234,39 @@ definePageMeta({
         <section class="bento-card col-span-3">
           <div class="card-header">
             <div class="header-title-group">
-              <v-icon icon="mdi-database-outline" size="18" class="header-icon" />
-              <h2>Master Data System</h2>
+              <v-icon
+                icon="mdi-database-outline"
+                size="18"
+                class="header-icon"
+              />
+              <h2>-</h2>
             </div>
           </div>
 
           <div class="card-body">
             <div class="action-grid-2">
-              <NuxtLink to="/admin/master/users" class="compact-action-card">
+              <NuxtLink class="compact-action-card">
                 <div class="action-icon">
                   <v-icon icon="mdi-account-group-outline" size="18" />
                 </div>
                 <div class="action-text">
-                  <span class="title">System Users</span>
-                  <span class="sub">Kelola akun, role, dan hak akses pengguna</span>
+                  <span class="title">-</span>
+                  <span class="sub"
+                    >---</span
+                  >
                 </div>
                 <v-icon icon="mdi-chevron-right" size="16" class="arrow" />
               </NuxtLink>
 
-              <NuxtLink to="/admin/master/client" class="compact-action-card">
+              <NuxtLink  class="compact-action-card">
                 <div class="action-icon">
                   <v-icon icon="mdi-domain" size="18" />
                 </div>
                 <div class="action-text">
-                  <span class="title">Master Client</span>
-                  <span class="sub">Direktori klien dan data kontak perusahaan</span>
+                  <span class="title">-</span>
+                  <span class="sub"
+                    >---</span
+                  >
                 </div>
                 <v-icon icon="mdi-chevron-right" size="16" class="arrow" />
               </NuxtLink>
@@ -203,7 +287,8 @@ definePageMeta({
   min-height: 100vh;
   background-color: #f1f5f9;
   color: #0f172a;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   padding: 16px;
 }
 
@@ -337,7 +422,7 @@ definePageMeta({
 .divider {
   height: 1px;
   background-color: #f1f5f9;
-  margin: 2px 0;
+  margin: 1px 0;
 }
 
 /* ---------------------------------------------------------
@@ -380,6 +465,16 @@ definePageMeta({
 .compact-action-card.highlight:hover {
   border-color: #f83b3b; /* Touch of Red Accent on Hover */
   background: #fff5f5;
+}
+
+.compact-action-card.highlight2 {
+  border-color: #cbd5e1;
+  background: #fafafa;
+}
+
+.compact-action-card.highlight2:hover {
+  border-color: #1b41ff; /* Touch of Red Accent on Hover */
+  background: rgba(0, 110, 255, 0.389)
 }
 
 .action-icon {

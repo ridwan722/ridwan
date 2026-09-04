@@ -88,6 +88,17 @@ const logout = async () => {
         >
           Update Version. 2
         </v-chip>
+
+        <v-btn
+    variant="outlined"
+    color="primary"
+    size="small"
+    prepend-icon="mdi-home-outline"
+    to="/admin"
+    class="text-capitalize font-weight-bold"
+  >
+    Home
+  </v-btn>
       </div>
     </template>
 
@@ -217,7 +228,7 @@ const logout = async () => {
                 color="error-lighten-5"
                 class="logout-btn justify-start"
                 rounded="lg"
-                @click="logout"
+                to="/"
               >
                 <template #prepend>
                   <v-icon color="error"> mdi-logout-variant </v-icon>
